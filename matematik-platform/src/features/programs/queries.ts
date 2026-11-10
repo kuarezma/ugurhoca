@@ -69,6 +69,28 @@ export async function loadYksProgramTargets(
 export async function loadLgsSchoolTargets(
   preferredYear = 2026,
 ): Promise<ProgramLoadResult<LgsSchoolTarget>> {
+  try {
+    const response = await fetch(`/api/lgs-targets?year=${preferredYear}`);
+    const payload = (await response.json()) as {
+      data?: {
+        schools: LgsSchoolTarget[];
+        dataYear: number;
+        error: string;
+        historyYears: number[];
+      };
+    };
+    if (response.ok && payload.data) {
+      return {
+        dataYear: payload.data.dataYear,
+        error: payload.data.error,
+        historyYears: payload.data.historyYears,
+        rows: payload.data.schools || [],
+      };
+    }
+  } catch {
+    // İstemci tarafında API rotasına erişilemezse yerel Supabase fallback'ine düşülür.
+  }
+
   const yearListQuery = await fetchAllProgramRows<{ year: number }>(
     (from, to) =>
       supabase.from('lgs_school_targets').select('year').range(from, to),

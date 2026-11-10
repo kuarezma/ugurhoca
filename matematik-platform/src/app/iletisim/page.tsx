@@ -1,6 +1,12 @@
 import type { Metadata } from 'next';
 import Link from 'next/link';
-import { ArrowLeft, Mail, MessageSquare, Shield, UserCheck } from 'lucide-react';
+import {
+  ArrowLeft,
+  Mail,
+  MessageSquare,
+  Shield,
+  UserCheck,
+} from 'lucide-react';
 import { createPageMetadata } from '@/lib/site-metadata';
 
 export const metadata: Metadata = createPageMetadata({
@@ -22,7 +28,9 @@ export default function IletisimPage() {
           <h1 className="font-display text-3xl font-bold text-primary sm:text-4xl">
             İletişim
           </h1>
-          <p className="text-sm text-tertiary">Platform Rehberi ve Eğitmen Bilgilendirmesi</p>
+          <p className="text-sm text-tertiary">
+            Platform Rehberi ve Eğitmen Bilgilendirmesi
+          </p>
         </header>
 
         {/* Öğretmen Künyesi Kartı */}
@@ -33,7 +41,8 @@ export default function IletisimPage() {
             </div>
             <div className="min-w-0">
               <div className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-xs font-bold bg-indigo-500/10 text-indigo-700 dark:text-indigo-300 border border-indigo-500/20 mb-1">
-                <UserCheck className="w-3.5 h-3.5" /> Platform Yöneticisi & Eğitmen
+                <UserCheck className="w-3.5 h-3.5" /> Platform Yöneticisi &
+                Eğitmen
               </div>
               <h2 className="font-display text-2xl font-black text-primary">
                 Uğur YAŞAYAN
@@ -55,8 +64,28 @@ export default function IletisimPage() {
               Platforma giriş yapmış tüm öğrencilerimiz, sağ alt köşede yer alan
               canlı <strong>Destek Sohbeti</strong> balonu aracılığıyla Uğur
               Hoca&apos;ya doğrudan soru, görsel ve mesaj gönderebilirler.
-              Takıldığınız matematik sorularının fotoğrafını (JPG, PNG veya WebP)
-              çekip ekleyebilir ve çözüm adımlarını doğrudan öğrenebilirsiniz.
+              Takıldığınız matematik sorularının fotoğrafını (JPG, PNG veya
+              WebP) çekip ekleyebilir ve çözüm adımlarını doğrudan
+              öğrenebilirsiniz.
+            </p>
+          </div>
+
+          <div className="rounded-2xl border border-default bg-surface-2/60 p-5 space-y-2">
+            <div className="flex items-center gap-2 font-bold text-primary text-base">
+              <Mail className="h-5 w-5 text-accent-fg" />
+              <h3>Doğrudan E-Posta İletişimi</h3>
+            </div>
+            <p>
+              Platforma henüz giriş yapmamış ziyaretçilerimiz, şifre sıfırlama
+              desteğine ihtiyaç duyan öğrencilerimiz veya resmi KVKK başvuruları
+              için doğrudan{' '}
+              <a
+                href="mailto:yasayanugur@gmail.com"
+                className="font-semibold text-accent-fg underline underline-offset-4 hover:text-primary transition-colors"
+              >
+                yasayanugur@gmail.com
+              </a>{' '}
+              adresi üzerinden iletişime geçebilirsiniz.
             </p>
           </div>
 
@@ -66,10 +95,10 @@ export default function IletisimPage() {
               <h3>KVKK ve Gizlilik Başvuruları</h3>
             </div>
             <p>
-              6698 sayılı Kişisel Verilerin Korunması Kanunu kapsamındaki haklarınız,
-              veri silme/düzeltme veya hesap kapatma talepleriniz için platform içi
-              destek formu üzerinden kimliğinizi doğrulayarak başvuru yapabilirsiniz.
-              Detaylı bilgi için{' '}
+              6698 sayılı Kişisel Verilerin Korunması Kanunu kapsamındaki
+              haklarınız, veri silme/düzeltme veya hesap kapatma talepleriniz
+              için platform içi destek formu üzerinden kimliğinizi doğrulayarak
+              başvuru yapabilirsiniz. Detaylı bilgi için{' '}
               <Link
                 href="/kvkk"
                 className="text-accent-fg underline underline-offset-4 hover:text-primary transition-colors"
@@ -89,9 +118,9 @@ export default function IletisimPage() {
         </section>
 
         <div className="rounded-2xl border border-tone-info-border bg-tone-info-bg p-5 text-sm text-tone-info-fg">
-          Uğur Hoca Matematik Platformu, tamamen açık ve öğrencilerin matematiksel
-          gelişimini desteklemek amacıyla tasarlanmış ücretsiz bir dijital eğitim
-          arşividir.
+          Uğur Hoca Matematik Platformu, tamamen açık ve öğrencilerin
+          matematiksel gelişimini desteklemek amacıyla tasarlanmış ücretsiz bir
+          dijital eğitim arşividir.
         </div>
 
         <Link

@@ -9,6 +9,7 @@ import { HomeFooter } from '@/features/home/components/HomeFooter';
 import { HomeHowItWorksSection } from '@/features/home/components/HomeHowItWorksSection';
 import { HomeHeroSection } from '@/features/home/components/HomeHeroSection';
 import { HomeNavbar } from '@/features/home/components/HomeNavbar';
+import { HomeWeeklyCurriculumSection } from '@/features/home/components/HomeWeeklyCurriculumSection';
 import { HomeUserContext } from '@/features/home/components/HomeRecentDocumentsSection';
 import { HomeSupportSection } from '@/features/home/components/HomeSupportSection';
 import { useHomePageData } from '@/features/home/hooks/useHomePageData';
@@ -72,9 +73,11 @@ const MathGlossaryModal = dynamic(
 
 const FormulaFlashcardsModal = dynamic(
   () =>
-    import('@/features/programs/components/FormulaFlashcardsModal').then((m) => ({
-      default: m.FormulaFlashcardsModal,
-    })),
+    import('@/features/programs/components/FormulaFlashcardsModal').then(
+      (m) => ({
+        default: m.FormulaFlashcardsModal,
+      }),
+    ),
   { ssr: false },
 );
 
@@ -84,17 +87,21 @@ const ScratchpadModal = dynamic(() => import('@/components/ScratchpadModal'), {
 
 const ExamTopicWeightMatrixModal = dynamic(
   () =>
-    import('@/features/programs/components/ExamTopicWeightMatrixModal').then((m) => ({
-      default: m.ExamTopicWeightMatrixModal,
-    })),
+    import('@/features/programs/components/ExamTopicWeightMatrixModal').then(
+      (m) => ({
+        default: m.ExamTopicWeightMatrixModal,
+      }),
+    ),
   { ssr: false },
 );
 
 const PrintableWeeklyPlannerModal = dynamic(
   () =>
-    import('@/features/programs/components/PrintableWeeklyPlannerModal').then((m) => ({
-      default: m.PrintableWeeklyPlannerModal,
-    })),
+    import('@/features/programs/components/PrintableWeeklyPlannerModal').then(
+      (m) => ({
+        default: m.PrintableWeeklyPlannerModal,
+      }),
+    ),
   { ssr: false },
 );
 
@@ -108,16 +115,21 @@ type HomePageProps = {
   announcementsSlot?: ReactNode;
   /** Son eklenen içerikler kendi Suspense sınırında stream edilir; hero bu sorguyu beklemez. */
   recentDocumentsSlot?: ReactNode;
+  /** Resmi 2026-2027 yıllık planından sunucuda çözümlenen haftalık müfredat kartları. */
+  weeklyCurriculumSlot?: ReactNode;
 };
 
 export default function HomePage({
   announcementsSlot,
   recentDocumentsSlot,
+  weeklyCurriculumSlot,
 }: HomePageProps) {
   const { theme } = useTheme();
   const isLight = theme === 'light';
   const [isFlashcardsOpen, setIsFlashcardsOpen] = useState(false);
-  const [flashcardSubject, setFlashcardSubject] = useState<string | undefined>();
+  const [flashcardSubject, setFlashcardSubject] = useState<
+    string | undefined
+  >();
   const [isSpeedDrillOpen, setIsSpeedDrillOpen] = useState(false);
   const [isScratchpadOpen, setIsScratchpadOpen] = useState(false);
   const [calculatorState, setCalculatorState] = useState<{
@@ -136,7 +148,10 @@ export default function HomePage({
 
   useEffect(() => {
     const handleToolEvent = (e: Event) => {
-      const customEvent = e as CustomEvent<{ tool: string; tab?: 'lgs' | 'yks' }>;
+      const customEvent = e as CustomEvent<{
+        tool: string;
+        tab?: 'lgs' | 'yks';
+      }>;
       const tool = customEvent.detail?.tool;
       if (tool === 'calculator') {
         const nextTab = customEvent.detail?.tab === 'yks' ? 'yks' : 'lgs';
@@ -191,16 +206,15 @@ export default function HomePage({
       }
     }
 
-    return () => window.removeEventListener('ugurhoca:open-tool', handleToolEvent);
+    return () =>
+      window.removeEventListener('ugurhoca:open-tool', handleToolEvent);
   }, []);
 
   const { handleLogout, user } = useHomePageData();
 
   return (
     <HomeUserContext.Provider value={user}>
-      <main
-        className="home-page relative min-h-screen overflow-x-clip bg-transparent light-atmosphere"
-      >
+      <main className="home-page relative min-h-screen overflow-x-clip bg-transparent light-atmosphere">
         <HomeNavbar user={user} onLogout={handleLogout} />
         <ActiveLiveLessonBadge userId={user?.id} />
         <div className="pt-[calc(4.5rem+env(safe-area-inset-top))] md:pt-20">
@@ -228,120 +242,127 @@ export default function HomePage({
             onOpenSpeedDrill={() => setIsSpeedDrillOpen(true)}
           />
 
-        <HomeHowItWorksSection />
+          {weeklyCurriculumSlot ?? <HomeWeeklyCurriculumSection />}
 
-        {/* 2. Duyurular */}
-        {announcementsSlot}
+          <HomeHowItWorksSection />
 
-        {/* 3. LGS ve YKS Sayacı */}
-        <HomeExamCountdownSection
-          onOpenCalculator={(tab) =>
-            setCalculatorState({
-              isOpen: true,
-              hasOpened: true,
-              tab: tab === 'yks' ? 'yks' : 'lgs',
-            })
-          }
-          userGrade={user?.grade}
-        />
+          {/* 2. Duyurular */}
+          {announcementsSlot}
 
-        {/* 4. Günün Sözü */}
-        <div className="defer-section">
-          <HomeDailyQuote />
+          {/* 3. LGS ve YKS Sayacı */}
+          <HomeExamCountdownSection
+            onOpenCalculator={(tab) =>
+              setCalculatorState({
+                isOpen: true,
+                hasOpened: true,
+                tab: tab === 'yks' ? 'yks' : 'lgs',
+              })
+            }
+            userGrade={user?.grade}
+          />
+
+          {/* 4. Günün Sözü */}
+          <div className="defer-section">
+            <HomeDailyQuote />
+          </div>
+
+          {/* 5. Uğur Hoca'ya Yaz */}
+          <div className="defer-section">
+            <HomeSupportSection user={user} />
+          </div>
+
+          {/* 6. Footer */}
+          <div className="defer-section">
+            <HomeFooter />
+          </div>
         </div>
-
-        {/* 5. Uğur Hoca'ya Yaz */}
-        <div className="defer-section">
-          <HomeSupportSection user={user} />
-        </div>
-
-        {/* 6. Footer */}
-        <div className="defer-section">
-          <HomeFooter />
-        </div>
-      </div>
-      {isFlashcardsOpen ? (
-        <FormulaFlashcardsModal
-          isOpen={isFlashcardsOpen}
-          initialSubject={flashcardSubject}
-          onClose={() => { setIsFlashcardsOpen(false); setFlashcardSubject(undefined); }}
-        />
-      ) : null}
-      {isScratchpadOpen ? (
-        <ScratchpadModal
-          isOpen={isScratchpadOpen}
-          onClose={() => setIsScratchpadOpen(false)}
-        />
-      ) : null}
-      {calculatorState.hasOpened ? (
-        <ExamScoreCalculatorModal
-          isOpen={calculatorState.isOpen}
-          initialTab={calculatorState.tab}
-          onClose={() => setCalculatorState((prev) => ({ ...prev, isOpen: false }))}
-        />
-      ) : null}
-      {isPomodoroOpen ? (
-        <FocusPomodoroModal
-          isOpen={isPomodoroOpen}
-          onClose={() => setIsPomodoroOpen(false)}
-        />
-      ) : null}
-      {isChecklistOpen ? (
-        <TopicChecklistModal
-          isOpen={isChecklistOpen}
-          onClose={() => setIsChecklistOpen(false)}
-        />
-      ) : null}
-      {isGraphOpen ? (
-        <MathGraphVisualizerModal
-          isOpen={isGraphOpen}
-          onClose={() => setIsGraphOpen(false)}
-          isLight={isLight}
-        />
-      ) : null}
-      {isProofsOpen ? (
-        <VisualMathProofsModal
-          isOpen={isProofsOpen}
-          onClose={() => setIsProofsOpen(false)}
-          isLight={isLight}
-        />
-      ) : null}
-      {isCheatSheetOpen ? (
-        <QuickFormulaCheatSheetModal
-          isOpen={isCheatSheetOpen}
-          onClose={() => setIsCheatSheetOpen(false)}
-          isLight={isLight}
-        />
-      ) : null}
-      {isGlossaryOpen ? (
-        <MathGlossaryModal
-          isOpen={isGlossaryOpen}
-          onClose={() => setIsGlossaryOpen(false)}
-          isLight={isLight}
-        />
-      ) : null}
-      {isTopicWeightsOpen ? (
-        <ExamTopicWeightMatrixModal
-          isOpen={isTopicWeightsOpen}
-          onClose={() => setIsTopicWeightsOpen(false)}
-        />
-      ) : null}
-      {isWeeklyPlannerOpen ? (
-        <PrintableWeeklyPlannerModal
-          isOpen={isWeeklyPlannerOpen}
-          onClose={() => setIsWeeklyPlannerOpen(false)}
-        />
-      ) : null}
-      {isSpeedDrillOpen ? (
-        <FormulaSpeedDrillModal
-          isOpen={isSpeedDrillOpen}
-          onClose={() => setIsSpeedDrillOpen(false)}
-          onOpenFlashcards={() => {
-            setIsSpeedDrillOpen(false);
-            setIsFlashcardsOpen(true);
-          }}
-        />
-      ) : null}
+        {isFlashcardsOpen ? (
+          <FormulaFlashcardsModal
+            isOpen={isFlashcardsOpen}
+            initialSubject={flashcardSubject}
+            onClose={() => {
+              setIsFlashcardsOpen(false);
+              setFlashcardSubject(undefined);
+            }}
+          />
+        ) : null}
+        {isScratchpadOpen ? (
+          <ScratchpadModal
+            isOpen={isScratchpadOpen}
+            onClose={() => setIsScratchpadOpen(false)}
+          />
+        ) : null}
+        {calculatorState.hasOpened ? (
+          <ExamScoreCalculatorModal
+            isOpen={calculatorState.isOpen}
+            initialTab={calculatorState.tab}
+            onClose={() =>
+              setCalculatorState((prev) => ({ ...prev, isOpen: false }))
+            }
+          />
+        ) : null}
+        {isPomodoroOpen ? (
+          <FocusPomodoroModal
+            isOpen={isPomodoroOpen}
+            onClose={() => setIsPomodoroOpen(false)}
+          />
+        ) : null}
+        {isChecklistOpen ? (
+          <TopicChecklistModal
+            isOpen={isChecklistOpen}
+            onClose={() => setIsChecklistOpen(false)}
+          />
+        ) : null}
+        {isGraphOpen ? (
+          <MathGraphVisualizerModal
+            isOpen={isGraphOpen}
+            onClose={() => setIsGraphOpen(false)}
+            isLight={isLight}
+          />
+        ) : null}
+        {isProofsOpen ? (
+          <VisualMathProofsModal
+            isOpen={isProofsOpen}
+            onClose={() => setIsProofsOpen(false)}
+            isLight={isLight}
+          />
+        ) : null}
+        {isCheatSheetOpen ? (
+          <QuickFormulaCheatSheetModal
+            isOpen={isCheatSheetOpen}
+            onClose={() => setIsCheatSheetOpen(false)}
+            isLight={isLight}
+          />
+        ) : null}
+        {isGlossaryOpen ? (
+          <MathGlossaryModal
+            isOpen={isGlossaryOpen}
+            onClose={() => setIsGlossaryOpen(false)}
+            isLight={isLight}
+          />
+        ) : null}
+        {isTopicWeightsOpen ? (
+          <ExamTopicWeightMatrixModal
+            isOpen={isTopicWeightsOpen}
+            onClose={() => setIsTopicWeightsOpen(false)}
+          />
+        ) : null}
+        {isWeeklyPlannerOpen ? (
+          <PrintableWeeklyPlannerModal
+            isOpen={isWeeklyPlannerOpen}
+            onClose={() => setIsWeeklyPlannerOpen(false)}
+          />
+        ) : null}
+        {isSpeedDrillOpen ? (
+          <FormulaSpeedDrillModal
+            isOpen={isSpeedDrillOpen}
+            onClose={() => setIsSpeedDrillOpen(false)}
+            onOpenFlashcards={() => {
+              setIsSpeedDrillOpen(false);
+              setIsFlashcardsOpen(true);
+            }}
+          />
+        ) : null}
       </main>
     </HomeUserContext.Provider>
   );

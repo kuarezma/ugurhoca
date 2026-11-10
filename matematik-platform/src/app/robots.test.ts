@@ -5,7 +5,7 @@ describe('robots', () => {
     const { rules } = robots();
     const disallow = Array.isArray(rules) ? [] : (rules.disallow ?? []);
 
-    expect(disallow).toContain('/admin/');
+    expect(disallow).toContain('/admin');
     expect(disallow).toContain('/api/');
     expect(disallow).toContain('/profil');
     expect(disallow).toContain('/odevler');

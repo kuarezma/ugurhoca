@@ -15,6 +15,7 @@ export const loadAllAdminRows = async <TRow>(
     data: TRow[] | null;
     error: unknown;
   }>,
+  maxRows = ADMIN_USERS_QUERY_LIMIT,
 ) => {
   const pageSize = 500;
   const rows: TRow[] = [];
@@ -27,7 +28,9 @@ export const loadAllAdminRows = async <TRow>(
       return { data: null, error };
     }
     rows.push(...(data || []));
-    if (!data || data.length < pageSize) return { data: rows, error: null };
+    if (rows.length >= maxRows || !data || data.length < pageSize) {
+      return { data: rows.slice(0, maxRows), error: null };
+    }
   }
 };
 

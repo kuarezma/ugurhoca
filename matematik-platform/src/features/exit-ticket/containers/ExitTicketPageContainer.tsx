@@ -17,6 +17,7 @@ import type { ExitTicketSession } from '../types';
 import {
   getSavedSessions,
   createExitTicketSession,
+  createCloudExitTicketSession,
 } from '../lib/exitTicketStorage';
 import { EXIT_TICKET_TEMPLATES } from '../lib/exitTicketTemplates';
 import dynamic from 'next/dynamic';
@@ -25,7 +26,9 @@ import { ExitTicketStudentPad } from '../components/ExitTicketStudentPad';
 import { ExitTicketCreateModal } from '../components/ExitTicketCreateModal';
 
 const ExitTicketTeacherPresenter = dynamic(() =>
-  import('../components/ExitTicketTeacherPresenter').then((module) => module.ExitTicketTeacherPresenter),
+  import('../components/ExitTicketTeacherPresenter').then(
+    (module) => module.ExitTicketTeacherPresenter,
+  ),
 );
 
 export function ExitTicketPageContainer() {
@@ -37,7 +40,8 @@ export function ExitTicketPageContainer() {
     initialRole === 'teacher' ? 'teacher' : initialPin ? 'student' : 'student',
   );
 
-  const [currentSession, setCurrentSession] = useState<ExitTicketSession | null>(null);
+  const [currentSession, setCurrentSession] =
+    useState<ExitTicketSession | null>(null);
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
   const [savedSessions, setSavedSessions] = useState<ExitTicketSession[]>([]);
 
@@ -46,7 +50,7 @@ export function ExitTicketPageContainer() {
   }, []);
 
   // Hızlı Demo Oturumu Aç (Öğretmenler için tek tık)
-  const handleLaunchQuickDemo = () => {
+  const handleLaunchQuickDemo = async () => {
     const template = EXIT_TICKET_TEMPLATES[0];
     const session = createExitTicketSession(
       template.title,
@@ -55,6 +59,19 @@ export function ExitTicketPageContainer() {
     );
     startTransition(() => setCurrentSession(session));
     setActiveTab('teacher');
+
+    try {
+      const cloud = await createCloudExitTicketSession(
+        template.title,
+        template.grade,
+        template.questions,
+      );
+      if (cloud) {
+        startTransition(() => setCurrentSession(cloud));
+      }
+    } catch {
+      // offline fallback
+    }
   };
 
   const handleSelectSavedSession = (session: ExitTicketSession) => {
@@ -83,7 +100,8 @@ export function ExitTicketPageContainer() {
               Ders Sonu Çıkış Bileti (Exit Ticket)
             </h1>
             <p className="text-secondary text-sm mt-1">
-              3 soruda sınıfın konuyu ne kadar kavradığını ve kavram yanılgılarını canlı görün.
+              3 soruda sınıfın konuyu ne kadar kavradığını ve kavram
+              yanılgılarını canlı görün.
             </p>
           </div>
 
@@ -153,7 +171,10 @@ export function ExitTicketPageContainer() {
                       Akıllı Tahtada Çıkış Bileti Başlatın
                     </h2>
                     <p className="text-slate-600 dark:text-slate-300 text-sm mt-2 max-w-lg leading-relaxed">
-                      Öğrencileriniz üye olmadan, sadece ekranda görecekleri 6 haneli kod ile telefon veya tabletlerinden bağlanır. Seçilen şıklar ve kavram yanılgıları tahtada anlık olarak analiz edilir.
+                      Öğrencileriniz üye olmadan, sadece ekranda görecekleri 6
+                      haneli kod ile telefon veya tabletlerinden bağlanır.
+                      Seçilen şıklar ve kavram yanılgıları tahtada anlık olarak
+                      analiz edilir.
                     </p>
 
                     <div className="flex flex-wrap items-center gap-3 mt-6">
@@ -184,9 +205,12 @@ export function ExitTicketPageContainer() {
                     <div className="w-8 h-8 rounded-xl bg-amber-500/20 text-amber-600 dark:text-amber-400 flex items-center justify-center font-bold mb-2">
                       1
                     </div>
-                    <h4 className="font-bold text-slate-900 dark:text-white text-sm">10 Saniyede Katılım</h4>
+                    <h4 className="font-bold text-slate-900 dark:text-white text-sm">
+                      10 Saniyede Katılım
+                    </h4>
                     <p className="text-xs text-slate-600 dark:text-slate-400 mt-1">
-                      Kayıt yok, şifre yok. 6 haneli PIN ile her cihazdan doğrudan bağlantı.
+                      Kayıt yok, şifre yok. 6 haneli PIN ile her cihazdan
+                      doğrudan bağlantı.
                     </p>
                   </div>
 
@@ -194,9 +218,12 @@ export function ExitTicketPageContainer() {
                     <div className="w-8 h-8 rounded-xl bg-sky-500/20 text-sky-600 dark:text-sky-400 flex items-center justify-center font-bold mb-2">
                       2
                     </div>
-                    <h4 className="font-bold text-slate-900 dark:text-white text-sm">Canlı Dağılım</h4>
+                    <h4 className="font-bold text-slate-900 dark:text-white text-sm">
+                      Canlı Dağılım
+                    </h4>
                     <p className="text-xs text-slate-600 dark:text-slate-400 mt-1">
-                      Tüm sınıfın A, B, C, D dağılımını yüzde ve adet olarak tahtada gösterin.
+                      Tüm sınıfın A, B, C, D dağılımını yüzde ve adet olarak
+                      tahtada gösterin.
                     </p>
                   </div>
 
@@ -204,9 +231,12 @@ export function ExitTicketPageContainer() {
                     <div className="w-8 h-8 rounded-xl bg-rose-500/20 text-rose-600 dark:text-rose-400 flex items-center justify-center font-bold mb-2">
                       3
                     </div>
-                    <h4 className="font-bold text-slate-900 dark:text-white text-sm">Yanılgı Teşhisi</h4>
+                    <h4 className="font-bold text-slate-900 dark:text-white text-sm">
+                      Yanılgı Teşhisi
+                    </h4>
                     <p className="text-xs text-slate-600 dark:text-slate-400 mt-1">
-                      Öğrenci neden B şıkkına gitti? Çeldiriciye özel pedagojik uyarı anında devrede.
+                      Öğrenci neden B şıkkına gitti? Çeldiriciye özel pedagojik
+                      uyarı anında devrede.
                     </p>
                   </div>
                 </div>
@@ -222,7 +252,8 @@ export function ExitTicketPageContainer() {
                 {savedSessions.length === 0 ? (
                   <div className="flex-1 flex flex-col items-center justify-center text-center p-6 text-slate-500 text-xs">
                     <School className="w-8 h-8 mb-2 opacity-40" />
-                    Henüz kayıtlı bir oturumunuz yok. Yukarıdan bir oturum başlatabilirsiniz.
+                    Henüz kayıtlı bir oturumunuz yok. Yukarıdan bir oturum
+                    başlatabilirsiniz.
                   </div>
                 ) : (
                   <div className="space-y-3 overflow-y-auto max-h-[380px]">

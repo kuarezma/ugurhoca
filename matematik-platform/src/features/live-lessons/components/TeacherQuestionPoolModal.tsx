@@ -15,6 +15,8 @@ import {
   getStudentQuestions,
   updateStudentQuestionStatus,
   deleteStudentQuestion,
+  fetchQuestionsFromServer,
+  syncUpdateQuestionStatusToServer,
   type StudentSubmittedQuestion,
 } from '@/features/live-lessons/lib/studentQuestionsStorage';
 import Image from 'next/image';
@@ -40,24 +42,46 @@ export function TeacherQuestionPoolModal({
   const [filter, setFilter] = useState<'all' | 'pending' | 'resolved'>('all');
   const [copiedId, setCopiedId] = useState<string | null>(null);
 
-  const loadQuestions = useCallback(() => {
+  const loadQuestions = useCallback(async () => {
+    // Önce yerel veriyi yükle (anında render)
     setQuestions(getStudentQuestions(lessonId));
+
+    // Sunucudan güncel verileri çek
+    try {
+      const serverData = await fetchQuestionsFromServer(lessonId);
+      if (serverData.length > 0) {
+        setQuestions(getStudentQuestions(lessonId));
+      }
+    } catch {
+      // offline fallback
+    }
   }, [lessonId]);
 
   useEffect(() => {
     if (isOpen) {
-      loadQuestions();
+      void loadQuestions();
     }
 
     const handleUpdate = () => {
-      loadQuestions();
+      void loadQuestions();
     };
     window.addEventListener('ugurhoca:student-questions-updated', handleUpdate);
-    return () =>
+
+    // Açıkken her 5 saniyede bir sunucudan soruları senkronize et
+    let interval: NodeJS.Timeout | null = null;
+    if (isOpen) {
+      interval = setInterval(() => {
+        void loadQuestions();
+      }, 5000);
+    }
+
+    return () => {
       window.removeEventListener(
         'ugurhoca:student-questions-updated',
         handleUpdate,
       );
+      if (interval) clearInterval(interval);
+    };
   }, [isOpen, loadQuestions]);
 
   const filteredQuestions = questions.filter((q) => {
@@ -76,13 +100,15 @@ export function TeacherQuestionPoolModal({
       setTimeout(() => setCopiedId(null), 2000);
     }
     updateStudentQuestionStatus(q.id, 'projected');
+    void syncUpdateQuestionStatusToServer(q.id, 'projected');
     onProjectQuestion?.(q);
-    loadQuestions();
+    void loadQuestions();
   };
 
   const handleResolve = (id: string) => {
     updateStudentQuestionStatus(id, 'resolved');
-    loadQuestions();
+    void syncUpdateQuestionStatusToServer(id, 'resolved');
+    void loadQuestions();
   };
 
   const handleDelete = (id: string) => {

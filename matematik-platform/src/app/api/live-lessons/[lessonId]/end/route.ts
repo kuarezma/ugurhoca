@@ -28,23 +28,29 @@ export async function POST(request: Request, context: RouteContext) {
   const auth = await requireLiveLessonUser();
   if (!auth.ok) return auth.response;
   if (!isLiveLessonAdmin(auth.user)) {
-    return NextResponse.json({ error: 'Bu işlem için admin yetkisi gerekir.' }, { status: 403 });
+    return NextResponse.json(
+      { error: 'Bu işlem için admin yetkisi gerekir.' },
+      { status: 403 },
+    );
   }
 
-  const limited = await enforceRateLimit(
-    'live-lesson-end',
-    auth.user.id,
-    { limit: 20, windowSeconds: 60 },
-  );
+  const limited = await enforceRateLimit('live-lesson-end', auth.user.id, {
+    limit: 20,
+    windowSeconds: 60,
+  });
   if (limited) return limited;
 
   const { lessonId } = await context.params;
   const rawBody = await request.json().catch(() => null);
   const parsedBody = endLessonBodySchema.safeParse(rawBody);
   if (!parsedBody.success) {
-    return NextResponse.json({ error: 'Geçersiz ders durumu.' }, { status: 400 });
+    return NextResponse.json(
+      { error: 'Geçersiz ders durumu.' },
+      { status: 400 },
+    );
   }
-  const status = parsedBody.data?.status === 'cancelled' ? 'cancelled' : 'ended';
+  const status =
+    parsedBody.data?.status === 'cancelled' ? 'cancelled' : 'ended';
 
   try {
     const lesson = await updateLiveLessonStatus({ lessonId, status });
@@ -56,7 +62,11 @@ export async function POST(request: Request, context: RouteContext) {
 
     if (livekitHost && apiKey && apiSecret && lesson?.room_id) {
       try {
-        const roomService = new RoomServiceClient(livekitHost, apiKey, apiSecret);
+        const roomService = new RoomServiceClient(
+          livekitHost,
+          apiKey,
+          apiSecret,
+        );
         await roomService.deleteRoom(lesson.room_id);
       } catch {
         // Oda zaten boşalmış veya LiveKit tarafında kapanmış olabilir; ana akışı engelleme
@@ -69,6 +79,9 @@ export async function POST(request: Request, context: RouteContext) {
       return NextResponse.json({ error: error.message }, { status: 400 });
     }
     logger.error('Canlı ders sonlandırma hatası', error);
-    return NextResponse.json({ error: 'Ders güncellenemedi.' }, { status: 400 });
+    return NextResponse.json(
+      { error: 'Ders güncellenemedi.' },
+      { status: 400 },
+    );
   }
 }

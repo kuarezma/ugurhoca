@@ -1,11 +1,20 @@
 'use client';
 
+import Image from 'next/image';
 import { motion } from 'framer-motion';
 import { useId, type DragEvent, type ChangeEvent } from 'react';
-import { ClipboardList, FileText, Upload, X } from 'lucide-react';
+import {
+  ClipboardList,
+  FileText,
+  Upload,
+  X,
+  PenTool,
+  ExternalLink,
+} from 'lucide-react';
 import type { Assignment, Submission } from '@/types';
 import { useAccessibleModal } from '@/hooks/useAccessibleModal';
 import { MathInputToolbar } from '@/components/MathInputToolbar';
+import MathText from '@/components/MathText';
 import { formatIstanbulDateTime } from '@/lib/date-format';
 
 type AssignmentSubmissionModalProps = {
@@ -88,11 +97,13 @@ export function AssignmentSubmissionModal({
           >
             {assignment.title}
           </h2>
-          <p
+          <div
             className={`text-sm ${isLight ? 'text-slate-600' : 'text-slate-400'}`}
           >
-            {assignment.description}
-          </p>
+            {assignment.description ? (
+              <MathText>{assignment.description}</MathText>
+            ) : null}
+          </div>
         </div>
 
         {activeSubmission ? (
@@ -146,6 +157,40 @@ export function AssignmentSubmissionModal({
                   {activeSubmission.feedback ||
                     'Harika iş çıkarmışsın! Başarılarının devamını dilerim.'}
                 </p>
+              </div>
+            )}
+
+            {activeSubmission.annotated_feedback_url && (
+              <div
+                className={`rounded-2xl border p-4 ${isLight ? 'border-rose-200 bg-rose-50/70' : 'border-rose-500/30 bg-rose-500/10'}`}
+              >
+                <div className="mb-2 flex items-center justify-between">
+                  <span className="text-sm font-bold text-rose-700 dark:text-rose-300 flex items-center gap-2">
+                    <PenTool className="h-4 w-4" />
+                    Öğretmen Çizimli Geri Bildirimi
+                  </span>
+                </div>
+                <div className="mt-2 space-y-3">
+                  <div className="relative rounded-xl overflow-hidden border border-rose-300/40 max-h-64 bg-black/5 dark:bg-black/20 flex items-center justify-center">
+                    <Image
+                      src={activeSubmission.annotated_feedback_url}
+                      alt="Öğretmen çizimli geri bildirimi"
+                      width={640}
+                      height={360}
+                      unoptimized
+                      className="max-h-64 w-auto object-contain rounded-lg"
+                    />
+                  </div>
+                  <a
+                    href={activeSubmission.annotated_feedback_url}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="inline-flex items-center gap-2 px-3.5 py-2 rounded-xl bg-brand-primary hover:bg-brand-primary-soft text-slate-950 dark:text-slate-950 text-xs font-bold transition shadow-sm"
+                  >
+                    <ExternalLink className="h-3.5 w-3.5" />
+                    Öğretmen Çizimli Geri Bildirimi Gör
+                  </a>
+                </div>
               </div>
             )}
 

@@ -1,6 +1,9 @@
 import 'server-only';
 
-import { getServerAccessToken, getServerAuthSkeleton } from '@/lib/auth-snapshot.server';
+import {
+  getServerAccessToken,
+  getServerAuthSkeleton,
+} from '@/lib/auth-snapshot.server';
 import { getVerifiedServerUser } from '@/lib/auth-verify.server';
 import { toDisplayGrade } from '@/lib/grade';
 import { createServerSupabaseClient } from '@/lib/supabase/server';
@@ -46,29 +49,31 @@ export const loadInitialProgressPageData =
     const supabase = createServerSupabaseClient(accessToken);
     // Kimlik zaten doğrulandığı için profil sorgusu diğerlerini beklemez;
     // doğrulamanın eklediği gidiş-dönüş burada geri kazanılır.
-    const [profileRes, sessionsRes, progressRes, goalRes, badgesRes] = await Promise.all([
-      supabase
-        .from('profiles')
-        .select('*')
-        .eq('id', verifiedUser.id)
-        .single(),
-      supabase
-        .from('study_sessions')
-        .select('*')
-        .eq('user_id', verifiedUser.id)
-        .order('date', { ascending: false }),
-      supabase
-        .from('user_progress')
-        .select('*')
-        .eq('user_id', verifiedUser.id)
-        .order('mastery_level', { ascending: false }),
-      supabase.from('study_goals').select('*').eq('user_id', verifiedUser.id),
-      supabase
-        .from('user_badges')
-        .select('*')
-        .eq('user_id', verifiedUser.id)
-        .order('earned_at', { ascending: false }),
-    ]);
+    const [profileRes, sessionsRes, progressRes, goalRes, badgesRes] =
+      await Promise.all([
+        supabase
+          .from('profiles')
+          .select('*')
+          .eq('id', verifiedUser.id)
+          .single(),
+        supabase
+          .from('study_sessions')
+          .select('*')
+          .eq('user_id', verifiedUser.id)
+          .order('date', { ascending: false })
+          .limit(2000),
+        supabase
+          .from('user_progress')
+          .select('*')
+          .eq('user_id', verifiedUser.id)
+          .order('mastery_level', { ascending: false }),
+        supabase.from('study_goals').select('*').eq('user_id', verifiedUser.id),
+        supabase
+          .from('user_badges')
+          .select('*')
+          .eq('user_id', verifiedUser.id)
+          .order('earned_at', { ascending: false }),
+      ]);
 
     const profile = profileRes.data;
     const user: AppUser = profile

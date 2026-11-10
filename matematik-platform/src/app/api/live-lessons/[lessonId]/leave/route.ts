@@ -18,16 +18,18 @@ export async function POST(_request: Request, context: RouteContext) {
   const auth = await requireLiveLessonUser();
   if (!auth.ok) return auth.response;
 
-  const limited = await enforceRateLimit(
-    'live-lesson-leave',
-    auth.user.id,
-    { limit: 30, windowSeconds: 60 },
-  );
+  const limited = await enforceRateLimit('live-lesson-leave', auth.user.id, {
+    limit: 30,
+    windowSeconds: 60,
+  });
   if (limited) return limited;
 
   const parsedParams = leaveParamsSchema.safeParse(await context.params);
   if (!parsedParams.success) {
-    return NextResponse.json({ error: 'Geçersiz ders kimliği.' }, { status: 400 });
+    return NextResponse.json(
+      { error: 'Geçersiz ders kimliği.' },
+      { status: 400 },
+    );
   }
   const { lessonId } = parsedParams.data;
   const supabase = createServiceRoleClient();

@@ -19,7 +19,7 @@ Sade ve ferah tasarımıyla öğrencinin dikkatini dağıtmadan yalnızca öğre
 - 📊 **Aylık Gelişim Karnesi & Başarı Belgesi:** Öğrencinin çalışma süresini ve konu hakimiyetini gösteren aylık raporlar ile başarıyı taçlandıran yazdırılabilir başarı sertifikası.
 - 🎮 **19 Eğitici Matematik Oyunu:** Zihinden işlem, koordinat bulma, kesirler ve çarpanları eğlenerek pekiştiren özgün matematik oyunları.
 - 📝 **Ödev Takibi & Çalışma Kağıtları:** Öğretmenin verdiği ödevleri tek ekrandan takip etme, sisteme yükleme ve tek tıkla yazdırılabilir A4 çalışma kağıtları.
-- 💬 **Gelişmiş Sohbet Balonu & 1-e-1 Eğitmen İletişimi:** Gerçek zamanlı "yazıyor..." göstergesi, iletildi/okundu (✓✓) teyidi, formül ve soru alıntılama (reply/quote), 60 saniyelik sesli not gönderme ve dahili ses oynatıcısı, çoklu görsel ve PDF soru föyü yükleme, sohbet içi arama ve tek tıkla öğrenci hızlı soru şablonları.
+- 💬 **Gelişmiş Sohbet Balonu & 1-e-1 Eğitmen İletişimi:** Gerçek zamanlı "yazıyor..." göstergesi, iletildi/okundu (✓✓) teyidi, formül ve soru alıntılama (reply/quote), soru fotoğrafı yükleme (JPG, PNG, WebP), sohbet içi arama ve tek tıkla öğrenci hızlı soru şablonları.
 - 📱 **Tüm Cihazlarda Kusursuz:** Bilgisayar, tablet ve akıllı telefonlarda rahat kullanım; tek tıkla ana ekrana uygulama gibi ekleme kolaylığı.
 
 ---
@@ -55,4 +55,4 @@ Platformda öğrenci gizliliği en üst düzeyde korunur:
 
 ## İletişim
 
-- **Web Sitesi:** [ugurhoca.com](https://ugurhoca.com)
+- **Web Sitesi:** [www.ugurhoca.com](https://www.ugurhoca.com)

@@ -1,0 +1,1298 @@
+[
+  {
+    "grade": 5,
+    "weekStart": "2026-09-14",
+    "weekEnd": "2026-09-18",
+    "topic": "Temel Geometrik Çizimler ve İnşalar",
+    "outcomeCode": "MAT.5.3.1",
+    "outcomeSummary": "Temel geometrik çizimler için matematiksel araç ve teknolojiden yararlanabilme",
+    "unit": "Geometrik Şekiller"
+  },
+  {
+    "grade": 5,
+    "weekStart": "2026-09-21",
+    "weekEnd": "2026-09-25",
+    "topic": "Temel Geometrik Çizimler ve İnşalar",
+    "outcomeCode": "MAT.5.3.2",
+    "outcomeSummary": "Temel geometrik çizimlere dayalı deneyimlerini yansıtabilme",
+    "unit": "Geometrik Şekiller"
+  },
+  {
+    "grade": 5,
+    "weekStart": "2026-09-28",
+    "weekEnd": "2026-10-02",
+    "topic": "Açı Ölçme",
+    "outcomeCode": "MAT.5.3.3",
+    "outcomeSummary": "Açıları ölçmek için matematiksel araç ve teknolojiden yararlanabilme",
+    "unit": "Geometrik Şekiller"
+  },
+  {
+    "grade": 5,
+    "weekStart": "2026-10-05",
+    "weekEnd": "2026-10-09",
+    "topic": "Açı Ölçme",
+    "outcomeCode": "MAT.5.3.4",
+    "outcomeSummary": "Düzlemde iki veya üç doğrunun birbirine göre durumuna bağlı olarak oluşabilecek açılara dair çıkarım yapabilme",
+    "unit": "Geometrik Şekiller"
+  },
+  {
+    "grade": 5,
+    "weekStart": "2026-10-12",
+    "weekEnd": "2026-10-16",
+    "topic": "Çokgenler ve Çember",
+    "outcomeCode": "MAT.5.3.5",
+    "outcomeSummary": "Çokgenleri düzlemde ardışık olarak kesişen doğruların oluşturduğu kapalı şekiller olarak yorumlayabilme",
+    "unit": "Geometrik Şekiller"
+  },
+  {
+    "grade": 5,
+    "weekStart": "2026-10-19",
+    "weekEnd": "2026-10-23",
+    "topic": "Çokgenler ve Çember",
+    "outcomeCode": "MAT.5.3.6",
+    "outcomeSummary": "Çokgenlerin özellikleri ile ilgili edindiği deneyimleri yansıtabilme",
+    "unit": "Geometrik Şekiller"
+  },
+  {
+    "grade": 5,
+    "weekStart": "2026-10-26",
+    "weekEnd": "2026-10-30",
+    "topic": "Çokgenler ve Çember",
+    "outcomeCode": "MAT.5.3.7",
+    "outcomeSummary": "Matematiksel araç ve teknoloji yardımıyla düzlemde iki noktada kesişen çember çiftinin merkezleri ve kesişim noktalarından biri ile inşa edilen üçgenlerin kenar özelliklerine yönelik çıkarım yapabilme",
+    "unit": "Geometrik Şekiller"
+  },
+  {
+    "grade": 5,
+    "weekStart": "2026-11-02",
+    "weekEnd": "2026-11-06",
+    "topic": "Çokgenler ve Çember",
+    "outcomeCode": "MAT.5.3.7",
+    "outcomeSummary": "Matematiksel araç ve teknoloji yardımıyla düzlemde iki noktada kesişen çember çiftinin merkezleri ve kesişim noktalarından biri ile inşa edilen üçgenlerin kenar özelliklerine yönelik çıkarım yapabilme",
+    "unit": "Geometrik Şekiller"
+  },
+  {
+    "grade": 5,
+    "weekStart": "2026-11-09",
+    "weekEnd": "2026-11-13",
+    "topic": "Çok Basamaklı Sayıları Okuma ve Yazma",
+    "outcomeCode": "MAT.5.1.1",
+    "outcomeSummary": "Altı basamaklı sayıları okuma ve yazmayı çok basamaklı sayılara genelleyebilme",
+    "unit": "Sayılar ve Nicelikler"
+  },
+  {
+    "grade": 5,
+    "weekStart": "2026-11-23",
+    "weekEnd": "2026-11-27",
+    "topic": "Basamak Değerlerini Çözümleme",
+    "outcomeCode": "MAT.5.1.1",
+    "outcomeSummary": "Altı basamaklı sayıları okuma ve yazmayı çok basamaklı sayılara genelleyebilme",
+    "unit": "Sayılar ve Nicelikler"
+  },
+  {
+    "grade": 5,
+    "weekStart": "2026-11-30",
+    "weekEnd": "2026-12-04",
+    "topic": "Doğal Sayılarla Dört İşlem İçeren Problem Çözme",
+    "outcomeCode": "MAT.5.1.2",
+    "outcomeSummary": "Doğal sayılar ve işlemler içeren gerçek yaşam problemlerini çözebilme",
+    "unit": "Sayılar ve Nicelikler"
+  },
+  {
+    "grade": 5,
+    "weekStart": "2026-12-07",
+    "weekEnd": "2026-12-11",
+    "topic": "Doğal Sayılarla Dört İşlem İçeren Problem Çözme",
+    "outcomeCode": "MAT.5.1.2",
+    "outcomeSummary": "Doğal sayılar ve işlemler içeren gerçek yaşam problemlerini çözebilme",
+    "unit": "Sayılar ve Nicelikler"
+  },
+  {
+    "grade": 5,
+    "weekStart": "2026-12-14",
+    "weekEnd": "2026-12-18",
+    "topic": "Doğal Sayılarla Dört İşlem İçeren Problem Çözme",
+    "outcomeCode": "MAT.5.1.2",
+    "outcomeSummary": "Doğal sayılar ve işlemler içeren gerçek yaşam problemlerini çözebilme",
+    "unit": "Sayılar ve Nicelikler"
+  },
+  {
+    "grade": 5,
+    "weekStart": "2026-12-21",
+    "weekEnd": "2026-12-25",
+    "topic": "Doğal Sayılarla Dört İşlem İçeren Problem Çözme",
+    "outcomeCode": "MAT.5.1.2",
+    "outcomeSummary": "Doğal sayılar ve işlemler içeren gerçek yaşam problemlerini çözebilme",
+    "unit": "Sayılar ve Nicelikler"
+  },
+  {
+    "grade": 5,
+    "weekStart": "2026-12-28",
+    "weekEnd": "2026-12-31",
+    "topic": "Dikdörtgenin Çevre Uzunluğu ve Alanı",
+    "outcomeCode": "MAT.5.4.1",
+    "outcomeSummary": "Kenar uzunlukları doğal sayı olan bir dikdörtgenin çevre uzunluğu verildiğinde kenar uzunluklarını yorumlayabilme",
+    "unit": "Geometrik Nicelikler"
+  },
+  {
+    "grade": 5,
+    "weekStart": "2027-01-04",
+    "weekEnd": "2027-01-08",
+    "topic": "Dikdörtgenin Çevre Uzunluğu ve Alanı",
+    "outcomeCode": "MAT.5.4.2",
+    "outcomeSummary": "Birim karelerden yola çıkarak dikdörtgenin alanını değerlendirebilme",
+    "unit": "Geometrik Nicelikler"
+  },
+  {
+    "grade": 5,
+    "weekStart": "2027-01-11",
+    "weekEnd": "2027-01-15",
+    "topic": "Dikdörtgenin Çevre Uzunluğu ve Alanı",
+    "outcomeCode": "MAT.5.4.4",
+    "outcomeSummary": "Dikdörtgenin çevre uzunluğu ve alanı ile ilgili problemleri çözebilme",
+    "unit": "Geometrik Nicelikler"
+  },
+  {
+    "grade": 5,
+    "weekStart": "2027-01-18",
+    "weekEnd": "2027-01-22",
+    "topic": "Dikdörtgenin Çevre Uzunluğu ve Alanı",
+    "outcomeCode": "MAT.5.4.4",
+    "outcomeSummary": "Dikdörtgenin çevre uzunluğu ve alanı ile ilgili problemleri çözebilme",
+    "unit": "Geometrik Nicelikler"
+  },
+  {
+    "grade": 5,
+    "weekStart": "2027-02-08",
+    "weekEnd": "2027-02-12",
+    "topic": "Kesirlerin Farklı Gösterimleri",
+    "outcomeCode": "MAT.5.1.3",
+    "outcomeSummary": "Gerçek yaşam durumlarına karşılık gelen kesirleri farklı biçimlerde temsil edebilme",
+    "unit": "Sayılar ve Nicelikler"
+  },
+  {
+    "grade": 5,
+    "weekStart": "2027-02-15",
+    "weekEnd": "2027-02-19",
+    "topic": "Kesirlerin Farklı Gösterimleri",
+    "outcomeCode": "MAT.5.1.3",
+    "outcomeSummary": "Gerçek yaşam durumlarına karşılık gelen kesirleri farklı biçimlerde temsil edebilme",
+    "unit": "Sayılar ve Nicelikler"
+  },
+  {
+    "grade": 5,
+    "weekStart": "2027-02-22",
+    "weekEnd": "2027-02-26",
+    "topic": "Kesirlerin Farklı Gösterimleri",
+    "outcomeCode": "MAT.5.1.3",
+    "outcomeSummary": "Gerçek yaşam durumlarına karşılık gelen kesirleri farklı biçimlerde temsil edebilme",
+    "unit": "Sayılar ve Nicelikler"
+  },
+  {
+    "grade": 5,
+    "weekStart": "2027-03-01",
+    "weekEnd": "2027-03-05",
+    "topic": "Kesirlerin Farklı Gösterimleri",
+    "outcomeCode": "MAT.5.1.3",
+    "outcomeSummary": "Gerçek yaşam durumlarına karşılık gelen kesirleri farklı biçimlerde temsil edebilme",
+    "unit": "Sayılar ve Nicelikler"
+  },
+  {
+    "grade": 5,
+    "weekStart": "2027-03-15",
+    "weekEnd": "2027-03-19",
+    "topic": "Kesirlerin Karşılaştırılması",
+    "outcomeCode": "MAT.5.1.4",
+    "outcomeSummary": "Farklı gösterimlerle ifade edilen kesirlerin karşılaştırılmasına yönelik çıkarım yapabilme",
+    "unit": "Sayılar ve Nicelikler"
+  },
+  {
+    "grade": 5,
+    "weekStart": "2027-03-22",
+    "weekEnd": "2027-03-26",
+    "topic": "Kesirlerin Karşılaştırılması",
+    "outcomeCode": "MAT.5.1.4",
+    "outcomeSummary": "Farklı gösterimlerle ifade edilen kesirlerin karşılaştırılmasına yönelik çıkarım yapabilme",
+    "unit": "Sayılar ve Nicelikler"
+  },
+  {
+    "grade": 5,
+    "weekStart": "2027-03-29",
+    "weekEnd": "2027-04-02",
+    "topic": "Kesirlerin Karşılaştırılması",
+    "outcomeCode": "MAT.5.1.4",
+    "outcomeSummary": "Farklı gösterimlerle ifade edilen kesirlerin karşılaştırılmasına yönelik çıkarım yapabilme",
+    "unit": "Sayılar ve Nicelikler"
+  },
+  {
+    "grade": 5,
+    "weekStart": "2027-04-05",
+    "weekEnd": "2027-04-09",
+    "topic": "Kategorik Veri Dağılımları",
+    "outcomeCode": "MAT.5.5.1",
+    "outcomeSummary": "Kategorik veri ile çalışabilme ve veriye dayalı karar verebilme",
+    "unit": "İstatistiksel Araştırma Süreci"
+  },
+  {
+    "grade": 5,
+    "weekStart": "2027-04-12",
+    "weekEnd": "2027-04-16",
+    "topic": "Kategorik Veri Dağılımları",
+    "outcomeCode": "MAT.5.5.1",
+    "outcomeSummary": "Kategorik veri ile çalışabilme ve veriye dayalı karar verebilme",
+    "unit": "İstatistiksel Araştırma Süreci"
+  },
+  {
+    "grade": 5,
+    "weekStart": "2027-04-19",
+    "weekEnd": "2027-04-23",
+    "topic": "Kategorik Veri Dağılımları",
+    "outcomeCode": "MAT.5.5.1",
+    "outcomeSummary": "Kategorik veri ile çalışabilme ve veriye dayalı karar verebilme",
+    "unit": "İstatistiksel Araştırma Süreci"
+  },
+  {
+    "grade": 5,
+    "weekStart": "2027-04-26",
+    "weekEnd": "2027-04-30",
+    "topic": "Kategorik Veri Dağılımları",
+    "outcomeCode": "MAT.5.5.1",
+    "outcomeSummary": "Kategorik veri ile çalışabilme ve veriye dayalı karar verebilme",
+    "unit": "İstatistiksel Araştırma Süreci"
+  },
+  {
+    "grade": 5,
+    "weekStart": "2027-05-03",
+    "weekEnd": "2027-05-07",
+    "topic": "Kategorik Veri Dağılımları",
+    "outcomeCode": "MAT.5.5.2",
+    "outcomeSummary": "Başkaları tarafından oluşturulan kategorik veriye dayalı istatistiksel sonuç veya yorumları tartışabilme",
+    "unit": "İstatistiksel Araştırma Süreci"
+  },
+  {
+    "grade": 5,
+    "weekStart": "2027-05-10",
+    "weekEnd": "2027-05-14",
+    "topic": "Değişme-Birleşme ve Dağılma Özellikleri",
+    "outcomeCode": "MAT.5.2.1",
+    "outcomeSummary": "Eşitliğin korunumuna ve işlem özelliklerine yönelik çıkarım yapabilme",
+    "unit": "İşlemlerle Cebirsel Düşünme"
+  },
+  {
+    "grade": 5,
+    "weekStart": "2027-05-20",
+    "weekEnd": "2027-05-21",
+    "topic": "İşlem Önceliği",
+    "outcomeCode": "MAT.5.2.2",
+    "outcomeSummary": "Karşılaştığı günlük hayat ya da matematiksel durumlarda işlem önceliğini yorumlayabilme",
+    "unit": "İşlemlerle Cebirsel Düşünme"
+  },
+  {
+    "grade": 5,
+    "weekStart": "2027-05-24",
+    "weekEnd": "2027-05-28",
+    "topic": "Örüntüler",
+    "outcomeCode": "MAT.5.2.3",
+    "outcomeSummary": "Sayı ve şekil örüntülerinin kuralına ilişkin muhakeme yapabilme",
+    "unit": "İşlemlerle Cebirsel Düşünme"
+  },
+  {
+    "grade": 5,
+    "weekStart": "2027-05-31",
+    "weekEnd": "2027-06-04",
+    "topic": "Temel Aritmetik İşlemler ve Algoritma",
+    "outcomeCode": "MAT.5.2.4",
+    "outcomeSummary": "Temel aritmetik işlem içeren durumlardaki algoritmaları yorumlayabilme",
+    "unit": "İşlemlerle Cebirsel Düşünme"
+  },
+  {
+    "grade": 5,
+    "weekStart": "2027-06-07",
+    "weekEnd": "2027-06-11",
+    "topic": "Temel Aritmetik İşlemler ve Algoritma",
+    "outcomeCode": "MAT.5.2.4",
+    "outcomeSummary": "Temel aritmetik işlem içeren durumlardaki algoritmaları yorumlayabilme",
+    "unit": "İşlemlerle Cebirsel Düşünme"
+  },
+  {
+    "grade": 5,
+    "weekStart": "2027-06-14",
+    "weekEnd": "2027-06-18",
+    "topic": "Öznel Olasılık",
+    "outcomeCode": "MAT.5.6.2",
+    "outcomeSummary": "Olayları az ya da çok olasılıklı şeklinde yapılandırabilme",
+    "unit": "Veriden Olasılığa"
+  },
+  {
+    "grade": 6,
+    "weekStart": "2026-09-14",
+    "weekEnd": "2026-09-18",
+    "topic": "Bir Doğal Sayının Çarpanları ve Katları",
+    "outcomeCode": "MAT.6.1.1",
+    "outcomeSummary": "Karşılaştığı problem durumlarında bir doğal sayının çarpan ve katlarına yönelik muhakeme yapabilme",
+    "unit": "Sayılar ve Nicelikler"
+  },
+  {
+    "grade": 6,
+    "weekStart": "2026-09-21",
+    "weekEnd": "2026-09-25",
+    "topic": "Bölünebilme Kriterleri",
+    "outcomeCode": "MAT.6.1.2",
+    "outcomeSummary": "Bir doğal sayının 2, 3, 4, 5, 6, 9 ve 10 ile tam bölünebilme kriterlerine ilişkin çıkarım yapabilme",
+    "unit": "Sayılar ve Nicelikler"
+  },
+  {
+    "grade": 6,
+    "weekStart": "2026-09-28",
+    "weekEnd": "2026-10-02",
+    "topic": "Bir Doğal Sayının Çarpanları ve Katları",
+    "outcomeCode": "MAT.6.1.3",
+    "outcomeSummary": "Bir doğal sayının asal olma durumunu ve asal çarpanlarını çözümleyebilme",
+    "unit": "Sayılar ve Nicelikler"
+  },
+  {
+    "grade": 6,
+    "weekStart": "2026-10-05",
+    "weekEnd": "2026-10-09",
+    "topic": "Deneysel Olasılık",
+    "outcomeCode": "MAT.6.6.1",
+    "outcomeSummary": "Bir olayın olasılığını gözleme dayalı tahmin edebilme",
+    "unit": "Veriden Olasılığa"
+  },
+  {
+    "grade": 6,
+    "weekStart": "2026-10-12",
+    "weekEnd": "2026-10-16",
+    "topic": "Deneysel Olasılık",
+    "outcomeCode": "MAT.6.6.1",
+    "outcomeSummary": "Bir olayın olasılığını gözleme dayalı tahmin edebilme",
+    "unit": "Veriden Olasılığa"
+  },
+  {
+    "grade": 6,
+    "weekStart": "2026-10-19",
+    "weekEnd": "2026-10-23",
+    "topic": "Ondalık Gösterimleri Çözümleme",
+    "outcomeCode": "MAT.6.1.5",
+    "outcomeSummary": "Gerçek yaşam durumlarında ondalık gösterimlerin basamak değerlerini kesirlerden yararlanarak yorumlayabilme",
+    "unit": "Sayılar ve Nicelikler"
+  },
+  {
+    "grade": 6,
+    "weekStart": "2026-10-26",
+    "weekEnd": "2026-10-30",
+    "topic": "Kesir-Bölme İlişkisi",
+    "outcomeCode": "MAT.6.1.6",
+    "outcomeSummary": "Kesir ve bölme işlemi arasındaki ilişkiye yönelik tümevarımsal akıl yürütebilme",
+    "unit": "Sayılar ve Nicelikler"
+  },
+  {
+    "grade": 6,
+    "weekStart": "2026-11-02",
+    "weekEnd": "2026-11-06",
+    "topic": "Kesirlerle Dört İşlem İçeren Problem Çözme",
+    "outcomeCode": "MAT.6.1.7",
+    "outcomeSummary": "Gerçek yaşam durumlarında karşılaşılan kesir, ondalık ve yüzde gösterimleri ile ilgili dört işlem gerektiren problemleri çözebilme",
+    "unit": "Sayılar ve Nicelikler"
+  },
+  {
+    "grade": 6,
+    "weekStart": "2026-11-09",
+    "weekEnd": "2026-11-13",
+    "topic": "Kesirlerle Dört İşlem İçeren Problem Çözme",
+    "outcomeCode": "MAT.6.1.7",
+    "outcomeSummary": "Gerçek yaşam durumlarında karşılaşılan kesir, ondalık ve yüzde gösterimleri ile ilgili dört işlem gerektiren problemleri çözebilme",
+    "unit": "Sayılar ve Nicelikler"
+  },
+  {
+    "grade": 6,
+    "weekStart": "2026-11-23",
+    "weekEnd": "2026-11-27",
+    "topic": "Kesirlerle Dört İşlem İçeren Problem Çözme",
+    "outcomeCode": "MAT.6.1.7",
+    "outcomeSummary": "Gerçek yaşam durumlarında karşılaşılan kesir, ondalık ve yüzde gösterimleri ile ilgili dört işlem gerektiren problemleri çözebilme",
+    "unit": "Sayılar ve Nicelikler"
+  },
+  {
+    "grade": 6,
+    "weekStart": "2026-11-30",
+    "weekEnd": "2026-12-04",
+    "topic": "Kesirlerle Dört İşlem İçeren Problem Çözme",
+    "outcomeCode": "MAT.6.1.7",
+    "outcomeSummary": "Gerçek yaşam durumlarında karşılaşılan kesir, ondalık ve yüzde gösterimleri ile ilgili dört işlem gerektiren problemleri çözebilme",
+    "unit": "Sayılar ve Nicelikler"
+  },
+  {
+    "grade": 6,
+    "weekStart": "2026-12-07",
+    "weekEnd": "2026-12-11",
+    "topic": "Kesirlerle Dört İşlem İçeren Problem Çözme",
+    "outcomeCode": "MAT.6.1.7",
+    "outcomeSummary": "Gerçek yaşam durumlarında karşılaşılan kesir, ondalık ve yüzde gösterimleri ile ilgili dört işlem gerektiren problemleri çözebilme",
+    "unit": "Sayılar ve Nicelikler"
+  },
+  {
+    "grade": 6,
+    "weekStart": "2026-12-14",
+    "weekEnd": "2026-12-18",
+    "topic": "Uzunluk Ölçme",
+    "outcomeCode": "MAT.6.1.8",
+    "outcomeSummary": "Karşılaştığı günlük hayat ya da matematiksel durumlarda standart uzunluk ölçme birimlerini değerlendirebilme",
+    "unit": "Sayılar ve Nicelikler"
+  },
+  {
+    "grade": 6,
+    "weekStart": "2026-12-21",
+    "weekEnd": "2026-12-25",
+    "topic": "Kategorik ve Nicel (Kesikli) Veri Dağılımları",
+    "outcomeCode": "MAT.6.5.1",
+    "outcomeSummary": "Kategorik veya nicel (kesikli) veri ile çalışabilme ve veriye dayalı karar verebilme",
+    "unit": "İstatistiksel Araştırma Süreci"
+  },
+  {
+    "grade": 6,
+    "weekStart": "2026-12-28",
+    "weekEnd": "2026-12-31",
+    "topic": "Kategorik ve Nicel (Sürekli) Veri Dağılımları",
+    "outcomeCode": "MAT.6.5.1",
+    "outcomeSummary": "Kategorik veya nicel (kesikli) veri ile çalışabilme ve veriye dayalı karar verebilme",
+    "unit": "İstatistiksel Araştırma Süreci"
+  },
+  {
+    "grade": 6,
+    "weekStart": "2027-01-04",
+    "weekEnd": "2027-01-08",
+    "topic": "Kategorik ve Nicel (Sürekli) Veri Dağılımları",
+    "outcomeCode": "MAT.6.5.1",
+    "outcomeSummary": "Kategorik veya nicel (kesikli) veri ile çalışabilme ve veriye dayalı karar verebilme",
+    "unit": "İstatistiksel Araştırma Süreci"
+  },
+  {
+    "grade": 6,
+    "weekStart": "2027-01-11",
+    "weekEnd": "2027-01-15",
+    "topic": "Kategorik ve Nicel (Sürekli) Veri Dağılımları",
+    "outcomeCode": "MAT.6.5.1",
+    "outcomeSummary": "Kategorik veya nicel (kesikli) veri ile çalışabilme ve veriye dayalı karar verebilme",
+    "unit": "İstatistiksel Araştırma Süreci"
+  },
+  {
+    "grade": 6,
+    "weekStart": "2027-01-18",
+    "weekEnd": "2027-01-22",
+    "topic": "Kategorik ve Nicel (Sürekli) Veri Dağılımları",
+    "outcomeCode": "MAT.6.5.1",
+    "outcomeSummary": "Kategorik veya nicel (kesikli) veri ile çalışabilme ve veriye dayalı karar verebilme",
+    "unit": "İstatistiksel Araştırma Süreci"
+  },
+  {
+    "grade": 6,
+    "weekStart": "2027-02-08",
+    "weekEnd": "2027-02-12",
+    "topic": "İki Paralel Doğrunun Bir Kesenle Oluşturduğu Açılar",
+    "outcomeCode": "MAT.6.3.1",
+    "outcomeSummary": "Düzlemde iki paralel doğru ve bir kesen ile oluşan açıları sınıflandırabilme",
+    "unit": "Geometrik Şekiller"
+  },
+  {
+    "grade": 6,
+    "weekStart": "2027-02-15",
+    "weekEnd": "2027-02-19",
+    "topic": "Üçgenin Açıları",
+    "outcomeCode": "MAT.6.3.2",
+    "outcomeSummary": "Matematiksel araç ve teknolojiden yararlanarak iki paralel doğrunun iki kesenle oluşturduğu şekillerin özelliklerine dair çıkarım yapabilme",
+    "unit": "Geometrik Şekiller"
+  },
+  {
+    "grade": 6,
+    "weekStart": "2027-02-22",
+    "weekEnd": "2027-02-26",
+    "topic": "Dörtgenlerin Kenar, Açı ve Köşegen Özellikleri",
+    "outcomeCode": "MAT.6.3.3",
+    "outcomeSummary": "Matematiksel araç ve teknolojiden yararlanarak birbirlerini ortalayan doğru parçalarını köşegen kabul eden dörtgenlere yönelik çıkarım yapabilme",
+    "unit": "Geometrik Şekiller"
+  },
+  {
+    "grade": 6,
+    "weekStart": "2027-03-01",
+    "weekEnd": "2027-03-05",
+    "topic": "Üçgenin Açıları",
+    "outcomeCode": "MAT.6.3.4",
+    "outcomeSummary": "Üçgen, yamuk, paralelkenar, eşkenar dörtgen, dikdörtgen ve karenin açıları ile ilgili problemleri çözebilme",
+    "unit": "Geometrik Şekiller"
+  },
+  {
+    "grade": 6,
+    "weekStart": "2027-03-15",
+    "weekEnd": "2027-03-19",
+    "topic": "Bilinmeyen Nicelikler",
+    "outcomeCode": "MAT.6.2.1",
+    "outcomeSummary": "Gerçek yaşam durumlarında bilinen niceliklerden bilinmeyen niceliklere ilişkin muhakeme yapabilme",
+    "unit": "İşlemlerle Cebirsel Düşünme ve Değişimler"
+  },
+  {
+    "grade": 6,
+    "weekStart": "2027-03-22",
+    "weekEnd": "2027-03-26",
+    "topic": "Bilinmeyen Nicelikler",
+    "outcomeCode": "MAT.6.2.1",
+    "outcomeSummary": "Gerçek yaşam durumlarında bilinen niceliklerden bilinmeyen niceliklere ilişkin muhakeme yapabilme",
+    "unit": "İşlemlerle Cebirsel Düşünme ve Değişimler"
+  },
+  {
+    "grade": 6,
+    "weekStart": "2027-03-29",
+    "weekEnd": "2027-04-02",
+    "topic": "Bilinmeyen Nicelikler",
+    "outcomeCode": "MAT.6.2.1",
+    "outcomeSummary": "Gerçek yaşam durumlarında bilinen niceliklerden bilinmeyen niceliklere ilişkin muhakeme yapabilme",
+    "unit": "İşlemlerle Cebirsel Düşünme ve Değişimler"
+  },
+  {
+    "grade": 6,
+    "weekStart": "2027-04-05",
+    "weekEnd": "2027-04-09",
+    "topic": "Örüntü",
+    "outcomeCode": "MAT.6.2.2",
+    "outcomeSummary": "Sayı ve şekil örüntülerini yorumlayabilme",
+    "unit": "İşlemlerle Cebirsel Düşünme ve Değişimler"
+  },
+  {
+    "grade": 6,
+    "weekStart": "2027-04-12",
+    "weekEnd": "2027-04-16",
+    "topic": "Örüntü",
+    "outcomeCode": "MAT.6.2.2",
+    "outcomeSummary": "Sayı ve şekil örüntülerini yorumlayabilme",
+    "unit": "İşlemlerle Cebirsel Düşünme ve Değişimler"
+  },
+  {
+    "grade": 6,
+    "weekStart": "2027-04-19",
+    "weekEnd": "2027-04-23",
+    "topic": "Cebirsel İfadeler ve Algoritma",
+    "outcomeCode": "MAT.6.2.3",
+    "outcomeSummary": "Cebirsel ifadeler içeren durumlardaki algoritmaları yorumlayabilme",
+    "unit": "İşlemlerle Cebirsel Düşünme ve Değişimler"
+  },
+  {
+    "grade": 6,
+    "weekStart": "2027-04-26",
+    "weekEnd": "2027-04-30",
+    "topic": "Cebirsel İfadeler ve Algoritma",
+    "outcomeCode": "MAT.6.2.3",
+    "outcomeSummary": "Cebirsel ifadeler içeren durumlardaki algoritmaları yorumlayabilme",
+    "unit": "İşlemlerle Cebirsel Düşünme ve Değişimler"
+  },
+  {
+    "grade": 6,
+    "weekStart": "2027-05-03",
+    "weekEnd": "2027-05-07",
+    "topic": "Uzunluk ve Alan Ölçme Birimleri Arasındaki İlişki",
+    "outcomeCode": "MAT.6.4.1",
+    "outcomeSummary": "Uzunluk ve alan ölçme birimleri arasındaki ilişkilerle ilgili analojik akıl yürütebilme",
+    "unit": "Geometrik Nicelikler"
+  },
+  {
+    "grade": 6,
+    "weekStart": "2027-05-10",
+    "weekEnd": "2027-05-14",
+    "topic": "Paralelkenar ve Üçgenin Alanı",
+    "outcomeCode": "MAT.6.4.2",
+    "outcomeSummary": "Dikdörtgenin alan bağıntısına yönelik deneyimlerini paralelkenar ve üçgenin alan bağıntılarına yansıtabilme",
+    "unit": "Geometrik Nicelikler"
+  },
+  {
+    "grade": 6,
+    "weekStart": "2027-05-20",
+    "weekEnd": "2027-05-21",
+    "topic": "Uzunluk ve Alan Ölçme Birimleri Arasındaki İlişki",
+    "outcomeCode": "MAT.6.4.3",
+    "outcomeSummary": "Geometrik şekillerin alanları ile modellenen gerçek yaşam durumlarına yönelik problem çözebilme",
+    "unit": "Geometrik Nicelikler"
+  },
+  {
+    "grade": 6,
+    "weekStart": "2027-05-24",
+    "weekEnd": "2027-05-28",
+    "topic": "Paralelkenar ve Üçgenin Alanı",
+    "outcomeCode": "MAT.6.4.3",
+    "outcomeSummary": "Geometrik şekillerin alanları ile modellenen gerçek yaşam durumlarına yönelik problem çözebilme",
+    "unit": "Geometrik Nicelikler"
+  },
+  {
+    "grade": 6,
+    "weekStart": "2027-05-31",
+    "weekEnd": "2027-06-04",
+    "topic": "Çemberin ve Çapın Uzunlukları Arasındaki İlişki",
+    "outcomeCode": "MAT.6.4.4",
+    "outcomeSummary": "Çemberin uzunluğu ile çap uzunluğu arasındaki ilişkiye yönelik çıkarım yapabilme",
+    "unit": "Geometrik Nicelikler"
+  },
+  {
+    "grade": 6,
+    "weekStart": "2027-06-07",
+    "weekEnd": "2027-06-11",
+    "topic": "Çemberin ve Çapın Uzunlukları Arasındaki İlişki",
+    "outcomeCode": "MAT.6.4.4",
+    "outcomeSummary": "Çemberin uzunluğu ile çap uzunluğu arasındaki ilişkiye yönelik çıkarım yapabilme",
+    "unit": "Geometrik Nicelikler"
+  },
+  {
+    "grade": 6,
+    "weekStart": "2027-06-14",
+    "weekEnd": "2027-06-18",
+    "topic": "Çemberin ve Çapın Uzunlukları Arasındaki İlişki",
+    "outcomeCode": "MAT.6.4.5",
+    "outcomeSummary": "Çap veya yarıçap uzunluğu verilen bir çemberin uzunluğu ile ilgili problemleri çözebilme",
+    "unit": "Geometrik Nicelikler"
+  },
+  {
+    "grade": 7,
+    "weekStart": "2026-09-14",
+    "weekEnd": "2026-09-18",
+    "topic": "Tam Sayılar",
+    "outcomeCode": "MAT.7.1.1",
+    "outcomeSummary": "Gerçek yaşam ya da matematiksel durumlarda doğal sayı, tam sayı ve rasyonel sayıları yorumlayabilme",
+    "unit": "Sayılar ve Nicelikler"
+  },
+  {
+    "grade": 7,
+    "weekStart": "2026-09-21",
+    "weekEnd": "2026-09-25",
+    "topic": "Tam Sayılar",
+    "outcomeCode": "MAT.7.1.1",
+    "outcomeSummary": "Gerçek yaşam ya da matematiksel durumlarda doğal sayı, tam sayı ve rasyonel sayıları yorumlayabilme",
+    "unit": "Sayılar ve Nicelikler"
+  },
+  {
+    "grade": 7,
+    "weekStart": "2026-09-28",
+    "weekEnd": "2026-10-02",
+    "topic": "Rasyonel Sayılar ve Farklı Temsilleri",
+    "outcomeCode": "MAT.7.1.2",
+    "outcomeSummary": "Gerçek yaşam durumlarında rasyonel sayıların ondalık gösterimlerini yansıtabilme",
+    "unit": "Sayılar ve Nicelikler"
+  },
+  {
+    "grade": 7,
+    "weekStart": "2026-10-05",
+    "weekEnd": "2026-10-09",
+    "topic": "Rasyonel Sayılar ve Farklı Temsilleri",
+    "outcomeCode": "MAT.7.1.2",
+    "outcomeSummary": "Gerçek yaşam durumlarında rasyonel sayıların ondalık gösterimlerini yansıtabilme",
+    "unit": "Sayılar ve Nicelikler"
+  },
+  {
+    "grade": 7,
+    "weekStart": "2026-10-12",
+    "weekEnd": "2026-10-16",
+    "topic": "Rasyonel Sayılarda Karşılaştırma ve Sıralama",
+    "outcomeCode": "MAT.7.1.3",
+    "outcomeSummary": "Rasyonel sayıların karşılaştırma ve sıralama ilişkilerini yorumlayabilme",
+    "unit": "Sayılar ve Nicelikler"
+  },
+  {
+    "grade": 7,
+    "weekStart": "2026-10-19",
+    "weekEnd": "2026-10-23",
+    "topic": "Rasyonel Sayılarla İşlemler ve Problem Çözme",
+    "outcomeCode": "MAT.7.1.4",
+    "outcomeSummary": "Rasyonel sayılar ve işlemler içeren gerçek yaşam problemlerini çözebilme",
+    "unit": "Sayılar ve Nicelikler"
+  },
+  {
+    "grade": 7,
+    "weekStart": "2026-10-26",
+    "weekEnd": "2026-10-30",
+    "topic": "Rasyonel Sayılarla İşlemler ve Problem Çözme",
+    "outcomeCode": "MAT.7.1.4",
+    "outcomeSummary": "Rasyonel sayılar ve işlemler içeren gerçek yaşam problemlerini çözebilme",
+    "unit": "Sayılar ve Nicelikler"
+  },
+  {
+    "grade": 7,
+    "weekStart": "2026-11-02",
+    "weekEnd": "2026-11-06",
+    "topic": "Rasyonel Sayılarla İşlemler ve Problem Çözme",
+    "outcomeCode": "MAT.7.1.4",
+    "outcomeSummary": "Rasyonel sayılar ve işlemler içeren gerçek yaşam problemlerini çözebilme",
+    "unit": "Sayılar ve Nicelikler"
+  },
+  {
+    "grade": 7,
+    "weekStart": "2026-11-09",
+    "weekEnd": "2026-11-13",
+    "topic": "Dikdörtgenler Prizmasının Hacmi ve Yüzey Alanı",
+    "outcomeCode": "MAT.7.4.2",
+    "outcomeSummary": "Dikdörtgenler prizmasının yüzey alanını yorumlayabilme",
+    "unit": "Geometrik Nicelikler"
+  },
+  {
+    "grade": 7,
+    "weekStart": "2026-11-23",
+    "weekEnd": "2026-11-27",
+    "topic": "Dikdörtgenler Prizmasının Hacmi ve Yüzey Alanı",
+    "outcomeCode": "MAT.7.4.4",
+    "outcomeSummary": "Dikdörtgenler prizmasının hacim bağıntısını değerlendirebilme",
+    "unit": "Geometrik Nicelikler"
+  },
+  {
+    "grade": 7,
+    "weekStart": "2026-11-30",
+    "weekEnd": "2026-12-04",
+    "topic": "Dikdörtgenler Prizmasının Hacmi ve Yüzey Alanı",
+    "outcomeCode": "MAT.7.4.6",
+    "outcomeSummary": "Günlük hayat durumlarında dikdörtgenler prizmaları ile modellenen cisimlerin yüzey alanı ve hacmine yönelik problem çözebilme",
+    "unit": "Geometrik Nicelikler"
+  },
+  {
+    "grade": 7,
+    "weekStart": "2026-12-07",
+    "weekEnd": "2026-12-11",
+    "topic": "Dikdörtgenler Prizmasının Hacmi ve Yüzey Alanı",
+    "outcomeCode": "MAT.7.4.6",
+    "outcomeSummary": "Günlük hayat durumlarında dikdörtgenler prizmaları ile modellenen cisimlerin yüzey alanı ve hacmine yönelik problem çözebilme",
+    "unit": "Geometrik Nicelikler"
+  },
+  {
+    "grade": 7,
+    "weekStart": "2026-12-14",
+    "weekEnd": "2026-12-18",
+    "topic": "Kategorik ve Nicel (Sürekli) Veri Dağılımları",
+    "outcomeCode": "MAT.7.6.1",
+    "outcomeSummary": "Kategorik veya nicel (sürekli) veri ile çalışabilme ve veriye dayalı karar verebilme",
+    "unit": "İstatistiksel Araştırma Süreci"
+  },
+  {
+    "grade": 7,
+    "weekStart": "2026-12-21",
+    "weekEnd": "2026-12-25",
+    "topic": "Kategorik ve Nicel (Sürekli) Veri Dağılımları",
+    "outcomeCode": "MAT.7.6.1",
+    "outcomeSummary": "Kategorik veya nicel (sürekli) veri ile çalışabilme ve veriye dayalı karar verebilme",
+    "unit": "İstatistiksel Araştırma Süreci"
+  },
+  {
+    "grade": 7,
+    "weekStart": "2026-12-28",
+    "weekEnd": "2026-12-31",
+    "topic": "Kategorik ve Nicel (Sürekli) Veri Dağılımları",
+    "outcomeCode": "MAT.7.6.2",
+    "outcomeSummary": "Başkaları tarafından oluşturulan kategorik veya nicel (sürekli) veriye dayalı istatistiksel sonuç veya yorumları tartışabilme",
+    "unit": "İstatistiksel Araştırma Süreci"
+  },
+  {
+    "grade": 7,
+    "weekStart": "2027-01-04",
+    "weekEnd": "2027-01-08",
+    "topic": "Kategorik ve Nicel (Sürekli) Veri Dağılımları",
+    "outcomeCode": "MAT.7.6.2",
+    "outcomeSummary": "Başkaları tarafından oluşturulan kategorik veya nicel (sürekli) veriye dayalı istatistiksel sonuç veya yorumları tartışabilme",
+    "unit": "İstatistiksel Araştırma Süreci"
+  },
+  {
+    "grade": 7,
+    "weekStart": "2027-01-11",
+    "weekEnd": "2027-01-15",
+    "topic": "Kategorik ve Nicel (Sürekli) Veri Dağılımları",
+    "outcomeCode": "MAT.7.6.2",
+    "outcomeSummary": "Başkaları tarafından oluşturulan kategorik veya nicel (sürekli) veriye dayalı istatistiksel sonuç veya yorumları tartışabilme",
+    "unit": "İstatistiksel Araştırma Süreci"
+  },
+  {
+    "grade": 7,
+    "weekStart": "2027-01-18",
+    "weekEnd": "2027-01-22",
+    "topic": "Yansıma Dönüşümü",
+    "outcomeCode": "MAT.7.3.1",
+    "outcomeSummary": "Şekillerin yansıma dönüşümü altındaki görüntülerinin oluşturulmasına dair çıkarım yapabilme",
+    "unit": "Dönüşüm"
+  },
+  {
+    "grade": 7,
+    "weekStart": "2027-02-08",
+    "weekEnd": "2027-02-12",
+    "topic": "Üçgenlerde Kenarortay, Açıortay ve Yükseklik",
+    "outcomeCode": "MAT.7.5.1",
+    "outcomeSummary": "Matematiksel araç ve teknolojiden yararlanarak üçgende kenarortayı, açıortayı ve yüksekliği çözümleyebilme",
+    "unit": "Geometrik Şekiller"
+  },
+  {
+    "grade": 7,
+    "weekStart": "2027-02-15",
+    "weekEnd": "2027-02-19",
+    "topic": "Üçgenlerde Kenarortay, Açıortay ve Yükseklik",
+    "outcomeCode": "MAT.7.5.2",
+    "outcomeSummary": "Orta dikme inşasına yönelik deneyimlerini üçgende kenarortay inşasına yansıtabilme",
+    "unit": "Geometrik Şekiller"
+  },
+  {
+    "grade": 7,
+    "weekStart": "2027-02-22",
+    "weekEnd": "2027-02-26",
+    "topic": "Oran",
+    "outcomeCode": "MAT.7.1.5",
+    "outcomeSummary": "Gerçek yaşam durumları üzerinden oran ilişkileri hakkında muhakeme yapabilme",
+    "unit": "Sayılar ve Nicelikler"
+  },
+  {
+    "grade": 7,
+    "weekStart": "2027-03-01",
+    "weekEnd": "2027-03-05",
+    "topic": "Doğru Orantılı Durumlara İlişkin Problem Çözme",
+    "outcomeCode": "MAT.7.1.7",
+    "outcomeSummary": "Gerçek yaşam durumları üzerinden doğru orantılı durumlara ilişkin problemleri çözebilme",
+    "unit": "Sayılar ve Nicelikler"
+  },
+  {
+    "grade": 7,
+    "weekStart": "2027-03-15",
+    "weekEnd": "2027-03-19",
+    "topic": "Doğru Orantılı Durumlara İlişkin Problem Çözme",
+    "outcomeCode": "MAT.7.1.7",
+    "outcomeSummary": "Gerçek yaşam durumları üzerinden doğru orantılı durumlara ilişkin problemleri çözebilme",
+    "unit": "Sayılar ve Nicelikler"
+  },
+  {
+    "grade": 7,
+    "weekStart": "2027-03-22",
+    "weekEnd": "2027-03-26",
+    "topic": "Teorik Olasılık",
+    "outcomeCode": "MAT.7.7.2",
+    "outcomeSummary": "Aynı deneye ait olayların eşit olasılıklı olma durumlarını değerlendirebilme",
+    "unit": "Veriden Olasılığa"
+  },
+  {
+    "grade": 7,
+    "weekStart": "2027-03-29",
+    "weekEnd": "2027-04-02",
+    "topic": "Cebirsel İfadelerle İşlemler",
+    "outcomeCode": "MAT.7.2.1",
+    "outcomeSummary": "Gerçek yaşam durumları ya da matematiksel durumlar üzerinden cebirsel ifadelerle toplama, çıkarma ve bir rasyonel sayıyla çarpma işlemlerini yorumlayabilme",
+    "unit": "İşlemlerle Cebirsel Düşünme ve Değişimler"
+  },
+  {
+    "grade": 7,
+    "weekStart": "2027-04-05",
+    "weekEnd": "2027-04-09",
+    "topic": "Cebirsel İfadelerle İşlemler",
+    "outcomeCode": "MAT.7.2.1",
+    "outcomeSummary": "Gerçek yaşam durumları ya da matematiksel durumlar üzerinden cebirsel ifadelerle toplama, çıkarma ve bir rasyonel sayıyla çarpma işlemlerini yorumlayabilme",
+    "unit": "İşlemlerle Cebirsel Düşünme ve Değişimler"
+  },
+  {
+    "grade": 7,
+    "weekStart": "2027-04-12",
+    "weekEnd": "2027-04-16",
+    "topic": "Cebirsel İfadelerle İşlemler",
+    "outcomeCode": "MAT.7.2.1",
+    "outcomeSummary": "Gerçek yaşam durumları ya da matematiksel durumlar üzerinden cebirsel ifadelerle toplama, çıkarma ve bir rasyonel sayıyla çarpma işlemlerini yorumlayabilme",
+    "unit": "İşlemlerle Cebirsel Düşünme ve Değişimler"
+  },
+  {
+    "grade": 7,
+    "weekStart": "2027-04-19",
+    "weekEnd": "2027-04-23",
+    "topic": "Denklem ve Eşitsizlikler",
+    "outcomeCode": "MAT.7.2.2",
+    "outcomeSummary": "Birinci dereceden bir bilinmeyenli denklem ve birinci dereceden bir bilinmeyenli eşitsizlik içeren gerçek yaşam problemlerini çözebilme",
+    "unit": "İşlemlerle Cebirsel Düşünme ve Değişimler"
+  },
+  {
+    "grade": 7,
+    "weekStart": "2027-04-26",
+    "weekEnd": "2027-04-30",
+    "topic": "Denklem ve Eşitsizlikler",
+    "outcomeCode": "MAT.7.2.2",
+    "outcomeSummary": "Birinci dereceden bir bilinmeyenli denklem ve birinci dereceden bir bilinmeyenli eşitsizlik içeren gerçek yaşam problemlerini çözebilme",
+    "unit": "İşlemlerle Cebirsel Düşünme ve Değişimler"
+  },
+  {
+    "grade": 7,
+    "weekStart": "2027-05-03",
+    "weekEnd": "2027-05-07",
+    "topic": "Denklem ve Eşitsizlikler",
+    "outcomeCode": "MAT.7.2.2",
+    "outcomeSummary": "Birinci dereceden bir bilinmeyenli denklem ve birinci dereceden bir bilinmeyenli eşitsizlik içeren gerçek yaşam problemlerini çözebilme",
+    "unit": "İşlemlerle Cebirsel Düşünme ve Değişimler"
+  },
+  {
+    "grade": 7,
+    "weekStart": "2027-05-10",
+    "weekEnd": "2027-05-14",
+    "topic": "İspat",
+    "outcomeCode": "MAT.7.2.3",
+    "outcomeSummary": "Sayılar ve özelliklerini içeren ispatlara ilişkin matematiksel muhakeme yapabilme",
+    "unit": "İşlemlerle Cebirsel Düşünme ve Değişimler"
+  },
+  {
+    "grade": 7,
+    "weekStart": "2027-05-20",
+    "weekEnd": "2027-05-21",
+    "topic": "Cebirsel İfadelerle İşlemler ve Algoritma",
+    "outcomeCode": "MAT.7.2.4",
+    "outcomeSummary": "Temel aritmetik ve cebirsel ifadelerle işlem içeren durumlardaki süreci algoritma ifade yöntemlerini kullanarak yapılandırabilme",
+    "unit": "İşlemlerle Cebirsel Düşünme ve Değişimler"
+  },
+  {
+    "grade": 7,
+    "weekStart": "2027-05-24",
+    "weekEnd": "2027-05-28",
+    "topic": "Daire ve Daire Diliminin Alanı",
+    "outcomeCode": "MAT.7.4.7",
+    "outcomeSummary": "Dikdörtgenin, paralelkenarın alanına ve çemberin uzunluğuna ilişkin deneyimlerini dairenin alan bağıntısına yansıtabilme",
+    "unit": "Geometrik Nicelikler"
+  },
+  {
+    "grade": 7,
+    "weekStart": "2027-05-31",
+    "weekEnd": "2027-06-04",
+    "topic": "Daire ve Daire Diliminin Alanı",
+    "outcomeCode": "MAT.7.4.8",
+    "outcomeSummary": "Çemberde merkez açı ve gördüğü yay uzunluğu arasındaki ilişkiden yola çıkarak daire ve daire diliminin alanları arasındaki ilişkiye yönelik analojik akıl yürütebilme",
+    "unit": "Geometrik Nicelikler"
+  },
+  {
+    "grade": 7,
+    "weekStart": "2027-06-07",
+    "weekEnd": "2027-06-11",
+    "topic": "Eşkenar Dörtgen ve Yamuk",
+    "outcomeCode": "MAT.7.4.9",
+    "outcomeSummary": "Eşkenar dörtgen ve yamuğun alan bağıntılarına dair çıkarım yapabilme",
+    "unit": "Geometrik Nicelikler"
+  },
+  {
+    "grade": 7,
+    "weekStart": "2027-06-14",
+    "weekEnd": "2027-06-18",
+    "topic": "Daire ve Daire Diliminin Alanı",
+    "outcomeCode": "MAT.7.4.10",
+    "outcomeSummary": "Günlük hayat durumlarında daire, daire dilimi, eşkenar dörtgen ve yamuğun alanına ilişkin problem çözebilme",
+    "unit": "Geometrik Nicelikler"
+  },
+  {
+    "grade": 8,
+    "weekStart": "2026-09-14",
+    "weekEnd": "2026-09-18",
+    "topic": "Çarpanlar ve Katlar",
+    "outcomeCode": "M.8.1.1.1",
+    "outcomeSummary": "Verilen pozitif tam sayıların pozitif tam sayı çarpanlarını bulur, pozitif tam sayıların pozitif tam sayı çarpanlarını üslü ifadelerin çarpımı şeklinde yazar.",
+    "unit": "Sayılar ve İşlemler"
+  },
+  {
+    "grade": 8,
+    "weekStart": "2026-09-21",
+    "weekEnd": "2026-09-25",
+    "topic": "Çarpanlar ve Katlar",
+    "outcomeCode": "M.8.1.1.2",
+    "outcomeSummary": "İki doğal sayının en büyük ortak bölenini (EBOB) ve en küçük ortak katını (EKOK) hesaplar, ilgili problemleri çözer.",
+    "unit": "Sayılar ve İşlemler"
+  },
+  {
+    "grade": 8,
+    "weekStart": "2026-09-28",
+    "weekEnd": "2026-10-02",
+    "topic": "Üslü İfadeler",
+    "outcomeCode": "M.8.1.2.1",
+    "outcomeSummary": "Tam sayıların, tam sayı kuvvetlerini hesaplar.",
+    "unit": "Sayılar ve İşlemler"
+  },
+  {
+    "grade": 8,
+    "weekStart": "2026-10-05",
+    "weekEnd": "2026-10-09",
+    "topic": "Üslü İfadeler",
+    "outcomeCode": "M.8.1.2.3",
+    "outcomeSummary": "Sayıların ondalık gösterimlerini 10’un tam sayı kuvvetlerini kullanarak çözümler.",
+    "unit": "Sayılar ve İşlemler"
+  },
+  {
+    "grade": 8,
+    "weekStart": "2026-10-12",
+    "weekEnd": "2026-10-16",
+    "topic": "Üslü İfadeler",
+    "outcomeCode": "M.8.1.2.5",
+    "outcomeSummary": "Çok büyük ve çok küçük sayıları bilimsel gösterimle ifade eder ve karşılaştırır.",
+    "unit": "Sayılar ve İşlemler"
+  },
+  {
+    "grade": 8,
+    "weekStart": "2026-10-19",
+    "weekEnd": "2026-10-23",
+    "topic": "Kareköklü İfadeler",
+    "outcomeCode": "M.8.1.3.1",
+    "outcomeSummary": "Tamkare pozitif tam sayılarla bu sayıların karekökleri arasındaki ilişkiyi belirler.",
+    "unit": "Sayılar ve İşlemler"
+  },
+  {
+    "grade": 8,
+    "weekStart": "2026-10-26",
+    "weekEnd": "2026-10-30",
+    "topic": "Kareköklü İfadeler",
+    "outcomeCode": "M.8.1.3.3",
+    "outcomeSummary": "Kareköklü bir ifadeyi a√b şeklinde yazar ve a√b şeklindeki ifadede katsayıyı kök içine alır.",
+    "unit": "Sayılar ve İşlemler"
+  },
+  {
+    "grade": 8,
+    "weekStart": "2026-11-02",
+    "weekEnd": "2026-11-06",
+    "topic": "Kareköklü İfadeler",
+    "outcomeCode": "M.8.1.3.4",
+    "outcomeSummary": "Kareköklü ifadelerde çarpma ve bölme işlemlerini yapar.",
+    "unit": "Sayılar ve İşlemler"
+  },
+  {
+    "grade": 8,
+    "weekStart": "2026-11-09",
+    "weekEnd": "2026-11-13",
+    "topic": "Kareköklü İfadeler",
+    "outcomeCode": "M.8.1.3.5",
+    "outcomeSummary": "Kareköklü ifadelerde toplama ve çıkarma işlemlerini yapar.",
+    "unit": "Sayılar ve İşlemler"
+  },
+  {
+    "grade": 8,
+    "weekStart": "2026-11-23",
+    "weekEnd": "2026-11-27",
+    "topic": "Kareköklü İfadeler",
+    "outcomeCode": "M.8.1.3.7",
+    "outcomeSummary": "Ondalık ifadelerin kareköklerini belirler.",
+    "unit": "Sayılar ve İşlemler"
+  },
+  {
+    "grade": 8,
+    "weekStart": "2026-11-30",
+    "weekEnd": "2026-12-04",
+    "topic": "Veri Analizi",
+    "outcomeCode": "M.8.4.1.1",
+    "outcomeSummary": "En fazla üç veri grubuna ait çizgi ve sütun grafiklerini yorumlar.",
+    "unit": "Veri İşleme"
+  },
+  {
+    "grade": 8,
+    "weekStart": "2026-12-07",
+    "weekEnd": "2026-12-11",
+    "topic": "Veri Analizi",
+    "outcomeCode": "M.8.4.1.2",
+    "outcomeSummary": "Verileri sütun, daire veya çizgi grafiği ile gösterir ve bu gösterimler arasında uygun olan dönüşümleri yapar.",
+    "unit": "Veri İşleme"
+  },
+  {
+    "grade": 8,
+    "weekStart": "2026-12-14",
+    "weekEnd": "2026-12-18",
+    "topic": "Veri Analizi",
+    "outcomeCode": "M.8.4.1.2",
+    "outcomeSummary": "Verileri sütun, daire veya çizgi grafiği ile gösterir ve bu gösterimler arasında uygun olan dönüşümleri yapar.",
+    "unit": "Veri İşleme"
+  },
+  {
+    "grade": 8,
+    "weekStart": "2026-12-21",
+    "weekEnd": "2026-12-25",
+    "topic": "Basit Olayların Olma Olasılığı",
+    "outcomeCode": "M.8.5.1.3",
+    "outcomeSummary": "Eşit şansa sahip olan olaylarda her bir çıktının olasılık değerinin eşit olduğunu ve bu değerin 1/n olduğunu açıklar.",
+    "unit": "Olasılık"
+  },
+  {
+    "grade": 8,
+    "weekStart": "2026-12-28",
+    "weekEnd": "2027-01-01",
+    "topic": "Basit Olayların Olma Olasılığı",
+    "outcomeCode": "M.8.5.1.4",
+    "outcomeSummary": "Olasılık değerinin 0 ile 1 arasında (0 ve 1 dâhil) olduğunu anlar.",
+    "unit": "Olasılık"
+  },
+  {
+    "grade": 8,
+    "weekStart": "2027-01-04",
+    "weekEnd": "2027-01-08",
+    "topic": "Cebirsel İfadeler ve Özdeşlikler",
+    "outcomeCode": "M.8.2.1.1",
+    "outcomeSummary": "Basit cebirsel ifadeleri anlar ve farklı biçimlerde yazar.",
+    "unit": "Cebir"
+  },
+  {
+    "grade": 8,
+    "weekStart": "2027-01-11",
+    "weekEnd": "2027-01-15",
+    "topic": "Cebirsel İfadeler ve Özdeşlikler",
+    "outcomeCode": "M.8.2.1.3",
+    "outcomeSummary": "Özdeşlikleri modellerle açıklar.",
+    "unit": "Cebir"
+  },
+  {
+    "grade": 8,
+    "weekStart": "2027-01-18",
+    "weekEnd": "2027-01-22",
+    "topic": "Cebirsel İfadeler ve Özdeşlikler",
+    "outcomeCode": "M.8.2.1.4",
+    "outcomeSummary": "Cebirsel ifadeleri çarpanlara ayırır.",
+    "unit": "Cebir"
+  },
+  {
+    "grade": 8,
+    "weekStart": "2027-02-08",
+    "weekEnd": "2027-02-12",
+    "topic": "Doğrusal Denklemler",
+    "outcomeCode": "M.8.2.2.1",
+    "outcomeSummary": "Birinci dereceden bir bilinmeyenli denklemleri çözer.",
+    "unit": "Cebir"
+  },
+  {
+    "grade": 8,
+    "weekStart": "2027-02-15",
+    "weekEnd": "2027-02-19",
+    "topic": "Doğrusal Denklemler",
+    "outcomeCode": "M.8.2.2.3",
+    "outcomeSummary": "Aralarında doğrusal ilişki bulunan iki değişkenden birinin diğerine bağlı olarak nasıl değiştiğini tablo ve denklem ile ifade eder.",
+    "unit": "Cebir"
+  },
+  {
+    "grade": 8,
+    "weekStart": "2027-02-22",
+    "weekEnd": "2027-02-26",
+    "topic": "Doğrusal Denklemler",
+    "outcomeCode": "M.8.2.2.4",
+    "outcomeSummary": "Doğrusal denklemlerin grafiğini çizer.",
+    "unit": "Cebir"
+  },
+  {
+    "grade": 8,
+    "weekStart": "2027-03-01",
+    "weekEnd": "2027-03-05",
+    "topic": "Doğrusal Denklemler",
+    "outcomeCode": "M.8.2.2.5",
+    "outcomeSummary": "Doğrusal ilişki içeren gerçek hayat durumlarına ait denklem, tablo ve grafiği oluşturur ve yorumlar.",
+    "unit": "Cebir"
+  },
+  {
+    "grade": 8,
+    "weekStart": "2027-03-15",
+    "weekEnd": "2027-03-19",
+    "topic": "Doğrusal Denklemler",
+    "outcomeCode": "M.8.2.2.6",
+    "outcomeSummary": "Doğrunun eğimini modellerle açıklar, doğrusal denklemleri ve grafiklerini eğimle ilişkilendirir.",
+    "unit": "Cebir"
+  },
+  {
+    "grade": 8,
+    "weekStart": "2027-03-22",
+    "weekEnd": "2027-03-26",
+    "topic": "Doğrusal Denklemler",
+    "outcomeCode": "M.8.2.2.6",
+    "outcomeSummary": "Doğrunun eğimini modellerle açıklar, doğrusal denklemleri ve grafiklerini eğimle ilişkilendirir.",
+    "unit": "Cebir"
+  },
+  {
+    "grade": 8,
+    "weekStart": "2027-03-29",
+    "weekEnd": "2027-04-02",
+    "topic": "Eşitsizlikler",
+    "outcomeCode": "M.8.2.3.1",
+    "outcomeSummary": "Birinci dereceden bir bilinmeyenli eşitsizlik içeren günlük hayat durumlarına uygun matematik cümleleri yazar.",
+    "unit": "Cebir"
+  },
+  {
+    "grade": 8,
+    "weekStart": "2027-04-05",
+    "weekEnd": "2027-04-09",
+    "topic": "Eşitsizlikler",
+    "outcomeCode": "M.8.2.3.3",
+    "outcomeSummary": "Birinci dereceden bir bilinmeyenli eşitsizlikleri çözer.",
+    "unit": "Cebir"
+  },
+  {
+    "grade": 8,
+    "weekStart": "2027-04-12",
+    "weekEnd": "2027-04-16",
+    "topic": "Üçgenler",
+    "outcomeCode": "M.8.3.1.1",
+    "outcomeSummary": "Üçgende kenarortay, açıortay ve yüksekliği inşa eder.",
+    "unit": "Geometri ve Ölçme"
+  },
+  {
+    "grade": 8,
+    "weekStart": "2027-04-19",
+    "weekEnd": "2027-04-23",
+    "topic": "Üçgenler",
+    "outcomeCode": "M.8.3.1.3",
+    "outcomeSummary": "Üçgenin kenar uzunlukları ile bu kenarların karşısındaki açıların ölçülerini ilişkilendirir.",
+    "unit": "Geometri ve Ölçme"
+  },
+  {
+    "grade": 8,
+    "weekStart": "2027-04-26",
+    "weekEnd": "2027-04-30",
+    "topic": "Üçgenler",
+    "outcomeCode": "M.8.3.1.5",
+    "outcomeSummary": "Pisagor bağıntısını oluşturur, ilgili problemleri çözer.",
+    "unit": "Geometri ve Ölçme"
+  },
+  {
+    "grade": 8,
+    "weekStart": "2027-05-03",
+    "weekEnd": "2027-05-07",
+    "topic": "Üçgenler",
+    "outcomeCode": "M.8.3.1.5",
+    "outcomeSummary": "Pisagor bağıntısını oluşturur, ilgili problemleri çözer.",
+    "unit": "Geometri ve Ölçme"
+  },
+  {
+    "grade": 8,
+    "weekStart": "2027-05-10",
+    "weekEnd": "2027-05-14",
+    "topic": "Eşlik ve Benzerlik",
+    "outcomeCode": "M.8.3.3.1",
+    "outcomeSummary": "Eşlik ve benzerliği ilişkilendirir, eş ve benzer şekillerin kenar ve açı ilişkilerini belirler.",
+    "unit": "Geometri ve Ölçme"
+  },
+  {
+    "grade": 8,
+    "weekStart": "2027-05-17",
+    "weekEnd": "2027-05-21",
+    "topic": "Dönüşüm Geometrisi",
+    "outcomeCode": "M.8.3.2.1",
+    "outcomeSummary": "Nokta, doğru parçası ve diğer şekillerin öteleme sonucundaki görüntülerini çizer.",
+    "unit": "Geometri ve Ölçme"
+  },
+  {
+    "grade": 8,
+    "weekStart": "2027-05-24",
+    "weekEnd": "2027-05-28",
+    "topic": "Dönüşüm Geometrisi",
+    "outcomeCode": "M.8.3.2.2",
+    "outcomeSummary": "Nokta, doğru parçası ve diğer şekillerin yansıma sonucu oluşan görüntüsünü oluşturur.",
+    "unit": "Geometri ve Ölçme"
+  },
+  {
+    "grade": 8,
+    "weekStart": "2027-05-31",
+    "weekEnd": "2027-06-04",
+    "topic": "Geometrik Cisimler",
+    "outcomeCode": "M.8.3.4.1",
+    "outcomeSummary": "Dik prizmaları tanır, temel elemanlarını belirler, inşa eder ve açınımını çizer.",
+    "unit": "Geometri ve Ölçme"
+  },
+  {
+    "grade": 8,
+    "weekStart": "2027-06-07",
+    "weekEnd": "2027-06-11",
+    "topic": "Geometrik Cisimler",
+    "outcomeCode": "M.8.3.4.3",
+    "outcomeSummary": "Dik dairesel silindirin yüzey alanı bağıntısını oluşturur, ilgili problemleri çözer.",
+    "unit": "Geometri ve Ölçme"
+  },
+  {
+    "grade": 8,
+    "weekStart": "2027-06-14",
+    "weekEnd": "2027-06-18",
+    "topic": "Geometrik Cisimler",
+    "outcomeCode": "M.8.3.4.5",
+    "outcomeSummary": "Dik piramidi tanır, temel elemanlarını belirler, inşa eder ve açınımını çizer.",
+    "unit": "Geometri ve Ölçme"
+  }
+]

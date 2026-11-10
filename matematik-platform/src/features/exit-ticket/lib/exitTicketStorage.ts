@@ -32,7 +32,10 @@ export const saveSession = (session: ExitTicketSession): void => {
     } else {
       sessions.unshift(session);
     }
-    localStorage.setItem(SESSIONS_STORAGE_KEY, JSON.stringify(sessions.slice(0, 50)));
+    localStorage.setItem(
+      SESSIONS_STORAGE_KEY,
+      JSON.stringify(sessions.slice(0, 50)),
+    );
   } catch {
     // ignore
   }
@@ -79,7 +82,9 @@ export const submitExitTicketResponse = (
 
   // Aynı öğrencinin bu soruya daha önceki cevabını güncelle veya yenisini ekle
   const existingIdx = session.responses.findIndex(
-    (r) => r.questionIndex === questionIndex && r.studentName.toLowerCase() === studentName.trim().toLowerCase(),
+    (r) =>
+      r.questionIndex === questionIndex &&
+      r.studentName.toLowerCase() === studentName.trim().toLowerCase(),
   );
 
   const response: ExitTicketResponse = {
@@ -106,7 +111,9 @@ export const calculateDistribution = (
   questionIndex: number,
 ): QuestionDistribution => {
   const currentQ = session.questions[questionIndex];
-  const responsesForQ = session.responses.filter((r) => r.questionIndex === questionIndex);
+  const responsesForQ = session.responses.filter(
+    (r) => r.questionIndex === questionIndex,
+  );
 
   const counts: [number, number, number, number] = [0, 0, 0, 0];
   let correctCount = 0;
@@ -136,3 +143,130 @@ export const calculateDistribution = (
     correctPercentage: total > 0 ? Math.round((correctCount / total) * 100) : 0,
   };
 };
+
+/* --- Gerçek Zamanlı Bulut API Senkronizasyon Yardımcıları --- */
+
+export async function createCloudExitTicketSession(
+  title: string,
+  grade: number,
+  questions: ExitTicketQuestion[],
+): Promise<ExitTicketSession | null> {
+  try {
+    const res = await fetch('/api/exit-ticket', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ title, grade, questions }),
+    });
+    if (!res.ok) return null;
+    const json = await res.json();
+    if (json.session) {
+      const cloudSession: ExitTicketSession = {
+        ...json.session,
+        isCloudSession: true,
+      };
+      saveSession(cloudSession);
+      return cloudSession;
+    }
+    return null;
+  } catch {
+    return null;
+  }
+}
+
+export async function fetchCloudExitTicketSession(
+  code: string,
+): Promise<ExitTicketSession | null> {
+  try {
+    const res = await fetch(
+      `/api/exit-ticket?code=${encodeURIComponent(code)}`,
+    );
+    if (!res.ok) return null;
+    const json = await res.json();
+    if (json.session) {
+      return {
+        ...json.session,
+        isCloudSession: true,
+      };
+    }
+    return null;
+  } catch {
+    return null;
+  }
+}
+
+export async function updateCloudExitTicketSession(
+  code: string,
+  updates: {
+    status?: string;
+    currentQuestionIndex?: number;
+    showDistribution?: boolean;
+  },
+): Promise<boolean> {
+  try {
+    const res = await fetch('/api/exit-ticket', {
+      method: 'PATCH',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ code, ...updates }),
+    });
+    return res.ok;
+  } catch {
+    return false;
+  }
+}
+
+export interface StudentCloudSessionData {
+  id: string;
+  code: string;
+  title: string;
+  grade: number;
+  status: 'lobby' | 'in_progress' | 'completed';
+  currentQuestionIndex: number;
+  showDistribution: boolean;
+  questions: ExitTicketQuestion[];
+  totalResponses: number;
+  optionCounts?: [number, number, number, number];
+  isAdmin?: boolean;
+}
+
+export async function fetchStudentCloudSession(
+  code: string,
+): Promise<StudentCloudSessionData | null> {
+  try {
+    const res = await fetch(
+      `/api/exit-ticket?code=${encodeURIComponent(code)}`,
+    );
+    if (!res.ok) return null;
+    const json = await res.json();
+    if (json.code) {
+      return json as StudentCloudSessionData;
+    }
+    return null;
+  } catch {
+    return null;
+  }
+}
+
+export async function submitCloudExitTicketResponse(
+  code: string,
+  studentKey: string,
+  studentName: string,
+  questionIndex: number,
+  selectedIndex: number,
+): Promise<boolean> {
+  try {
+    const res = await fetch('/api/exit-ticket/respond', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        code,
+        studentKey,
+        studentName,
+        questionIndex,
+        selectedIndex,
+      }),
+    });
+    return res.ok;
+  } catch {
+    return false;
+  }
+}

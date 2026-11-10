@@ -22,7 +22,7 @@ export default function GizlilikPage() {
           <h1 className="font-display text-3xl font-bold text-primary sm:text-4xl">
             Gizlilik politikası
           </h1>
-          <p className="text-sm text-tertiary">Son güncelleme: 19 Nisan 2026</p>
+          <p className="text-sm text-tertiary">Son güncelleme: 10 Kasım 2026</p>
         </header>
 
         <section className="space-y-4 text-sm leading-relaxed text-secondary sm:text-base">
@@ -46,7 +46,10 @@ export default function GizlilikPage() {
             <li>Hata raporları ve performans metrikleri (anonim)</li>
           </ul>
 
-          <h2 id="cerezler" className="font-display text-xl font-bold text-primary">
+          <h2
+            id="cerezler"
+            className="font-display text-xl font-bold text-primary"
+          >
             Çerez kullanımı
           </h2>
           <p>
@@ -60,10 +63,12 @@ export default function GizlilikPage() {
             Verilerin kimlerle paylaşılabileceği
           </h2>
           <p>
-            Hizmet sürekliliği için aşağıdaki işleyenlerle sözleşmesel güvenceler
-            altında veri paylaşılabilir: Supabase (veritabanı/depolama), Vercel
-            (uygulama barındırma), Resend (bilgilendirme e-postaları). Bu
-            kuruluşlar veriyi yalnızca sözleşme kapsamında işler.
+            Hizmet sürekliliği için aşağıdaki işleyenlerle sözleşmesel
+            güvenceler altında veri paylaşılabilir: Supabase
+            (veritabanı/depolama), Vercel (uygulama barındırma), Resend
+            (bilgilendirme e-postaları), LiveKit Cloud (canlı ders ses/görüntü
+            odaları) ve Sentry (anonim hata izleme). Bu kuruluşlar veriyi
+            yalnızca hizmet sunumu kapsamında işler.
           </p>
 
           <h2 className="font-display text-xl font-bold text-primary">
@@ -71,8 +76,12 @@ export default function GizlilikPage() {
           </h2>
           <ul className="list-disc space-y-1 pl-5">
             <li>Tüm trafik için zorunlu HTTPS</li>
-            <li>Parolalar yalnızca tek yönlü özet fonksiyonları ile saklanır</li>
-            <li>Row-level güvenlik kuralları ile satır bazlı erişim kontrolü</li>
+            <li>
+              Parolalar yalnızca tek yönlü özet fonksiyonları ile saklanır
+            </li>
+            <li>
+              Row-level güvenlik kuralları ile satır bazlı erişim kontrolü
+            </li>
             <li>Öğrenci verileri başka öğrencilerle paylaşılmaz</li>
             <li>Erişim günlükleri ve düzenli yedekleme</li>
           </ul>

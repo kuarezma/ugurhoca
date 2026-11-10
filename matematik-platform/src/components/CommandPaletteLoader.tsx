@@ -24,15 +24,12 @@ function isCommandPaletteShortcut(event: KeyboardEvent): boolean {
   return event.key === '/' && !isTyping;
 }
 
-/** Komut paleti kodunu yalnızca kullanıcı kısayolu kullandığında indirir. */
+/** Komut paleti kodunu yalnızca kullanıcı kısayolu kullandığında veya özel olay tetiklendiğinde indirir. */
 export function CommandPaletteLoader() {
   const [isRequested, setIsRequested] = useState(false);
+  const [openCounter, setOpenCounter] = useState(0);
 
   useEffect(() => {
-    if (isRequested) {
-      return;
-    }
-
     const handleKeyDown = (event: KeyboardEvent) => {
       if (!isCommandPaletteShortcut(event)) {
         return;
@@ -40,11 +37,27 @@ export function CommandPaletteLoader() {
 
       event.preventDefault();
       setIsRequested(true);
+      setOpenCounter((c) => c + 1);
+    };
+
+    const handleCustomOpen = () => {
+      setIsRequested(true);
+      setOpenCounter((c) => c + 1);
     };
 
     window.addEventListener('keydown', handleKeyDown);
-    return () => window.removeEventListener('keydown', handleKeyDown);
-  }, [isRequested]);
+    window.addEventListener('ugurhoca:open-command-palette', handleCustomOpen);
 
-  return isRequested ? <CommandPalette initiallyOpen /> : null;
+    return () => {
+      window.removeEventListener('keydown', handleKeyDown);
+      window.removeEventListener(
+        'ugurhoca:open-command-palette',
+        handleCustomOpen,
+      );
+    };
+  }, []);
+
+  return isRequested ? (
+    <CommandPalette key={openCounter} initiallyOpen />
+  ) : null;
 }

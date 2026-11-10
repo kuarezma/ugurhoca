@@ -119,9 +119,15 @@ export interface Submission {
   score?: number | null;
   comment?: string | null;
   file_url?: string | null;
+  annotated_feedback_url?: string | null;
   attachments?: AssignmentAttachment[] | null;
   [key: string]: unknown;
 }
+
+export type QuizQuestionType =
+  | 'multiple_choice'
+  | 'short_answer'
+  | 'open_ended';
 
 export interface Quiz {
   id: string;
@@ -145,6 +151,9 @@ export interface QuizQuestion {
   correct_index: number;
   explanation?: string | null;
   question_order?: number;
+  question_type?: QuizQuestionType | null;
+  expected_answer?: string | null;
+  rubric?: string[] | null;
   [key: string]: unknown;
 }
 

@@ -9,6 +9,7 @@ import {
   BookOpen,
   FileText,
 } from 'lucide-react';
+import dynamic from 'next/dynamic';
 import { SafeLink } from '@/components/SafeLink';
 import { useRouter } from 'next/navigation';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
@@ -16,6 +17,16 @@ import type { DashboardNotification } from '@/types/dashboard';
 import { getNotificationStyle } from '@/features/profile/utils/getNotificationStyle';
 import { useNavbarNotifications } from '@/features/home/hooks/useNavbarNotifications';
 import { formatIstanbulDate } from '@/lib/date-format';
+
+const MathText = dynamic(() => import('@/components/MathText'));
+
+function renderNotificationContent(text?: string | null) {
+  if (!text) return null;
+  if (text.includes('$')) {
+    return <MathText as="span">{text}</MathText>;
+  }
+  return text;
+}
 
 type HomeNavbarNotificationBellProps = {
   userId: string;
@@ -337,13 +348,15 @@ export function HomeNavbarNotificationBell({
                           <div className="min-w-0 flex-1">
                             <div className="flex items-start justify-between gap-2">
                               <p className="truncate text-sm font-semibold text-slate-900 dark:text-white">
-                                {notification.title}
+                                {renderNotificationContent(notification.title)}
                               </p>
                             </div>
                             {notification.type !== 'message-read' &&
                             notification.message ? (
                               <p className="mt-0.5 line-clamp-2 text-xs text-slate-600 dark:text-slate-300">
-                                {notification.message}
+                                {renderNotificationContent(
+                                  notification.message,
+                                )}
                               </p>
                             ) : null}
                             <div className="mt-1 flex items-center gap-2 text-[11px] text-slate-400">

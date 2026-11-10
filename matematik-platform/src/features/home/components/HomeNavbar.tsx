@@ -2,7 +2,7 @@
 
 import Image from 'next/image';
 import { usePathname } from 'next/navigation';
-import { LogOut, Menu, X } from 'lucide-react';
+import { LogOut, Menu, Search, X } from 'lucide-react';
 import { useState } from 'react';
 import { SafeLink } from '@/components/SafeLink';
 import { ThemeToggle } from '@/components/ThemeToggle';
@@ -21,12 +21,16 @@ export function HomeNavbar({ onLogout, user }: HomeNavbarProps) {
   const profileHref = user?.isAdmin ? '/admin' : '/profil';
   const showBell = Boolean(user?.id);
 
+  const handleOpenCommandPalette = () => {
+    if (typeof window !== 'undefined') {
+      window.dispatchEvent(new Event('ugurhoca:open-command-palette'));
+    }
+  };
+
   return (
-    <nav
-      className="fixed left-0 right-0 top-0 z-50 border-b border-subtle bg-surface-1/95 font-sans backdrop-blur-xl transition-all duration-300 pt-[env(safe-area-inset-top)] shadow-xs"
-    >
+    <nav className="fixed left-0 right-0 top-0 z-50 border-b border-subtle bg-surface-1/95 font-sans backdrop-blur-xl transition-all duration-300 pt-[env(safe-area-inset-top)] shadow-xs">
       <div className="mx-auto max-w-6xl px-4 pl-[max(1rem,env(safe-area-inset-left))] pr-[max(1rem,env(safe-area-inset-right))]">
-        <div className="flex h-16 w-full items-center justify-between gap-3 sm:gap-4">
+        <div className="flex h-16 w-full items-center justify-between gap-2 sm:gap-4">
           <SafeLink
             href="/"
             aria-current={isHomePage ? 'page' : undefined}
@@ -57,19 +61,20 @@ export function HomeNavbar({ onLogout, user }: HomeNavbarProps) {
             </div>
           </SafeLink>
 
-
           {/* Orta Menü Bağlantıları (Masaüstü) */}
-          <div className="hidden lg:flex items-center gap-1.5 xl:gap-2">
+          <div className="hidden lg:flex items-center gap-1 xl:gap-1.5">
             <SafeLink
               href="/icerikler?type=yaprak-test"
-              className="inline-flex items-center gap-1.5 rounded-xl px-3.5 py-2 text-sm font-bold text-secondary transition-colors duration-150 hover:bg-surface-2 hover:text-primary"
+              className="inline-flex items-center gap-1.5 rounded-xl px-2.5 py-1.5 text-xs xl:text-sm font-bold text-secondary transition-colors duration-150 hover:bg-surface-2 hover:text-primary"
             >
               <span>📄 Yaprak Testler</span>
             </SafeLink>
             <SafeLink
               href="/oyunlar"
-              aria-current={pathname?.startsWith('/oyunlar') ? 'page' : undefined}
-              className={`inline-flex items-center gap-1.5 rounded-xl px-3.5 py-2 text-sm font-bold transition-colors duration-150 ${
+              aria-current={
+                pathname?.startsWith('/oyunlar') ? 'page' : undefined
+              }
+              className={`inline-flex items-center gap-1.5 rounded-xl px-2.5 py-1.5 text-xs xl:text-sm font-bold transition-colors duration-150 ${
                 pathname?.startsWith('/oyunlar')
                   ? 'bg-accent-bg text-accent-fg'
                   : 'text-secondary hover:bg-surface-2 hover:text-primary'
@@ -78,30 +83,80 @@ export function HomeNavbar({ onLogout, user }: HomeNavbarProps) {
               <span>🎮 Oyunlar</span>
             </SafeLink>
             <SafeLink
-              href="/icerikler"
-              aria-current={pathname?.startsWith('/icerikler') ? 'page' : undefined}
-              className={`inline-flex items-center gap-1.5 rounded-xl px-3.5 py-2 text-sm font-bold transition-colors duration-150 ${
-                pathname?.startsWith('/icerikler')
+              href="/testler"
+              aria-current={
+                pathname?.startsWith('/testler') ? 'page' : undefined
+              }
+              className={`inline-flex items-center gap-1.5 rounded-xl px-2.5 py-1.5 text-xs xl:text-sm font-bold transition-colors duration-150 ${
+                pathname?.startsWith('/testler')
                   ? 'bg-accent-bg text-accent-fg'
                   : 'text-secondary hover:bg-surface-2 hover:text-primary'
               }`}
             >
-              <span>📚 Konular & Sınıflar</span>
+              <span>📝 Testler</span>
+            </SafeLink>
+            <SafeLink
+              href="/programlar"
+              aria-current={
+                pathname?.startsWith('/programlar') ? 'page' : undefined
+              }
+              className={`inline-flex items-center gap-1.5 rounded-xl px-2.5 py-1.5 text-xs xl:text-sm font-bold transition-colors duration-150 ${
+                pathname?.startsWith('/programlar')
+                  ? 'bg-accent-bg text-accent-fg'
+                  : 'text-secondary hover:bg-surface-2 hover:text-primary'
+              }`}
+            >
+              <span>🧭 Rehberlik</span>
+            </SafeLink>
+            <SafeLink
+              href="/araclar"
+              aria-current={
+                pathname?.startsWith('/araclar') ? 'page' : undefined
+              }
+              className={`inline-flex items-center gap-1.5 rounded-xl px-2.5 py-1.5 text-xs xl:text-sm font-bold transition-colors duration-150 ${
+                pathname?.startsWith('/araclar')
+                  ? 'bg-accent-bg text-accent-fg'
+                  : 'text-secondary hover:bg-surface-2 hover:text-primary'
+              }`}
+            >
+              <span>🧮 Araçlar</span>
+            </SafeLink>
+            <SafeLink
+              href="/icerikler"
+              aria-current={pathname === '/icerikler' ? 'page' : undefined}
+              className={`inline-flex items-center gap-1.5 rounded-xl px-2.5 py-1.5 text-xs xl:text-sm font-bold transition-colors duration-150 ${
+                pathname === '/icerikler'
+                  ? 'bg-accent-bg text-accent-fg'
+                  : 'text-secondary hover:bg-surface-2 hover:text-primary'
+              }`}
+            >
+              <span>📚 Konular</span>
             </SafeLink>
             <SafeLink
               href="/canli-ders"
-              aria-current={pathname?.startsWith('/canli-ders') ? 'page' : undefined}
-              className="inline-flex items-center gap-1.5 rounded-xl px-3.5 py-2 text-sm font-bold text-tone-danger-fg bg-tone-danger-bg/50 border border-tone-danger-border transition-colors duration-150 hover:bg-tone-danger-bg"
+              aria-current={
+                pathname?.startsWith('/canli-ders') ? 'page' : undefined
+              }
+              className="inline-flex items-center gap-1.5 rounded-xl px-2.5 py-1.5 text-xs xl:text-sm font-bold text-tone-danger-fg bg-tone-danger-bg/50 border border-tone-danger-border transition-colors duration-150 hover:bg-tone-danger-bg"
             >
-              <span className="relative flex h-2 w-2">
-                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-rose-400 opacity-75"></span>
-                <span className="relative inline-flex rounded-full h-2 w-2 bg-rose-500"></span>
-              </span>
+              <span className="relative inline-flex rounded-full h-2 w-2 bg-rose-500" />
               <span>Canlı Ders</span>
             </SafeLink>
           </div>
 
           <div className="hidden shrink-0 items-center gap-2 lg:flex">
+            <button
+              type="button"
+              onClick={handleOpenCommandPalette}
+              aria-label="Hızlı arama aç"
+              className="inline-flex items-center gap-1.5 rounded-xl border border-subtle bg-surface-2/80 px-2.5 py-1.5 text-xs font-semibold text-secondary transition-colors duration-150 hover:border-default hover:bg-surface-2 hover:text-primary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent-info"
+            >
+              <Search className="h-4 w-4 shrink-0" aria-hidden="true" />
+              <span className="hidden xl:inline">Ara</span>
+              <kbd className="hidden xl:inline-flex items-center rounded border border-subtle bg-surface-1 px-1 py-0.5 text-[10px] font-semibold text-tertiary">
+                ⌘K
+              </kbd>
+            </button>
             <ThemeToggle compact />
             {showBell && user?.id ? (
               <HomeNavbarNotificationBell userId={user.id} />
@@ -147,7 +202,15 @@ export function HomeNavbar({ onLogout, user }: HomeNavbarProps) {
             )}
           </div>
 
-          <div className="ml-auto flex shrink-0 items-center gap-1 lg:hidden">
+          <div className="ml-auto flex shrink-0 items-center gap-1.5 lg:hidden">
+            <button
+              type="button"
+              onClick={handleOpenCommandPalette}
+              aria-label="Hızlı arama aç"
+              className="inline-flex h-9 w-9 items-center justify-center rounded-xl border border-subtle bg-surface-2 transition-colors hover:bg-surface-3 text-secondary hover:text-primary focus:outline-none focus-visible:ring-2 focus-visible:ring-accent-info"
+            >
+              <Search className="h-4 w-4" aria-hidden="true" />
+            </button>
             <ThemeToggle compact />
             {showBell && user?.id ? (
               <HomeNavbarNotificationBell userId={user.id} />
@@ -160,7 +223,11 @@ export function HomeNavbar({ onLogout, user }: HomeNavbarProps) {
               aria-controls="mobile-navigation"
               aria-label={isOpen ? 'Menüyü kapat' : 'Menüyü aç'}
             >
-              {isOpen ? <X className="h-6 w-6" aria-hidden="true" /> : <Menu className="h-6 w-6" aria-hidden="true" />}
+              {isOpen ? (
+                <X className="h-6 w-6" aria-hidden="true" />
+              ) : (
+                <Menu className="h-6 w-6" aria-hidden="true" />
+              )}
             </button>
           </div>
         </div>
@@ -172,6 +239,22 @@ export function HomeNavbar({ onLogout, user }: HomeNavbarProps) {
           className="animate-fade-in border-t max-h-[calc(100dvh-4.5rem-env(safe-area-inset-top))] overflow-y-auto pb-[calc(1.5rem+env(safe-area-inset-bottom))] lg:hidden border-default bg-surface-1/95 backdrop-blur-xl"
         >
           <div className="space-y-1.5 px-4 py-4">
+            <button
+              type="button"
+              onClick={() => {
+                setIsOpen(false);
+                handleOpenCommandPalette();
+              }}
+              className="flex w-full items-center justify-between rounded-xl border border-subtle bg-surface-2 px-3.5 py-2.5 text-sm font-bold text-primary hover:bg-surface-3"
+            >
+              <span className="flex items-center gap-2.5">
+                <Search className="h-4 w-4 text-accent-fg" aria-hidden="true" />
+                <span>Hızlı Arama & Komut Paleti</span>
+              </span>
+              <kbd className="rounded border border-subtle bg-surface-1 px-1.5 py-0.5 text-xs font-semibold text-tertiary">
+                ⌘K
+              </kbd>
+            </button>
             <SafeLink
               href="/icerikler?type=yaprak-test"
               onClick={() => setIsOpen(false)}
@@ -185,6 +268,27 @@ export function HomeNavbar({ onLogout, user }: HomeNavbarProps) {
               className="flex items-center gap-3 rounded-xl px-3.5 py-2.5 text-sm font-bold text-primary hover:bg-surface-2"
             >
               <span className="text-lg">🎮</span> Matematik Oyunları
+            </SafeLink>
+            <SafeLink
+              href="/testler"
+              onClick={() => setIsOpen(false)}
+              className="flex items-center gap-3 rounded-xl px-3.5 py-2.5 text-sm font-bold text-primary hover:bg-surface-2"
+            >
+              <span className="text-lg">📝</span> İnteraktif Testler
+            </SafeLink>
+            <SafeLink
+              href="/programlar"
+              onClick={() => setIsOpen(false)}
+              className="flex items-center gap-3 rounded-xl px-3.5 py-2.5 text-sm font-bold text-primary hover:bg-surface-2"
+            >
+              <span className="text-lg">🧭</span> LGS & YKS Rehberliği
+            </SafeLink>
+            <SafeLink
+              href="/araclar"
+              onClick={() => setIsOpen(false)}
+              className="flex items-center gap-3 rounded-xl px-3.5 py-2.5 text-sm font-bold text-primary hover:bg-surface-2"
+            >
+              <span className="text-lg">🧮</span> Matematik & Sınav Araçları
             </SafeLink>
             <SafeLink
               href="/icerikler"
@@ -202,7 +306,9 @@ export function HomeNavbar({ onLogout, user }: HomeNavbarProps) {
             </SafeLink>
             <div className="mt-3 border-t pt-3 border-subtle">
               <div className="mb-3 flex items-center justify-between px-2">
-                <span className="text-xs font-bold text-secondary">Görünüm</span>
+                <span className="text-xs font-bold text-secondary">
+                  Görünüm
+                </span>
                 <ThemeToggle />
               </div>
               {user ? (

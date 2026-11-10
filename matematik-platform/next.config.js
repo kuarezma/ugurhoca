@@ -99,6 +99,15 @@ const nextConfig = {
         headers: globalSecurityHeaders,
       },
       {
+        source: '/sw.js',
+        headers: [
+          {
+            key: 'Cache-Control',
+            value: 'no-cache, no-store, must-revalidate',
+          },
+        ],
+      },
+      {
         // Statik medya ve yazı tipleri (Fonts / Icons / WebP / AVIF)
         source: '/:path*.(png|jpg|jpeg|webp|avif|svg|ico|woff|woff2)',
         headers: [

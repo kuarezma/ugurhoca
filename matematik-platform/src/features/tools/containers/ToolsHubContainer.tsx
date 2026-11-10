@@ -25,7 +25,8 @@ export const PUBLIC_TOOLS = [
     icon: School,
     gradient: 'from-cyan-500 to-blue-600',
     tag: 'LGS 2026/2027',
-    badgeColor: 'bg-cyan-500/15 text-cyan-800 dark:text-cyan-300 border-cyan-500/30',
+    badgeColor:
+      'bg-cyan-500/15 text-cyan-800 dark:text-cyan-300 border-cyan-500/30',
   },
   {
     id: 'yks',
@@ -36,7 +37,8 @@ export const PUBLIC_TOOLS = [
     icon: GraduationCap,
     gradient: 'from-purple-500 to-indigo-600',
     tag: 'YKS (TYT / AYT)',
-    badgeColor: 'bg-purple-500/15 text-purple-800 dark:text-purple-300 border-purple-500/30',
+    badgeColor:
+      'bg-purple-500/15 text-purple-800 dark:text-purple-300 border-purple-500/30',
   },
   {
     id: 'ebob-ekok',
@@ -47,7 +49,8 @@ export const PUBLIC_TOOLS = [
     icon: Layers,
     gradient: 'from-emerald-500 to-teal-600',
     tag: '8. Sınıf & TYT',
-    badgeColor: 'bg-emerald-500/15 text-emerald-800 dark:text-emerald-300 border-emerald-500/30',
+    badgeColor:
+      'bg-emerald-500/15 text-emerald-800 dark:text-emerald-300 border-emerald-500/30',
   },
   {
     id: 'pisagor',
@@ -58,7 +61,8 @@ export const PUBLIC_TOOLS = [
     icon: Triangle,
     gradient: 'from-amber-500 to-orange-600',
     tag: 'Geometri',
-    badgeColor: 'bg-amber-500/15 text-amber-900 dark:text-amber-300 border-amber-500/30',
+    badgeColor:
+      'bg-amber-500/15 text-amber-900 dark:text-amber-300 border-amber-500/30',
   },
 ];
 
@@ -67,7 +71,8 @@ export function ToolsHubContainer() {
     '@context': 'https://schema.org',
     '@type': 'ItemList',
     name: 'Uğur Hoca Matematik ve Sınav Araçları',
-    description: 'Ücretsiz LGS, YKS ve matematik hesaplama araçları koleksiyonu',
+    description:
+      'Ücretsiz LGS, YKS ve matematik hesaplama araçları koleksiyonu',
     url: `${SITE_URL}/araclar`,
     numberOfItems: PUBLIC_TOOLS.length,
     itemListElement: PUBLIC_TOOLS.map((tool, idx) => ({
@@ -81,7 +86,10 @@ export function ToolsHubContainer() {
   return (
     <main className="page-surface min-h-screen gradient-bg px-4 pb-[max(4rem,calc(env(safe-area-inset-bottom)+2rem))] pt-[calc(4.5rem+env(safe-area-inset-top))] sm:px-6 sm:pt-20 relative">
       {/* Ambient Glow Mesh */}
-      <div className="pointer-events-none fixed inset-0 -z-10 overflow-hidden" aria-hidden="true">
+      <div
+        className="pointer-events-none fixed inset-0 -z-10 overflow-hidden"
+        aria-hidden="true"
+      >
         <div className="absolute -top-32 -left-32 h-96 w-96 rounded-full bg-cyan-500/10 dark:bg-cyan-500/5 blur-3xl" />
         <div className="absolute top-48 -right-32 h-96 w-96 rounded-full bg-indigo-500/10 dark:bg-indigo-500/5 blur-3xl" />
         <div className="absolute bottom-10 left-1/3 h-96 w-96 rounded-full bg-amber-500/10 dark:bg-amber-500/5 blur-3xl" />
@@ -115,8 +123,9 @@ export function ToolsHubContainer() {
           </h1>
 
           <p className="mt-4 text-base sm:text-lg text-secondary leading-relaxed">
-            LGS ve YKS hazırlığında ihtiyacın olan en güncel puan hesaplayıcılar,
-            adım adım matematik çözücüleri ve görsel simülatörler tek çatı altında.
+            LGS ve YKS hazırlığında ihtiyacın olan en güncel puan
+            hesaplayıcılar, adım adım matematik çözücüleri ve görsel
+            simülatörler tek çatı altında.
           </p>
 
           <div className="mt-6 flex flex-wrap items-center justify-center gap-4 text-xs font-medium text-secondary">
@@ -140,10 +149,12 @@ export function ToolsHubContainer() {
               <Link
                 key={tool.id}
                 href={tool.href}
-                className="group relative flex flex-col justify-between rounded-3xl border border-slate-200/90 dark:border-white/10 bg-surface-1 p-6 sm:p-8 shadow-xl backdrop-blur-xl transition-all duration-300 hover:border-indigo-500/50 hover:shadow-2xl hover:-translate-y-1 overflow-hidden"
+                className="group relative flex flex-col justify-between rounded-3xl border border-default bg-surface-1 p-6 sm:p-8 shadow-xl backdrop-blur-xl transition-all duration-300 hover:border-border-strong hover:shadow-2xl hover:-translate-y-1 overflow-hidden"
               >
                 {/* Top accent gradient line */}
-                <div className={`absolute inset-x-0 top-0 h-1 bg-gradient-to-r ${tool.gradient}`} />
+                <div
+                  className={`absolute inset-x-0 top-0 h-1 bg-gradient-to-r ${tool.gradient}`}
+                />
 
                 <div>
                   <div className="flex items-center justify-between mb-5">
@@ -168,7 +179,7 @@ export function ToolsHubContainer() {
                   </p>
                 </div>
 
-                <div className="mt-6 flex items-center gap-2 text-sm font-bold text-indigo-600 dark:text-indigo-400 group-hover:text-indigo-500 pt-4 border-t border-slate-100 dark:border-slate-800">
+                <div className="mt-6 flex items-center gap-2 text-sm font-bold text-accent-fg group-hover:text-primary pt-4 border-t border-subtle">
                   <span>Hesaplamaya Başla</span>
                   <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" />
                 </div>
@@ -178,7 +189,7 @@ export function ToolsHubContainer() {
         </div>
 
         {/* Bottom Platform Invitation Banner */}
-        <div className="mt-12 rounded-3xl border border-slate-200/90 dark:border-white/10 bg-surface-1 p-6 sm:p-8 text-center backdrop-blur-xl shadow-xl relative overflow-hidden">
+        <div className="mt-12 rounded-3xl border border-default bg-surface-1 p-6 sm:p-8 text-center backdrop-blur-xl shadow-xl relative overflow-hidden">
           <div className="absolute inset-0 bg-gradient-to-br from-indigo-500/5 to-purple-500/5 pointer-events-none" />
           <div className="flex justify-center mb-3">
             <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-indigo-500/15 text-indigo-600 dark:text-indigo-400 shadow-xs">
@@ -201,7 +212,7 @@ export function ToolsHubContainer() {
             </Link>
             <Link
               href="/programlar"
-              className="rounded-xl border border-default dark:border-slate-600 bg-white/90 dark:bg-slate-900/80 px-5 py-2.5 text-xs sm:text-sm font-bold text-primary transition hover:bg-slate-100 dark:hover:bg-slate-800 hover:-translate-y-0.5"
+              className="rounded-xl border border-default bg-surface-2 px-5 py-2.5 text-xs sm:text-sm font-bold text-primary transition hover:bg-surface-3 hover:-translate-y-0.5"
             >
               LGS & YKS Tercih Sihirbazı
             </Link>

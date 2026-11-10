@@ -24,7 +24,7 @@ describe('site-metadata', () => {
     expect(metadata.alternates?.canonical).toBe(`${SITE_URL}/testler`);
     expect(metadata.openGraph?.url).toBe(`${SITE_URL}/testler`);
     expect(twitter.card).toBe('summary_large_image');
-    expect(twitter.images).toContain(`${SITE_URL}/opengraph-image`);
+    expect(twitter.images).toContain(`${SITE_URL}/opengraph-image.png`);
   });
 
   it('marks noindex pages consistently for robots and googleBot', () => {
@@ -52,7 +52,8 @@ describe('site-metadata', () => {
       path: '/',
     });
     expect(defaultHomeMeta.title).toEqual({
-      absolute: 'Uğur Hoca Matematik | 5, 6, 7, 8. Sınıf & LGS Öğrenme Platformu',
+      absolute:
+        'Uğur Hoca Matematik | 5, 6, 7, 8. Sınıf & LGS Öğrenme Platformu',
     });
     expect(defaultHomeMeta.openGraph?.title).toBe(
       'Uğur Hoca Matematik | 5, 6, 7, 8. Sınıf & LGS Öğrenme Platformu',
@@ -76,4 +77,3 @@ describe('site-metadata', () => {
     expect(subpageMeta.openGraph?.title).toBe('Oyunlar | Uğur Hoca Matematik');
   });
 });
-

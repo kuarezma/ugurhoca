@@ -41,7 +41,8 @@
     "grade:integer",
     "feedback:text",
     "submitted_at:timestamp with time zone",
-    "late:boolean"
+    "late:boolean",
+    "annotated_feedback_url:text"
   ],
   "study_sessions": [
     "id:uuid",
@@ -406,7 +407,45 @@
     "explanation:text",
     "created_at:timestamp with time zone",
     "question_image_url:text",
-    "option_image_urls:text[]"
+    "option_image_urls:text[]",
+    "question_type:text",
+    "expected_answer:text",
+    "rubric:text[]"
+  ],
+  "exit_ticket_sessions": [
+    "id:uuid",
+    "code:text",
+    "title:text",
+    "grade:integer",
+    "status:text",
+    "current_question_index:integer",
+    "show_distribution:boolean",
+    "questions:jsonb",
+    "created_by:uuid",
+    "created_at:timestamp with time zone",
+    "updated_at:timestamp with time zone"
+  ],
+  "exit_ticket_responses": [
+    "id:uuid",
+    "session_id:uuid",
+    "student_key:text",
+    "student_id:uuid",
+    "student_name:text",
+    "question_index:integer",
+    "selected_index:integer",
+    "answered_at:timestamp with time zone"
+  ],
+  "live_lesson_questions": [
+    "id:uuid",
+    "lesson_id:uuid",
+    "student_id:uuid",
+    "student_name:text",
+    "topic:text",
+    "difficulty:text",
+    "question_text:text",
+    "image_url:text",
+    "status:text",
+    "created_at:timestamp with time zone"
   ],
   "live_lesson_events": [
     "id:uuid",

@@ -26,11 +26,10 @@ export async function GET() {
   const auth = await requireLiveLessonUser();
   if (!auth.ok) return auth.response;
 
-  const limited = await enforceRateLimit(
-    'live-lessons-list',
-    auth.user.id,
-    { limit: 60, windowSeconds: 60 },
-  );
+  const limited = await enforceRateLimit('live-lessons-list', auth.user.id, {
+    limit: 60,
+    windowSeconds: 60,
+  });
   if (limited) return limited;
 
   const lessons = await loadLiveLessonsForCurrentUser();
@@ -42,7 +41,10 @@ export async function POST(request: Request) {
     const auth = await requireLiveLessonUser();
     if (!auth.ok) return auth.response;
     if (!isLiveLessonAdmin(auth.user)) {
-      return NextResponse.json({ error: 'Bu işlem için admin yetkisi gerekir.' }, { status: 403 });
+      return NextResponse.json(
+        { error: 'Bu işlem için admin yetkisi gerekir.' },
+        { status: 403 },
+      );
     }
 
     const limited = await enforceRateLimit(
@@ -55,7 +57,10 @@ export async function POST(request: Request) {
     const rawBody = await request.json().catch(() => null);
     const parsedBody = createLiveLessonBodySchema.safeParse(rawBody);
     if (!parsedBody.success) {
-      return NextResponse.json({ error: 'Geçersiz ders planlama isteği.' }, { status: 400 });
+      return NextResponse.json(
+        { error: 'Geçersiz ders planlama isteği.' },
+        { status: 400 },
+      );
     }
     const body = parsedBody.data;
 
@@ -65,7 +70,9 @@ export async function POST(request: Request) {
       repeatWeeklyUntil: body.repeatWeeklyUntil || null,
       startsAt: String(body.startsAt || ''),
       targetGrade: String(body.targetGrade || ''),
-      targetStudentIds: Array.isArray(body.targetStudentIds) ? body.targetStudentIds : [],
+      targetStudentIds: Array.isArray(body.targetStudentIds)
+        ? body.targetStudentIds
+        : [],
       title: String(body.title || ''),
       userId: auth.user.id,
     });

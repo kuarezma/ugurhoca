@@ -813,8 +813,76 @@ SELECT pg_temp.expect_denied('anon documents bucketındaki dosyayı güncelleyem
 SELECT pg_temp.expect_denied('anon documents bucketındaki dosyayı silemez',
   'DELETE FROM storage.objects WHERE bucket_id = ''documents'' AND name = ''resmi_ders_plani.pdf''');
 
+-- anon yeni yüzeyleri (exit_ticket_sessions, exit_ticket_responses, live_lesson_questions) okuyamaz (REVOKE):
+SELECT pg_temp.expect_denied('anon exit_ticket_sessions okuyamaz (REVOKE)',
+  'SELECT count(*) FROM public.exit_ticket_sessions');
+SELECT pg_temp.expect_denied('anon exit_ticket_responses okuyamaz (REVOKE)',
+  'SELECT count(*) FROM public.exit_ticket_responses');
+SELECT pg_temp.expect_denied('anon live_lesson_questions okuyamaz (REVOKE)',
+  'SELECT count(*) FROM public.live_lesson_questions');
+
 -- ------------------------------------------------------------------------------
--- 8. Temizlik ve Geri Alma
+-- 8. Yüzey 9 & 10: exit_ticket_* ve live_lesson_questions (Öğrenci İzolasyonu)
+-- ------------------------------------------------------------------------------
+RESET ROLE;
+INSERT INTO public.exit_ticket_sessions (id, code, title, grade, status, created_by)
+VALUES (
+  '60000000-0000-4000-8000-0000000000e1',
+  '842915',
+  '8. Sınıf Üslü İfadeler Çıkış Bileti',
+  8,
+  'active',
+  '60000000-0000-4000-8000-0000000000ad'
+);
+INSERT INTO public.exit_ticket_responses (session_id, student_key, student_id, student_name, question_index, selected_index)
+VALUES
+  ('60000000-0000-4000-8000-0000000000e1', 'key-a', '60000000-0000-4000-8000-00000000000a', 'Öğrenci A', 0, 1),
+  ('60000000-0000-4000-8000-0000000000e1', 'key-b', '60000000-0000-4000-8000-00000000000b', 'Öğrenci B', 0, 2);
+
+INSERT INTO public.live_lesson_questions (id, student_id, student_name, topic, difficulty, question_text)
+VALUES
+  ('60000000-0000-4000-8000-0000000000f1', '60000000-0000-4000-8000-00000000000a', 'Öğrenci A', 'Kesirler', 'Orta', 'Payda eşitleme sorusu A'),
+  ('60000000-0000-4000-8000-0000000000f2', '60000000-0000-4000-8000-00000000000b', 'Öğrenci B', 'Üslü Sayılar', 'Zor', 'Negatif üs sorusu B');
+
+-- Öğrenci A: exit_ticket_responses tablosunu doğrudan okuyamaz (diğer öğrencilerin adlarını göremez)
+SET LOCAL ROLE authenticated;
+SELECT set_config('request.jwt.claims',
+  '{"sub":"60000000-0000-4000-8000-00000000000a","email":"rls-ogrenci-a@example.com","role":"authenticated"}', true);
+
+SELECT pg_temp.expect_count('Öğrenci A exit_ticket_sessions doğrudan göremez (RLS: 0 satır)',
+  (SELECT count(*) FROM public.exit_ticket_sessions), 0);
+SELECT pg_temp.expect_count('Öğrenci A exit_ticket_responses doğrudan göremez (RLS: 0 satır)',
+  (SELECT count(*) FROM public.exit_ticket_responses), 0);
+SELECT pg_temp.expect_count('Öğrenci A live_lesson_questions tablosunda yalnız kendi sorusunu görür',
+  (SELECT count(*) FROM public.live_lesson_questions), 1);
+SELECT pg_temp.expect_denied('Öğrenci A Öğrenci B adına live_lesson_questions ekleyemez',
+  'INSERT INTO public.live_lesson_questions (student_id, student_name, topic, question_text)
+   VALUES (''60000000-0000-4000-8000-00000000000b'', ''Sahte B'', ''Cebir'', ''Yetkisiz soru'')');
+INSERT INTO public.live_lesson_questions (id, student_id, student_name, topic, question_text)
+VALUES ('60000000-0000-4000-8000-0000000000f3', '60000000-0000-4000-8000-00000000000a', 'Öğrenci A', 'Oran Orantı', 'Kendi yeni sorum');
+SELECT pg_temp.expect_count('Öğrenci A kendi sorusunu ekledikten sonra 2 sorusunu görür (B yine gizli)',
+  (SELECT count(*) FROM public.live_lesson_questions), 2);
+
+-- Admin: tüm exit_ticket ve live_lesson_questions kayıtlarını görür ve yönetir
+RESET ROLE;
+SET LOCAL ROLE authenticated;
+SELECT set_config('request.jwt.claims',
+  '{"sub":"60000000-0000-4000-8000-0000000000ad","email":"admin@ugurhoca.com","role":"authenticated"}', true);
+
+SELECT pg_temp.expect_count('Admin exit_ticket_sessions kayıtlarını görür',
+  (SELECT count(*) FROM public.exit_ticket_sessions), 1);
+SELECT pg_temp.expect_count('Admin exit_ticket_responses kayıtlarını görür',
+  (SELECT count(*) FROM public.exit_ticket_responses), 2);
+SELECT pg_temp.expect_count('Admin tüm öğrencilerin live_lesson_questions sorularını görür',
+  (SELECT count(*) FROM public.live_lesson_questions), 3);
+UPDATE public.live_lesson_questions
+SET status = 'projected'
+WHERE id = '60000000-0000-4000-8000-0000000000f1';
+SELECT pg_temp.expect_count('Admin live_lesson_questions durumunu projected yapabilir',
+  (SELECT count(*) FROM public.live_lesson_questions WHERE id = '60000000-0000-4000-8000-0000000000f1' AND status = 'projected'), 1);
+
+-- ------------------------------------------------------------------------------
+-- 9. Temizlik ve Geri Alma
 -- ------------------------------------------------------------------------------
 RESET ROLE;
 ROLLBACK;

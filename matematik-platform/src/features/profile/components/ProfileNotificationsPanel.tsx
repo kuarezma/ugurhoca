@@ -1,16 +1,27 @@
 'use client';
 
+import dynamic from 'next/dynamic';
 import { motion } from 'framer-motion';
 import { ChevronRight } from 'lucide-react';
 import type { DashboardNotification } from '@/types/dashboard';
 import { getNotificationStyle } from '@/features/profile/utils/getNotificationStyle';
 import { formatIstanbulDate } from '@/lib/date-format';
 
+const MathText = dynamic(() => import('@/components/MathText'));
+
 type ProfileNotificationsPanelProps = {
   notifications: DashboardNotification[];
   unreadCount: number;
   onNotificationClick: (notification: DashboardNotification) => void;
 };
+
+function renderNotificationText(text?: string | null) {
+  if (!text) return null;
+  if (text.includes('$')) {
+    return <MathText as="span">{text}</MathText>;
+  }
+  return text;
+}
 
 export default function ProfileNotificationsPanel({
   notifications,
@@ -58,7 +69,7 @@ export default function ProfileNotificationsPanel({
                   <div className="min-w-0 flex-1">
                     <div className="flex items-start justify-between gap-2">
                       <p className="text-sm font-medium text-slate-900 dark:text-white">
-                        {notification.title}
+                        {renderNotificationText(notification.title)}
                       </p>
                       <span
                         className={`whitespace-nowrap rounded-full px-2 py-0.5 text-[11px] font-semibold ${style.badge}`}
@@ -69,7 +80,7 @@ export default function ProfileNotificationsPanel({
                     {notification.type !== 'message-read' &&
                     notification.message ? (
                       <p className="mt-1 line-clamp-2 text-xs text-slate-600 dark:text-slate-400">
-                        {notification.message}
+                        {renderNotificationText(notification.message)}
                       </p>
                     ) : null}
                     <p className="mt-2 text-xs text-slate-500 dark:text-slate-400">

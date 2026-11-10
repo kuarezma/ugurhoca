@@ -21,7 +21,8 @@ const mockContent: ContentDocument = {
   author: 'Uğur Hoca',
 };
 
-const renderCard = (ui: React.ReactElement) => render(ui, { wrapper: ToastProvider });
+const renderCard = (ui: React.ReactElement) =>
+  render(ui, { wrapper: ToastProvider });
 
 describe('ContentCard', () => {
   it('renders grid view correctly with title, metadata, stats, and action buttons', () => {
@@ -65,7 +66,17 @@ describe('ContentCard', () => {
     // Badges
     expect(screen.getByText('Yeni')).toBeInTheDocument();
     expect(screen.getByText('ÇÖZÜMLÜ')).toBeInTheDocument();
-    expect(screen.getByText('5. Sınıf')).toBeInTheDocument();
+    expect(screen.getAllByText('5. Sınıf')[0]).toBeInTheDocument();
+
+    // SEO link on title
+    expect(
+      screen.getByRole('link', {
+        name: '5. Sınıf Doğal Sayılar ve İşlemler Yaprak Test',
+      }),
+    ).toHaveAttribute(
+      'href',
+      '/icerikler/5-sinif-dogal-sayilar-ve-islemler-yaprak-test--doc-123',
+    );
 
     // Primary Actions
     const previewBtn = screen.getByRole('button', { name: /Önizle/i });

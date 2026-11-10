@@ -19,6 +19,7 @@ import MathText from '@/components/MathText';
 import { Mascot } from '@/components/Mascot';
 import { QuizPacingCoach } from './QuizPacingCoach';
 import type { Quiz, QuizQuestion } from '@/types/quiz';
+import { evaluateShortAnswer } from '@/features/quizzes/utils/answerEvaluation';
 
 export interface QuizResultsViewProps {
   score: number;
@@ -38,6 +39,8 @@ export interface QuizResultsViewProps {
   onShareResult?: () => void;
   onOpenMistakeNotebook?: () => void;
   onOpenWorksheet?: () => void;
+  textAnswers?: Record<number, string>;
+  rubricEvaluations?: Record<number, number[]>;
 }
 
 export function QuizResultsView({
@@ -58,17 +61,40 @@ export function QuizResultsView({
   onShareResult,
   onOpenMistakeNotebook,
   onOpenWorksheet,
+  textAnswers = {},
+  rubricEvaluations = {},
 }: QuizResultsViewProps) {
-  const indexedAnswers = quizQuestions.map((_, i) => answers[i]);
-  const correctCount = indexedAnswers.filter(
-    (a, i) => a === quizQuestions[i]?.correct_index,
+  const isQuestionCorrect = (q: QuizQuestion, i: number) => {
+    const type = q.question_type || 'multiple_choice';
+    if (type === 'short_answer') {
+      return evaluateShortAnswer(textAnswers[i] ?? '', q.expected_answer ?? '');
+    }
+    if (type === 'open_ended') {
+      const checked = rubricEvaluations[i] ?? [];
+      const total = q.rubric?.length ?? 0;
+      if (total > 0) return checked.length === total;
+      return (textAnswers[i] ?? '').trim().length > 0;
+    }
+    return answers[i] === q.correct_index;
+  };
+
+  const isQuestionAnswered = (q: QuizQuestion, i: number) => {
+    const type = q.question_type || 'multiple_choice';
+    if (type === 'short_answer' || type === 'open_ended') {
+      return (textAnswers[i] ?? '').trim().length > 0;
+    }
+    return answers[i] !== undefined;
+  };
+
+  const correctCount = quizQuestions.filter((q, i) =>
+    isQuestionCorrect(q, i),
+  ).length;
+  const wrongCount = quizQuestions.filter(
+    (q, i) => isQuestionAnswered(q, i) && !isQuestionCorrect(q, i),
   ).length;
 
-  const wrongCount = indexedAnswers.filter(
-    (a, i) => a !== undefined && a !== quizQuestions[i]?.correct_index,
-  ).length;
-
-  const mascotPose = score >= 80 ? 'celebrate' : score >= 50 ? 'waving' : 'thinking';
+  const mascotPose =
+    score >= 80 ? 'celebrate' : score >= 50 ? 'waving' : 'thinking';
 
   return (
     <div className="max-w-4xl mx-auto">
@@ -77,7 +103,11 @@ export function QuizResultsView({
 
         <div className="relative z-10 flex flex-col items-center">
           <div className="mb-4">
-            <Mascot pose={mascotPose} size={140} ariaLabel="Test sonucu maskot tepkisi" />
+            <Mascot
+              pose={mascotPose}
+              size={140}
+              ariaLabel="Test sonucu maskot tepkisi"
+            />
           </div>
 
           <span className="inline-block px-3 py-1 rounded-full bg-purple-500/10 border border-purple-500/20 text-purple-700 dark:text-purple-300 text-xs font-bold uppercase tracking-wider mb-2">
@@ -93,8 +123,8 @@ export function QuizResultsView({
               score >= 70
                 ? 'from-green-500 to-emerald-500 dark:from-green-400 dark:to-emerald-400'
                 : score >= 40
-                ? 'from-amber-500 to-orange-500 dark:from-amber-400 dark:to-orange-400'
-                : 'from-red-500 to-purple-500 dark:from-red-400 dark:to-purple-400'
+                  ? 'from-amber-500 to-orange-500 dark:from-amber-400 dark:to-orange-400'
+                  : 'from-red-500 to-purple-500 dark:from-red-400 dark:to-purple-400'
             }`}
           >
             {score}%
@@ -102,13 +132,17 @@ export function QuizResultsView({
 
           <div className="grid grid-cols-2 gap-4 mb-8 w-full max-w-sm">
             <div className="bg-emerald-50 dark:bg-emerald-500/10 border border-emerald-200 dark:border-emerald-500/20 rounded-2xl p-4">
-              <div className="text-4xl font-black text-accent-success-ink dark:text-emerald-400 mb-1">{correctCount}</div>
+              <div className="text-4xl font-black text-accent-success-ink dark:text-emerald-400 mb-1">
+                {correctCount}
+              </div>
               <div className="text-emerald-700 dark:text-emerald-500/80 font-bold uppercase text-xs tracking-wider">
                 Doğru
               </div>
             </div>
             <div className="bg-rose-50 dark:bg-red-500/10 border border-rose-200 dark:border-red-500/20 rounded-2xl p-4">
-              <div className="text-4xl font-black text-rose-600 dark:text-red-400 mb-1">{wrongCount}</div>
+              <div className="text-4xl font-black text-rose-600 dark:text-red-400 mb-1">
+                {wrongCount}
+              </div>
               <div className="text-rose-700 dark:text-red-500/80 font-bold uppercase text-xs tracking-wider">
                 Yanlış
               </div>
@@ -122,65 +156,76 @@ export function QuizResultsView({
               questions={quizQuestions}
               questionTimes={questionTimes}
               answers={answers}
-              totalSecondsSpent={startTime ? Math.floor((Date.now() - startTime) / 1000) : 0}
+              totalSecondsSpent={
+                startTime ? Math.floor((Date.now() - startTime) / 1000) : 0
+              }
             />
           </div>
 
           {/* Metakognitif Öz Güven & Yanılgı Analizi */}
-          {Object.keys(confidenceRatings).length > 0 && (() => {
-            const ratedEntries = Object.entries(confidenceRatings);
-            const sureWrongCount = ratedEntries.filter(
-              ([idx, conf]) => conf === 'sure' && answers[Number(idx)] !== quizQuestions[Number(idx)]?.correct_index,
-            ).length;
-            const guessCorrectCount = ratedEntries.filter(
-              ([idx, conf]) => conf === 'guess' && answers[Number(idx)] === quizQuestions[Number(idx)]?.correct_index,
-            ).length;
+          {Object.keys(confidenceRatings).length > 0 &&
+            (() => {
+              const ratedEntries = Object.entries(confidenceRatings);
+              const sureWrongCount = ratedEntries.filter(
+                ([idx, conf]) =>
+                  conf === 'sure' &&
+                  answers[Number(idx)] !==
+                    quizQuestions[Number(idx)]?.correct_index,
+              ).length;
+              const guessCorrectCount = ratedEntries.filter(
+                ([idx, conf]) =>
+                  conf === 'guess' &&
+                  answers[Number(idx)] ===
+                    quizQuestions[Number(idx)]?.correct_index,
+              ).length;
 
-            return (
-              <div className="mb-8 w-full p-4 sm:p-5 rounded-2xl bg-indigo-50 dark:bg-indigo-950/40 border border-indigo-200 dark:border-indigo-500/30 text-left">
-                <div className="flex items-center gap-2 mb-3">
-                  <Sparkles className="w-4 h-4 text-indigo-600 dark:text-indigo-400" />
-                  <h4 className="text-xs sm:text-sm font-bold text-slate-900 dark:text-white uppercase tracking-wider">
-                    Metakognitif Analiz (Öz Güven & Tahmin Karnesi)
-                  </h4>
-                </div>
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs">
-                  <div className="p-3 rounded-xl bg-white dark:bg-rose-500/10 border border-rose-200 dark:border-rose-500/20 shadow-xs">
-                    <span className="font-bold text-rose-700 dark:text-rose-300 block">
-                      🚨 Emin Olup Yanlış Yapılan: {sureWrongCount} Soru
-                    </span>
-                    <p className="text-slate-600 dark:text-slate-300 mt-1 leading-relaxed">
-                      {sureWrongCount > 0
-                        ? 'Bu sorularda güçlü bir kavram yanılgısı tespit edildi. Hata defterinden çözüm adımlarını özellikle incele.'
-                        : 'Harika! Kendinden emin olduğun hiçbir soruda yanılgıya düşmedin.'}
-                    </p>
+              return (
+                <div className="mb-8 w-full p-4 sm:p-5 rounded-2xl bg-indigo-50 dark:bg-indigo-950/40 border border-indigo-200 dark:border-indigo-500/30 text-left">
+                  <div className="flex items-center gap-2 mb-3">
+                    <Sparkles className="w-4 h-4 text-indigo-600 dark:text-indigo-400" />
+                    <h4 className="text-xs sm:text-sm font-bold text-slate-900 dark:text-white uppercase tracking-wider">
+                      Metakognitif Analiz (Öz Güven & Tahmin Karnesi)
+                    </h4>
                   </div>
-                  <div className="p-3 rounded-xl bg-white dark:bg-amber-500/10 border border-amber-200 dark:border-amber-500/20 shadow-xs">
-                    <span className="font-bold text-amber-700 dark:text-amber-300 block">
-                      🎲 Tahmin Edip Doğru Çıkan: {guessCorrectCount} Soru
-                    </span>
-                    <p className="text-slate-600 dark:text-slate-300 mt-1 leading-relaxed">
-                      {guessCorrectCount > 0
-                        ? 'Şans faktörüyle tutturulmuş olabilir. Konuyu kalıcı kılmak için soru çözümünü gözden geçir.'
-                        : 'Tahmin ettiğin soru bulunmuyor.'}
-                    </p>
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs">
+                    <div className="p-3 rounded-xl bg-white dark:bg-rose-500/10 border border-rose-200 dark:border-rose-500/20 shadow-xs">
+                      <span className="font-bold text-rose-700 dark:text-rose-300 block">
+                        🚨 Emin Olup Yanlış Yapılan: {sureWrongCount} Soru
+                      </span>
+                      <p className="text-slate-600 dark:text-slate-300 mt-1 leading-relaxed">
+                        {sureWrongCount > 0
+                          ? 'Bu sorularda güçlü bir kavram yanılgısı tespit edildi. Hata defterinden çözüm adımlarını özellikle incele.'
+                          : 'Harika! Kendinden emin olduğun hiçbir soruda yanılgıya düşmedin.'}
+                      </p>
+                    </div>
+                    <div className="p-3 rounded-xl bg-white dark:bg-amber-500/10 border border-amber-200 dark:border-amber-500/20 shadow-xs">
+                      <span className="font-bold text-amber-700 dark:text-amber-300 block">
+                        🎲 Tahmin Edip Doğru Çıkan: {guessCorrectCount} Soru
+                      </span>
+                      <p className="text-slate-600 dark:text-slate-300 mt-1 leading-relaxed">
+                        {guessCorrectCount > 0
+                          ? 'Şans faktörüyle tutturulmuş olabilir. Konuyu kalıcı kılmak için soru çözümünü gözden geçir.'
+                          : 'Tahmin ettiğin soru bulunmuyor.'}
+                      </p>
+                    </div>
                   </div>
                 </div>
-              </div>
-            );
-          })()}
+              );
+            })()}
 
           {/* Soru Soru Sınav Analizi */}
           <div className="text-left bg-slate-50 dark:bg-slate-800/30 border border-slate-200 dark:border-slate-700/50 rounded-2xl p-6 mb-8 max-h-[400px] overflow-y-auto custom-scrollbar w-full">
             <h3 className="text-xl font-bold text-slate-900 dark:text-white mb-4 flex items-center gap-2">
-              <Target className="w-5 h-5 text-purple-600 dark:text-purple-400" /> {' '}Sınav Analizi
+              <Target className="w-5 h-5 text-purple-600 dark:text-purple-400" />{' '}
+              Sınav Analizi
             </h3>
             <div className="space-y-4">
               {quizQuestions.map((q, index) => {
-                const userAnswer = answers[index];
-                const isCorrect = userAnswer === q.correct_index;
-                const isUnanswered = userAnswer === undefined;
+                const qType = q.question_type || 'multiple_choice';
+                const isCorrect = isQuestionCorrect(q, index);
+                const isUnanswered = !isQuestionAnswered(q, index);
                 const timeSpent = questionTimes[index] || 0;
+                const userAnswer = answers[index];
 
                 return (
                   <div
@@ -196,7 +241,9 @@ export function QuizResultsView({
                         <MathText
                           as="p"
                           className={`font-semibold text-sm ${
-                            isCorrect ? 'text-emerald-800 dark:text-emerald-300' : 'text-rose-800 dark:text-red-300'
+                            isCorrect
+                              ? 'text-emerald-800 dark:text-emerald-300'
+                              : 'text-rose-800 dark:text-red-300'
                           }`}
                         >
                           {`${index + 1}. ${q.question}`}
@@ -210,10 +257,10 @@ export function QuizResultsView({
                                 timeSpent > 150
                                   ? 'bg-rose-500/15 border-rose-500/30 text-rose-700 dark:text-rose-300'
                                   : timeSpent > 110
-                                  ? 'bg-amber-500/15 border-amber-500/30 text-amber-700 dark:text-amber-300'
-                                  : timeSpent >= 45
-                                  ? 'bg-cyan-500/15 border-cyan-500/30 text-cyan-700 dark:text-cyan-300'
-                                  : 'bg-emerald-500/15 border-emerald-500/30 text-emerald-700 dark:text-emerald-300'
+                                    ? 'bg-amber-500/15 border-amber-500/30 text-amber-700 dark:text-amber-300'
+                                    : timeSpent >= 45
+                                      ? 'bg-cyan-500/15 border-cyan-500/30 text-cyan-700 dark:text-cyan-300'
+                                      : 'bg-emerald-500/15 border-emerald-500/30 text-emerald-700 dark:text-emerald-300'
                               }`}
                             >
                               <Clock className="h-3 w-3" />
@@ -221,10 +268,10 @@ export function QuizResultsView({
                                 {timeSpent > 150
                                   ? `⚠️ Zaman Tuzağı: ${Math.floor(timeSpent / 60)} dk ${timeSpent % 60} sn`
                                   : timeSpent > 110
-                                  ? `⏳ Süre Uzadı: ${Math.floor(timeSpent / 60)} dk ${timeSpent % 60} sn`
-                                  : timeSpent >= 45
-                                  ? `⏱️ İdeal: ${timeSpent} sn`
-                                  : `⚡ Hızlı: ${timeSpent} sn`}
+                                    ? `⏳ Süre Uzadı: ${Math.floor(timeSpent / 60)} dk ${timeSpent % 60} sn`
+                                    : timeSpent >= 45
+                                      ? `⏱️ İdeal: ${timeSpent} sn`
+                                      : `⚡ Hızlı: ${timeSpent} sn`}
                               </span>
                             </span>
                           </div>
@@ -239,29 +286,120 @@ export function QuizResultsView({
                     </div>
 
                     <div className="space-y-2 mt-3">
-                      <div className="flex items-center gap-2 text-sm text-slate-600 dark:text-slate-300">
-                        <span className="opacity-70 w-20 text-xs uppercase tracking-wider">
-                          Cevabın:
-                        </span>
-                        <MathText
-                          className={`font-medium px-2 py-0.5 rounded ${
-                            isCorrect
-                              ? 'bg-emerald-100 text-emerald-800 dark:bg-emerald-500/20 dark:text-emerald-200'
-                              : 'bg-rose-100 text-rose-800 dark:bg-red-500/20 dark:text-red-200'
-                          }`}
-                        >
-                          {isUnanswered ? 'Boş Bırakıldı' : q.options[userAnswer]}
-                        </MathText>
-                      </div>
+                      {qType === 'multiple_choice' && (
+                        <>
+                          <div className="flex items-center gap-2 text-sm text-slate-600 dark:text-slate-300">
+                            <span className="opacity-70 w-20 text-xs uppercase tracking-wider">
+                              Cevabın:
+                            </span>
+                            <MathText
+                              className={`font-medium px-2 py-0.5 rounded ${
+                                isCorrect
+                                  ? 'bg-emerald-100 text-emerald-800 dark:bg-emerald-500/20 dark:text-emerald-200'
+                                  : 'bg-rose-100 text-rose-800 dark:bg-red-500/20 dark:text-red-200'
+                              }`}
+                            >
+                              {isUnanswered
+                                ? 'Boş Bırakıldı'
+                                : q.options?.[userAnswer] || ''}
+                            </MathText>
+                          </div>
 
-                      {!isCorrect && (
-                        <div className="flex items-center gap-2 text-sm text-slate-600 dark:text-slate-300">
-                          <span className="opacity-70 w-20 text-xs uppercase tracking-wider">
-                            Doğrusu:
-                          </span>
-                          <MathText className="font-medium px-2 py-0.5 rounded bg-emerald-100 text-emerald-800 dark:bg-emerald-500/20 dark:text-emerald-200">
-                            {q.options[q.correct_index]}
-                          </MathText>
+                          {!isCorrect && q.options && (
+                            <div className="flex items-center gap-2 text-sm text-slate-600 dark:text-slate-300">
+                              <span className="opacity-70 w-20 text-xs uppercase tracking-wider">
+                                Doğrusu:
+                              </span>
+                              <MathText className="font-medium px-2 py-0.5 rounded bg-emerald-100 text-emerald-800 dark:bg-emerald-500/20 dark:text-emerald-200">
+                                {q.options[q.correct_index]}
+                              </MathText>
+                            </div>
+                          )}
+                        </>
+                      )}
+
+                      {qType === 'short_answer' && (
+                        <>
+                          <div className="flex items-center gap-2 text-sm text-slate-600 dark:text-slate-300">
+                            <span className="opacity-70 w-20 text-xs uppercase tracking-wider">
+                              Cevabın:
+                            </span>
+                            <span
+                              className={`font-medium px-2 py-0.5 rounded ${
+                                isCorrect
+                                  ? 'bg-emerald-100 text-emerald-800 dark:bg-emerald-500/20 dark:text-emerald-200'
+                                  : 'bg-rose-100 text-rose-800 dark:bg-red-500/20 dark:text-red-200'
+                              }`}
+                            >
+                              {isUnanswered
+                                ? 'Boş Bırakıldı'
+                                : textAnswers[index]}
+                            </span>
+                          </div>
+
+                          {!isCorrect && q.expected_answer && (
+                            <div className="flex items-center gap-2 text-sm text-slate-600 dark:text-slate-300">
+                              <span className="opacity-70 w-20 text-xs uppercase tracking-wider">
+                                Doğrusu:
+                              </span>
+                              <span className="font-medium px-2 py-0.5 rounded bg-emerald-100 text-emerald-800 dark:bg-emerald-500/20 dark:text-emerald-200">
+                                {q.expected_answer.split('|')[0]}
+                              </span>
+                            </div>
+                          )}
+                        </>
+                      )}
+
+                      {qType === 'open_ended' && (
+                        <div className="space-y-2">
+                          <div className="text-sm text-slate-600 dark:text-slate-300">
+                            <span className="opacity-70 text-xs uppercase tracking-wider block mb-1">
+                              Çözüm Adımların:
+                            </span>
+                            <p className="font-medium px-3 py-2 rounded-xl bg-slate-100 dark:bg-slate-800/60 text-slate-800 dark:text-slate-200 text-xs leading-relaxed whitespace-pre-wrap">
+                              {isUnanswered
+                                ? 'Boş Bırakıldı'
+                                : textAnswers[index]}
+                            </p>
+                          </div>
+
+                          {q.rubric && q.rubric.length > 0 && (
+                            <div className="mt-2 p-3 rounded-xl bg-purple-50/70 border border-purple-200 dark:bg-purple-500/10 dark:border-purple-500/20 text-xs space-y-1.5">
+                              <span className="font-bold text-purple-900 dark:text-purple-300 block">
+                                📋 MEB Puanlama Rubriği Değerlendirmesi:
+                              </span>
+                              {q.rubric.map((rStep, rIdx) => {
+                                const isChecked = (
+                                  rubricEvaluations[index] || []
+                                ).includes(rIdx);
+                                return (
+                                  <div
+                                    key={rIdx}
+                                    className="flex items-start gap-2"
+                                  >
+                                    <span
+                                      className={
+                                        isChecked
+                                          ? 'text-emerald-600 dark:text-emerald-400 font-bold'
+                                          : 'text-slate-400'
+                                      }
+                                    >
+                                      {isChecked ? '✓' : '○'}
+                                    </span>
+                                    <span
+                                      className={
+                                        isChecked
+                                          ? 'text-slate-800 dark:text-slate-200 font-medium'
+                                          : 'text-slate-500 dark:text-slate-400'
+                                      }
+                                    >
+                                      {rStep}
+                                    </span>
+                                  </div>
+                                );
+                              })}
+                            </div>
+                          )}
                         </div>
                       )}
 
@@ -274,7 +412,8 @@ export function QuizResultsView({
                             <AlertCircle className="w-4 h-4 text-rose-600 dark:text-rose-400 shrink-0 mt-0.5" />
                             <div>
                               <span className="font-bold block text-rose-800 dark:text-rose-300">
-                                💡 Kavram Yanılgısı Teşhisi ({String.fromCharCode(65 + userAnswer)} Şıkkı):
+                                💡 Kavram Yanılgısı Teşhisi (
+                                {String.fromCharCode(65 + userAnswer)} Şıkkı):
                               </span>
                               <p className="mt-0.5 leading-relaxed text-slate-700 dark:text-slate-300">
                                 {q.distractor_explanations[userAnswer]}
@@ -296,13 +435,16 @@ export function QuizResultsView({
                             type="button"
                             onClick={() => {
                               window.dispatchEvent(
-                                new CustomEvent('open-teacher-chat-with-question', {
-                                  detail: {
-                                    questionIndex: index,
-                                    questionText: q.question,
-                                    quizTitle: quiz?.title || 'Test',
+                                new CustomEvent(
+                                  'open-teacher-chat-with-question',
+                                  {
+                                    detail: {
+                                      questionIndex: index,
+                                      questionText: q.question,
+                                      quizTitle: quiz?.title || 'Test',
+                                    },
                                   },
-                                }),
+                                ),
                               );
                             }}
                             className="inline-flex items-center gap-1.5 rounded-lg px-2.5 py-1 text-xs font-semibold bg-indigo-50 text-indigo-700 border border-indigo-200 hover:bg-indigo-100 dark:bg-indigo-500/15 dark:text-indigo-300 dark:border-indigo-500/30 dark:hover:bg-indigo-500/25 transition shadow-xs"
@@ -363,7 +505,9 @@ export function QuizResultsView({
               className="flex items-center justify-center gap-2 py-3 px-4 bg-slate-100 hover:bg-slate-200 text-slate-800 dark:bg-slate-800/80 dark:hover:bg-slate-700/80 disabled:opacity-50 disabled:cursor-not-allowed dark:text-white text-sm font-semibold rounded-xl border border-slate-200 dark:border-slate-700/50 transition"
             >
               <FileDown className="w-4 h-4 text-purple-600 dark:text-purple-400" />
-              {pdfLoading ? 'PDF Hazırlanıyor...' : 'Sonuç Karnesini İndir (PDF)'}
+              {pdfLoading
+                ? 'PDF Hazırlanıyor...'
+                : 'Sonuç Karnesini İndir (PDF)'}
             </button>
             {onDownloadWord && (
               <button

@@ -1,16 +1,12 @@
 'use client';
 
 import { useState } from 'react';
-import {
-  X,
-  Send,
-  HelpCircle,
-  CheckCircle2
-} from 'lucide-react';
+import { X, Send, HelpCircle, CheckCircle2 } from 'lucide-react';
 import { useAccessibleModal } from '@/hooks/useAccessibleModal';
 import type { LiveLesson } from '@/features/live-lessons/types';
 import {
   submitStudentQuestion,
+  syncSubmitQuestionToServer,
   type StudentQuestionDifficulty,
 } from '@/features/live-lessons/lib/studentQuestionsStorage';
 import { fireConfetti } from '@/components/ConfettiBurst';
@@ -30,10 +26,13 @@ export function SubmitQuestionModal({
   defaultStudentName = '',
 }: SubmitQuestionModalProps) {
   const modalRef = useAccessibleModal<HTMLDivElement>(isOpen, onClose);
-  const [studentName, setStudentName] = useState(defaultStudentName || 'Öğrenci');
+  const [studentName, setStudentName] = useState(
+    defaultStudentName || 'Öğrenci',
+  );
   const [selectedLessonId, setSelectedLessonId] = useState<string>('');
   const [topic, setTopic] = useState('');
-  const [difficulty, setDifficulty] = useState<StudentQuestionDifficulty>('Orta');
+  const [difficulty, setDifficulty] =
+    useState<StudentQuestionDifficulty>('Orta');
   const [questionText, setQuestionText] = useState('');
   const [imageUrl, setImageUrl] = useState('');
   const [isSubmitted, setIsSubmitted] = useState(false);
@@ -50,14 +49,17 @@ export function SubmitQuestionModal({
       return;
     }
 
-    submitStudentQuestion({
+    const payload = {
       student_name: studentName.trim() || 'Öğrenci',
       lesson_id: selectedLessonId || undefined,
       topic: topic.trim(),
       difficulty,
       question_text: questionText.trim(),
       image_url: imageUrl.trim() || undefined,
-    });
+    };
+
+    submitStudentQuestion(payload);
+    void syncSubmitQuestionToServer(payload);
 
     void fireConfetti({
       particleCount: 50,
@@ -88,13 +90,9 @@ export function SubmitQuestionModal({
       aria-label="Canlı Derse Soru Gönder"
       className="fixed inset-0 z-[140] flex items-center justify-center bg-slate-950/80 dark:bg-slate-950/80 p-3 sm:p-4 backdrop-blur-md overflow-y-auto"
     >
-      <div
-        className="relative w-full max-w-lg overflow-hidden rounded-3xl border border-slate-200 dark:border-white/15 bg-white dark:bg-slate-900 text-slate-900 dark:text-slate-100 shadow-2xl transition-all my-auto"
-      >
+      <div className="relative w-full max-w-lg overflow-hidden rounded-3xl border border-slate-200 dark:border-white/15 bg-white dark:bg-slate-900 text-slate-900 dark:text-slate-100 shadow-2xl transition-all my-auto">
         {/* Üst Başlık */}
-        <div
-          className="flex items-center justify-between border-b border-slate-200 dark:border-white/10 px-5 py-4 bg-slate-50 dark:bg-slate-950/80"
-        >
+        <div className="flex items-center justify-between border-b border-slate-200 dark:border-white/10 px-5 py-4 bg-slate-50 dark:bg-slate-950/80">
           <div className="flex items-center gap-2.5">
             <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-2xl bg-amber-500/15 text-amber-600 dark:text-amber-500 border border-amber-500/25">
               <HelpCircle className="h-5 w-5" />
@@ -104,7 +102,8 @@ export function SubmitQuestionModal({
                 Canlı Derse Soru Gönder
               </h2>
               <p className="text-xs text-slate-600 dark:text-slate-400">
-                Yapamadığın soruyu ilet, Uğur Hoca derste tahtaya yansıtıp çözsün!
+                Yapamadığın soruyu ilet, Uğur Hoca derste tahtaya yansıtıp
+                çözsün!
               </p>
             </div>
           </div>
@@ -127,9 +126,13 @@ export function SubmitQuestionModal({
                 <CheckCircle2 className="h-7 w-7" />
               </div>
               <div>
-                <h3 className="text-lg font-bold text-slate-900 dark:text-white">Sorun Canlı Ders Havuzuna Eklendi!</h3>
+                <h3 className="text-lg font-bold text-slate-900 dark:text-white">
+                  Sorun Canlı Ders Havuzuna Eklendi!
+                </h3>
                 <p className="text-xs mt-1 max-w-sm mx-auto text-slate-600 dark:text-slate-400">
-                  Tebrikler! Sorun öğretmen soru masasına başarıyla iletildi. Canlı derse katıldığında Uğur Hoca bu soruyu ekrana yansıtıp tüm sınıfla birlikte çözecek.
+                  Tebrikler! Sorun öğretmen soru masasına başarıyla iletildi.
+                  Canlı derse katıldığında Uğur Hoca bu soruyu ekrana yansıtıp
+                  tüm sınıfla birlikte çözecek.
                 </p>
               </div>
 
@@ -161,7 +164,10 @@ export function SubmitQuestionModal({
               {/* Öğrenci İsmi & İlgili Ders */}
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                 <div>
-                  <label htmlFor="sq-student-name" className="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1">
+                  <label
+                    htmlFor="sq-student-name"
+                    className="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1"
+                  >
                     Adın / Rumuzun
                   </label>
                   <div className="relative">
@@ -177,7 +183,10 @@ export function SubmitQuestionModal({
                 </div>
 
                 <div>
-                  <label htmlFor="sq-lesson" className="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1">
+                  <label
+                    htmlFor="sq-lesson"
+                    className="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1"
+                  >
                     İlgili Canlı Ders (İsteğe Bağlı)
                   </label>
                   <select
@@ -199,7 +208,10 @@ export function SubmitQuestionModal({
               {/* Konu & Zorluk */}
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                 <div>
-                  <label htmlFor="sq-topic" className="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1">
+                  <label
+                    htmlFor="sq-topic"
+                    className="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1"
+                  >
                     Matematik Konusu *
                   </label>
                   <input
@@ -218,7 +230,9 @@ export function SubmitQuestionModal({
                     Zorluk Seviyesi
                   </span>
                   <div className="flex gap-1.5">
-                    {(['Kolay', 'Orta', 'Zor'] as StudentQuestionDifficulty[]).map((dif) => (
+                    {(
+                      ['Kolay', 'Orta', 'Zor'] as StudentQuestionDifficulty[]
+                    ).map((dif) => (
                       <button
                         key={dif}
                         type="button"
@@ -238,7 +252,10 @@ export function SubmitQuestionModal({
 
               {/* Soru Metni */}
               <div>
-                <label htmlFor="sq-question-text" className="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1">
+                <label
+                  htmlFor="sq-question-text"
+                  className="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1"
+                >
                   Soru Metni & Açıklamanız *
                 </label>
                 <textarea
@@ -254,7 +271,10 @@ export function SubmitQuestionModal({
 
               {/* Görsel URL (Opsiyonel) */}
               <div>
-                <label htmlFor="sq-image-url" className="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1">
+                <label
+                  htmlFor="sq-image-url"
+                  className="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1"
+                >
                   Soru Fotoğrafı / Linki (İsteğe Bağlı)
                 </label>
                 <div className="flex items-center gap-2">
@@ -270,7 +290,8 @@ export function SubmitQuestionModal({
                   </div>
                 </div>
                 <span className="text-[10px] text-slate-500 dark:text-slate-400 mt-1 block">
-                  Telefonundan veya bilgisayarından aldığın ekran görüntüsünün linkini ekleyebilirsin.
+                  Telefonundan veya bilgisayarından aldığın ekran görüntüsünün
+                  linkini ekleyebilirsin.
                 </span>
               </div>
 

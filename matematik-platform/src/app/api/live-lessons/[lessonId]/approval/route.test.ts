@@ -270,12 +270,10 @@ describe('/api/live-lessons/[lessonId]/approval', () => {
           return {
             select: vi.fn().mockReturnValue({
               eq: vi.fn().mockReturnValue({
-                single: vi
-                  .fn()
-                  .mockResolvedValue({
-                    data: { room_id: 'room-123' },
-                    error: null,
-                  }),
+                single: vi.fn().mockResolvedValue({
+                  data: { room_id: 'room-123' },
+                  error: null,
+                }),
               }),
             }),
           };
@@ -328,12 +326,10 @@ describe('/api/live-lessons/[lessonId]/approval', () => {
           return {
             select: vi.fn().mockReturnValue({
               eq: vi.fn().mockReturnValue({
-                single: vi
-                  .fn()
-                  .mockResolvedValue({
-                    data: { room_id: 'room-123' },
-                    error: null,
-                  }),
+                single: vi.fn().mockResolvedValue({
+                  data: { room_id: 'room-123' },
+                  error: null,
+                }),
               }),
             }),
           };

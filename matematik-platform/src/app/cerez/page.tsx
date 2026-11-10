@@ -27,18 +27,19 @@ export default function CerezPage() {
 
         <section className="space-y-4 text-sm leading-relaxed text-secondary sm:text-base">
           <p>
-            Uğur Hoca Matematik platformu (“Platform”), öğrencilere hızlı, güvenli
-            ve kesintisiz bir öğrenme deneyimi sunmak amacıyla sınırlı sayıda teknik
-            ve işlevsel çerez kullanmaktadır.
+            Uğur Hoca Matematik platformu (“Platform”), öğrencilere hızlı,
+            güvenli ve kesintisiz bir öğrenme deneyimi sunmak amacıyla sınırlı
+            sayıda teknik ve işlevsel çerez kullanmaktadır.
           </p>
 
           <h2 className="font-display text-xl font-bold text-primary">
             Çerez nedir?
           </h2>
           <p>
-            Çerezler, bir web sitesini ziyaret ettiğinizde tarayıcınız aracılığıyla
-            cihazınıza kaydedilen küçük metin dosyalarıdır. Platform’da yalnızca
-            hizmetin temel işleyişini sağlamak için gerekli olan çerezler kullanılır.
+            Çerezler, bir web sitesini ziyaret ettiğinizde tarayıcınız
+            aracılığıyla cihazınıza kaydedilen küçük metin dosyalarıdır.
+            Platform’da yalnızca hizmetin temel işleyişini sağlamak için gerekli
+            olan çerezler kullanılır.
           </p>
 
           <h2 className="font-display text-xl font-bold text-primary">
@@ -47,29 +48,36 @@ export default function CerezPage() {
 
           <div className="space-y-3">
             <div className="rounded-2xl border border-default bg-surface-2/60 p-4">
-              <h3 className="font-bold text-primary">1. Zorunlu Oturum Çerezleri</h3>
+              <h3 className="font-bold text-primary">
+                1. Zorunlu Oturum Çerezleri
+              </h3>
               <p className="mt-1 text-sm text-secondary">
-                Öğrenci ve öğretmen hesaplarının güvenle oturum açmasını sağlayan
-                Supabase Auth oturum belirteçleridir. Bu çerezler olmadan platforma
-                güvenli giriş yapılamaz.
+                Öğrenci ve öğretmen hesaplarının güvenle oturum açmasını
+                sağlayan Supabase Auth oturum belirteçleridir. Bu çerezler
+                olmadan platforma güvenli giriş yapılamaz.
               </p>
             </div>
 
             <div className="rounded-2xl border border-default bg-surface-2/60 p-4">
-              <h3 className="font-bold text-primary">2. UX Önbellek Çerezi (uh_user_snapshot)</h3>
+              <h3 className="font-bold text-primary">
+                2. UX Önbellek ve Oturum Çerezleri (ugurhoca_auth_snapshot /
+                ugurhoca_access_token)
+              </h3>
               <p className="mt-1 text-sm text-secondary">
-                Sayfa geçişlerinde öğrencinin kullanıcı adını ve sınıfını hızlıca
-                arayüze yansıtarak gecikmesiz bir deneyim sunmak için kullanılan hafif
-                öğrenci profil önbellek çerezidir.
+                Sayfa geçişlerinde öğrencinin kullanıcı adını ve sınıfını
+                hızlıca arayüze yansıtarak gecikmesiz bir deneyim sunmak için
+                kullanılan hafif öğrenci profil önbellek çerezidir.
               </p>
             </div>
 
             <div className="rounded-2xl border border-default bg-surface-2/60 p-4">
-              <h3 className="font-bold text-primary">3. İşlevsel Tercih Kayıtları</h3>
+              <h3 className="font-bold text-primary">
+                3. İşlevsel Tercih Kayıtları
+              </h3>
               <p className="mt-1 text-sm text-secondary">
                 Açık/koyu tema tercihleriniz ve arayüz kişiselleştirmeleriniz
-                tarayıcınızın yerel saklama alanında (localStorage) veya işlevsel
-                çerezlerde saklanır.
+                tarayıcınızın yerel saklama alanında (localStorage) veya
+                işlevsel çerezlerde saklanır.
               </p>
             </div>
           </div>
@@ -79,25 +87,25 @@ export default function CerezPage() {
           </h2>
           <p>
             Platformumuzda hiçbir koşulda reklam veya üçüncü taraf takip çerezi
-            kullanılmaz. Öğrenci verileri hiçbir reklam ağına, veri komisyoncusuna
-            veya ticari şirkete aktarılmaz.
+            kullanılmaz. Öğrenci verileri hiçbir reklam ağına, veri
+            komisyoncusuna veya ticari şirkete aktarılmaz.
           </p>
 
           <h2 className="font-display text-xl font-bold text-primary">
             Çerezleri nasıl yönetebilirsiniz?
           </h2>
           <p>
-            Tarayıcınızın ayarlarından çerezleri dilediğiniz zaman silebilir veya
-            engelleyebilirsiniz. Ancak zorunlu oturum çerezlerini engellemeniz
-            durumunda platforma giriş yapamayabilirsiniz.
+            Tarayıcınızın ayarlarından çerezleri dilediğiniz zaman silebilir
+            veya engelleyebilirsiniz. Ancak zorunlu oturum çerezlerini
+            engellemeniz durumunda platforma giriş yapamayabilirsiniz.
           </p>
 
           <h2 className="font-display text-xl font-bold text-primary">
             Gizlilik ve Haklarınız
           </h2>
           <p>
-            Kişisel verilerinizin nasıl korunduğuna ilişkin daha fazla bilgi edinmek
-            için{' '}
+            Kişisel verilerinizin nasıl korunduğuna ilişkin daha fazla bilgi
+            edinmek için{' '}
             <Link
               href="/gizlilik"
               className="text-accent-fg underline underline-offset-4 hover:text-primary transition-colors"

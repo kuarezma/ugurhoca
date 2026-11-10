@@ -24,16 +24,18 @@ export async function POST(_request: Request, context: RouteContext) {
   const auth = await requireLiveLessonUser();
   if (!auth.ok) return auth.response;
 
-  const limited = await enforceRateLimit(
-    'live-lesson-join',
-    auth.user.id,
-    { limit: 20, windowSeconds: 60 },
-  );
+  const limited = await enforceRateLimit('live-lesson-join', auth.user.id, {
+    limit: 20,
+    windowSeconds: 60,
+  });
   if (limited) return limited;
 
   const parsedParams = joinParamsSchema.safeParse(await context.params);
   if (!parsedParams.success) {
-    return NextResponse.json({ error: 'Geçersiz ders kimliği.' }, { status: 400 });
+    return NextResponse.json(
+      { error: 'Geçersiz ders kimliği.' },
+      { status: 400 },
+    );
   }
   const { lessonId } = parsedParams.data;
   const supabase = createServiceRoleClient();
@@ -49,10 +51,19 @@ export async function POST(_request: Request, context: RouteContext) {
     return NextResponse.json({ error: 'Ders bulunamadı.' }, { status: 404 });
   }
   if (lesson.status === 'cancelled' || lesson.status === 'ended') {
-    return NextResponse.json({ error: 'Bu ders artık aktif değil.' }, { status: 409 });
+    return NextResponse.json(
+      { error: 'Bu ders artık aktif değil.' },
+      { status: 409 },
+    );
   }
-  if (role === 'student' && !canUserAccessLiveLesson(lesson as LiveLesson, auth.user)) {
-    return NextResponse.json({ error: 'Bu ders size açık değil.' }, { status: 403 });
+  if (
+    role === 'student' &&
+    !canUserAccessLiveLesson(lesson as LiveLesson, auth.user)
+  ) {
+    return NextResponse.json(
+      { error: 'Bu ders size açık değil.' },
+      { status: 403 },
+    );
   }
 
   await supabase.from('live_lesson_participants').insert({
@@ -70,5 +81,8 @@ export async function POST(_request: Request, context: RouteContext) {
       .eq('id', lessonId);
   }
 
-  return NextResponse.json({ lesson: toClientLiveLesson(lesson as LiveLesson), role });
+  return NextResponse.json({
+    lesson: toClientLiveLesson(lesson as LiveLesson),
+    role,
+  });
 }

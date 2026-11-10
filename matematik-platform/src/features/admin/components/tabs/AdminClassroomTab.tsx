@@ -1,6 +1,7 @@
 'use client';
 
-import { useState, useMemo, useCallback } from 'react';
+import { useState, useMemo } from 'react';
+import { useClassroomGuidanceNotes } from '@/features/admin/hooks/useClassroomGuidanceNotes';
 import {
   GraduationCap,
   Users,
@@ -84,25 +85,8 @@ export default function AdminClassroomTab({
 
   const [viewMode, setViewMode] = useState<ViewMode>('roster');
   const [searchQuery, setSearchQuery] = useState('');
-  const [editingNotes, setEditingNotes] = useState<Record<string, string>>({});
-
-  // Rehberlik notlarını localStorage'da kalıcı tutalım
-  const getSavedNote = useCallback((studentId: string) => {
-    if (typeof window !== 'undefined') {
-      return localStorage.getItem(`ugurhoca_guidance_note_${studentId}`) || '';
-    }
-    return '';
-  }, []);
-
-  const handleSaveNote = useCallback(
-    (studentId: string, text: string) => {
-      if (typeof window !== 'undefined') {
-        localStorage.setItem(`ugurhoca_guidance_note_${studentId}`, text);
-        showToast('success', 'Rehberlik gözlem notu kaydedildi.');
-      }
-    },
-    [showToast],
-  );
+  const { editingNotes, setEditingNotes, getSavedNote, handleSaveNote } =
+    useClassroomGuidanceNotes(students, showToast);
 
   const currentWeekStart = useMemo(() => getCurrentWeekStart(), []);
 

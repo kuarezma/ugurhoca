@@ -18,6 +18,7 @@ import { supabase } from '@/lib/supabase/client';
 import { trackStudentActivityEvent } from '@/features/analytics/trackActivity';
 import { Quiz, QuizQuestion } from '@/types/quiz';
 import type { AppUser } from '@/types';
+import { evaluateShortAnswer } from '@/features/quizzes/utils/answerEvaluation';
 import { log } from './helpers';
 
 type UseQuizResultProps = {
@@ -37,6 +38,8 @@ type UseQuizResultProps = {
   setQuestionElapsedSeconds: Dispatch<SetStateAction<number>>;
   setQuestionTimes: Dispatch<SetStateAction<Record<number, number>>>;
   currentQuestion: number;
+  textAnswers?: Record<number, string>;
+  rubricEvaluations?: Record<number, number[]>;
 };
 
 export function useQuizResult({
@@ -56,15 +59,46 @@ export function useQuizResult({
   setQuestionElapsedSeconds,
   setQuestionTimes,
   currentQuestion,
+  textAnswers = {},
+  rubricEvaluations = {},
 }: UseQuizResultProps) {
+  const isQuestionCorrect = useCallback(
+    (q: QuizQuestion, i: number) => {
+      const type = q.question_type || 'multiple_choice';
+      if (type === 'short_answer') {
+        const text = textAnswers[i] ?? '';
+        return evaluateShortAnswer(text, q.expected_answer ?? '');
+      }
+      if (type === 'open_ended') {
+        const checked = rubricEvaluations[i] ?? [];
+        const total = q.rubric?.length ?? 0;
+        if (total > 0) return checked.length === total;
+        return (textAnswers[i] ?? '').trim().length > 0;
+      }
+      return answers[i] === q.correct_index;
+    },
+    [answers, textAnswers, rubricEvaluations],
+  );
+
   const calculateScore = useCallback(() => {
     if (quizQuestions.length === 0) return 0;
     let correct = 0;
     quizQuestions.forEach((q, i: number) => {
-      if (answers[i] === q.correct_index) correct++;
+      const type = q.question_type || 'multiple_choice';
+      if (type === 'open_ended') {
+        const checked = rubricEvaluations[i] ?? [];
+        const total = q.rubric?.length ?? 0;
+        if (total > 0) {
+          correct += checked.length / total;
+        } else if ((textAnswers[i] ?? '').trim().length > 0) {
+          correct += 1;
+        }
+      } else if (isQuestionCorrect(q, i)) {
+        correct++;
+      }
     });
     return Math.round((correct / quizQuestions.length) * 100);
-  }, [answers, quizQuestions]);
+  }, [quizQuestions, isQuestionCorrect, rubricEvaluations, textAnswers]);
 
   const saveQuizResult = useCallback(async () => {
     // Kilit yerel sayaçları, hata defterini ve uzak kaydı birlikte korur.
@@ -75,14 +109,20 @@ export function useQuizResult({
       setActiveDraft(null);
     }
     // Hata defterine yanlışları otomatik ekle, doğru çözülenleri öğrenildi işaretle
-    const mistakes = quizQuestions.filter(
-      (q, i) => answers[i] !== undefined && answers[i] !== q.correct_index,
-    );
+    const mistakes = quizQuestions.filter((q, i) => {
+      const answered =
+        answers[i] !== undefined ||
+        (textAnswers[i] !== undefined && textAnswers[i].trim().length > 0);
+      return answered && !isQuestionCorrect(q, i);
+    });
+
     if (mistakes.length > 0) {
       const userAnswersMap: Record<string, number> = {};
       quizQuestions.forEach((q, i) => {
         if (answers[i] !== undefined) {
           userAnswersMap[q.id] = answers[i];
+        } else if (textAnswers[i] !== undefined) {
+          userAnswersMap[q.id] = isQuestionCorrect(q, i) ? 1 : 0;
         }
       });
       saveMistakesToBank(
@@ -92,9 +132,7 @@ export function useQuizResult({
         user?.id ?? null,
       );
     }
-    const corrects = quizQuestions.filter(
-      (q, i) => answers[i] === q.correct_index,
-    );
+    const corrects = quizQuestions.filter((q, i) => isQuestionCorrect(q, i));
     for (const c of corrects) {
       markMistakeMastered(c.question, true, user?.id ?? null);
     }
@@ -172,12 +210,14 @@ export function useQuizResult({
   }, [
     answers,
     calculateScore,
+    isQuestionCorrect,
     quizQuestions,
     resultSavedRef,
     selectedQuiz,
     setActiveDraft,
     showToast,
     startTime,
+    textAnswers,
     user,
   ]);
 

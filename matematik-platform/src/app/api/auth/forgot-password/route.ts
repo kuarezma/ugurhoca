@@ -4,6 +4,7 @@ import { createLogger } from '@/lib/logger';
 import { forgotPasswordSchema } from '@/lib/route-schemas';
 import { enforceRateLimit } from '@/lib/rate-limit';
 import { ADMIN_EMAIL } from '@/lib/admin';
+import { SITE_URL } from '@/lib/site-metadata';
 import { normalizeFullNameForMatch } from '@/lib/student-identity';
 import { createServiceRoleClient } from '@/lib/supabase/server';
 import { getResendApiKey } from '@/lib/env.server';
@@ -140,7 +141,7 @@ export async function POST(request: Request) {
                 ${studentId ? `<p><strong>Öğrenci ID:</strong> ${studentId}</p>` : ''}
                 <p>Öğrenciniz giriş şifresini unuttuğunu bildirdi. Admin panelinden tek tıkla öğrencinin şifresini sıfırlayabilirsiniz.</p>
                 <div style="margin-top: 24px;">
-                  <a href="https://ugurhoca.com/admin" style="background: #4f46e5; color: white; padding: 10px 20px; text-decoration: none; border-radius: 8px; font-weight: bold;">Admin Paneline Git</a>
+                  <a href="${SITE_URL}/admin" style="background: #4f46e5; color: white; padding: 10px 20px; text-decoration: none; border-radius: 8px; font-weight: bold;">Admin Paneline Git</a>
                 </div>
               </div>
             `,
@@ -157,11 +158,10 @@ export async function POST(request: Request) {
       return genericResponse();
     }
 
-    const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://ugurhoca.com';
     const { error: resetError } = await adminClient.auth.resetPasswordForEmail(
       targetEmail,
       {
-        redirectTo: `${siteUrl}/sifre-sifirla`,
+        redirectTo: `${SITE_URL}/sifre-sifirla`,
       },
     );
 

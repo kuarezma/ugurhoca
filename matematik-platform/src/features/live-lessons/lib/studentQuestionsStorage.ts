@@ -24,7 +24,9 @@ const notifyUpdate = () => {
   }
 };
 
-export const getStudentQuestions = (lessonId?: string): StudentSubmittedQuestion[] => {
+export const getStudentQuestions = (
+  lessonId?: string,
+): StudentSubmittedQuestion[] => {
   if (typeof window === 'undefined') return [];
   try {
     const raw = localStorage.getItem(STORAGE_KEY);
@@ -32,7 +34,7 @@ export const getStudentQuestions = (lessonId?: string): StudentSubmittedQuestion
     const parsed = JSON.parse(raw);
     if (Array.isArray(parsed)) {
       const valid = parsed.filter((q): q is StudentSubmittedQuestion =>
-        Boolean(q && typeof q === 'object' && q.id && q.question_text)
+        Boolean(q && typeof q === 'object' && q.id && q.question_text),
       );
       if (lessonId) {
         return valid.filter((q) => !q.lesson_id || q.lesson_id === lessonId);
@@ -99,3 +101,68 @@ export const deleteStudentQuestion = (id: string): boolean => {
     return false;
   }
 };
+
+/* --- Sunucu API Senkronizasyon Yardımcıları --- */
+
+export async function fetchQuestionsFromServer(
+  lessonId?: string,
+): Promise<StudentSubmittedQuestion[]> {
+  try {
+    const query = lessonId ? `?lessonId=${encodeURIComponent(lessonId)}` : '';
+    const res = await fetch(`/api/live-lessons/questions${query}`);
+    if (!res.ok) return [];
+    const json = await res.json();
+    const serverQuestions: StudentSubmittedQuestion[] = json.questions || [];
+
+    if (typeof window !== 'undefined' && serverQuestions.length > 0) {
+      // Yerel localStorage ile birleştir
+      const local = getStudentQuestions();
+      const serverIds = new Set(serverQuestions.map((q) => q.id));
+      const combined = [
+        ...serverQuestions,
+        ...local.filter((l) => !serverIds.has(l.id)),
+      ].slice(0, MAX_QUESTIONS);
+      try {
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(combined));
+      } catch {
+        // ignore quota
+      }
+    }
+    return serverQuestions;
+  } catch {
+    return [];
+  }
+}
+
+export async function syncSubmitQuestionToServer(
+  input: Omit<StudentSubmittedQuestion, 'id' | 'created_at' | 'status'>,
+): Promise<StudentSubmittedQuestion | null> {
+  try {
+    const res = await fetch('/api/live-lessons/questions', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(input),
+    });
+    if (!res.ok) return null;
+    const json = await res.json();
+    return json.question || null;
+  } catch {
+    return null;
+  }
+}
+
+export async function syncUpdateQuestionStatusToServer(
+  id: string,
+  status: StudentQuestionStatus,
+): Promise<boolean> {
+  try {
+    const res = await fetch('/api/live-lessons/questions', {
+      method: 'PATCH',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ id, status }),
+    });
+    return res.ok;
+  } catch {
+    return false;
+  }
+}

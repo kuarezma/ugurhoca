@@ -30,21 +30,26 @@ export async function PATCH(request: Request, context: RouteContext) {
   const auth = await requireLiveLessonUser();
   if (!auth.ok) return auth.response;
   if (!isLiveLessonAdmin(auth.user)) {
-    return NextResponse.json({ error: 'Bu işlem için admin yetkisi gerekir.' }, { status: 403 });
+    return NextResponse.json(
+      { error: 'Bu işlem için admin yetkisi gerekir.' },
+      { status: 403 },
+    );
   }
 
-  const limited = await enforceRateLimit(
-    'live-lesson-update',
-    auth.user.id,
-    { limit: 30, windowSeconds: 60 },
-  );
+  const limited = await enforceRateLimit('live-lesson-update', auth.user.id, {
+    limit: 30,
+    windowSeconds: 60,
+  });
   if (limited) return limited;
 
   const { lessonId } = await context.params;
   const rawBody = await request.json().catch(() => null);
   const parsedBody = updateLiveLessonBodySchema.safeParse(rawBody);
   if (!parsedBody.success) {
-    return NextResponse.json({ error: 'Geçersiz ders güncelleme isteği.' }, { status: 400 });
+    return NextResponse.json(
+      { error: 'Geçersiz ders güncelleme isteği.' },
+      { status: 400 },
+    );
   }
   const body = parsedBody.data;
 
@@ -57,7 +62,9 @@ export async function PATCH(request: Request, context: RouteContext) {
       recordingUrl: body.recordingUrl ?? null,
       startsAt: String(body.startsAt || ''),
       targetGrade: String(body.targetGrade || ''),
-      targetStudentIds: Array.isArray(body.targetStudentIds) ? body.targetStudentIds : [],
+      targetStudentIds: Array.isArray(body.targetStudentIds)
+        ? body.targetStudentIds
+        : [],
       title: String(body.title || ''),
     });
     return NextResponse.json({ lesson });
@@ -66,6 +73,9 @@ export async function PATCH(request: Request, context: RouteContext) {
       return NextResponse.json({ error: error.message }, { status: 400 });
     }
     logger.error('Canlı ders güncelleme hatası', error);
-    return NextResponse.json({ error: 'Ders güncellenemedi.' }, { status: 400 });
+    return NextResponse.json(
+      { error: 'Ders güncellenemedi.' },
+      { status: 400 },
+    );
   }
 }

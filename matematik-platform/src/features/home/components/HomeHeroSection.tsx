@@ -119,7 +119,7 @@ const games = [
     borderStyle: 'border-amber-200/90 dark:border-amber-800/60',
     iconStyle:
       'bg-amber-100 text-amber-800 dark:bg-amber-950/60 dark:text-amber-300',
-    href: '/oyunlar/carpim-yarisi',
+    href: '/oyunlar?id=1',
     icon: Zap,
     description: 'Çarpma becerini geliştir',
   },
@@ -128,7 +128,7 @@ const games = [
     borderStyle: 'border-rose-200/90 dark:border-rose-800/60',
     iconStyle:
       'bg-rose-100 text-rose-800 dark:bg-rose-950/60 dark:text-rose-300',
-    href: '/oyunlar/kesir-pizzacisi',
+    href: '/oyunlar?id=13',
     icon: PieChart,
     description: 'Kesirleri keşfet',
   },
@@ -136,7 +136,7 @@ const games = [
     title: 'Sayı Düellosu',
     borderStyle: 'border-sky-200/90 dark:border-sky-800/60',
     iconStyle: 'bg-sky-100 text-sky-800 dark:bg-sky-950/60 dark:text-sky-300',
-    href: '/oyunlar/sayi-duellosu',
+    href: '/oyunlar?id=19',
     icon: Trophy,
     description: 'Sayılarla düşün',
   },
@@ -145,7 +145,7 @@ const games = [
     borderStyle: 'border-emerald-200/90 dark:border-emerald-800/60',
     iconStyle:
       'bg-emerald-100 text-emerald-800 dark:bg-emerald-950/60 dark:text-emerald-300',
-    href: '/oyunlar/balon-patlatma',
+    href: '/oyunlar?id=11',
     icon: Wind,
     description: 'İşlemlerle pratik yap',
   },
@@ -248,13 +248,27 @@ export function HomeHeroSection({
               anlaşılır ders içerikleri ve matematik oyunlarıyla kendi hızında
               öğren.
             </p>
-            <p className="inline-flex items-start gap-2 rounded-xl border border-emerald-300/80 bg-emerald-100/70 px-3 py-2 text-sm font-semibold leading-relaxed text-emerald-900 dark:border-emerald-700/60 dark:bg-emerald-950/50 dark:text-emerald-200">
-              <Lightbulb
-                aria-hidden="true"
-                className="mt-0.5 h-4 w-4 shrink-0 text-emerald-700 dark:text-emerald-300"
-              />
-              <span>%100 Ücretsiz & Reklamsız · 100+ Yaprak Test & Föy</span>
-            </p>
+            <div className="flex flex-wrap items-center gap-3 pt-1">
+              <p className="inline-flex items-start gap-2 rounded-xl border border-emerald-300/80 bg-emerald-100/70 px-3 py-2 text-sm font-semibold leading-relaxed text-emerald-900 dark:border-emerald-700/60 dark:bg-emerald-950/50 dark:text-emerald-200">
+                <Lightbulb
+                  aria-hidden="true"
+                  className="mt-0.5 h-4 w-4 shrink-0 text-emerald-700 dark:text-emerald-300"
+                />
+                <span>%100 Ücretsiz & Reklamsız · 100+ Yaprak Test & Föy</span>
+              </p>
+              {!user ? (
+                <SafeLink
+                  href="/deneme-salonu"
+                  className="inline-flex items-center gap-2 rounded-xl border border-default bg-surface-1 px-3.5 py-2 text-sm font-semibold text-primary shadow-xs transition-colors hover:border-strong hover:bg-surface-2"
+                >
+                  <Trophy
+                    aria-hidden="true"
+                    className="h-4 w-4 shrink-0 text-accent-fg"
+                  />
+                  <span>Üye Olmadan Örnek Test & Oyun Dene</span>
+                </SafeLink>
+              ) : null}
+            </div>
           </div>
 
           <div

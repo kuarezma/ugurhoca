@@ -1,4 +1,8 @@
 export type Difficulty = 'Kolay' | 'Orta' | 'Zor';
+export type QuizQuestionType =
+  | 'multiple_choice'
+  | 'short_answer'
+  | 'open_ended';
 
 export interface Quiz {
   id: string;
@@ -23,6 +27,9 @@ export interface QuizQuestion {
   question_order: number;
   explanation: string | null;
   distractor_explanations?: Record<number, string> | null;
+  question_type?: QuizQuestionType | null;
+  expected_answer?: string | null;
+  rubric?: string[] | null;
   created_at: string;
 }
 

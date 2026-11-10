@@ -3,14 +3,26 @@ import type { Metadata } from 'next';
 // Vercel preview/özel domain için override edilebilir; boşsa prod domain.
 // NEXT_PUBLIC_ prefix zorunlu: ToolsHubContainer gibi istemci bileşenleri de
 // bu sabiti kullanır.
-export const SITE_URL =
-  process.env.NEXT_PUBLIC_SITE_URL?.replace(/\/$/, '') ||
-  'https://ugurhoca.com';
+function normalizeCanonicalSiteUrl(rawUrl?: string): string {
+  const trimmed = rawUrl?.trim().replace(/\/$/, '');
+  if (
+    !trimmed ||
+    trimmed === 'https://ugurhoca.com' ||
+    trimmed === 'http://ugurhoca.com'
+  ) {
+    return 'https://www.ugurhoca.com';
+  }
+  return trimmed;
+}
+
+export const SITE_URL = normalizeCanonicalSiteUrl(
+  process.env.NEXT_PUBLIC_SITE_URL,
+);
 export const SITE_NAME = 'Uğur Hoca Matematik';
 
 // 1200x630 sosyal önizleme görseli (src/app/opengraph-image.png).
-// next.config.js üzerinden /opengraph-image -> /opengraph-image.png yönlendirilir.
-const defaultOgImage = `${SITE_URL}/opengraph-image`;
+// Doğrudan nihai PNG adresini kullanarak sosyal medya botlarında 307 yönlendirmesini önler.
+const defaultOgImage = `${SITE_URL}/opengraph-image.png`;
 
 export function buildCanonicalUrl(path: string) {
   return `${SITE_URL}${path.startsWith('/') ? path : `/${path}`}`;
@@ -78,4 +90,3 @@ export function createPageMetadata({
     },
   };
 }
-

@@ -24,24 +24,35 @@ import { hasSupabaseSessionCookie } from '@/lib/supabase/session-cookie';
 export async function proxy(request: NextRequest) {
   if (/%5c|\\/i.test(request.nextUrl.pathname)) {
     // Bozuk yolu yönlendirmeden normal 404 sayfasına taşı; sayfa çözümleyicisine ulaşmasın.
-    return NextResponse.rewrite(new URL('/_not-found', request.url), { status: 404 });
+    return NextResponse.rewrite(new URL('/_not-found', request.url), {
+      status: 404,
+    });
   }
 
   const url = process.env.NEXT_PUBLIC_SUPABASE_URL;
   const anonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
-  const hasSsrSession = Boolean(url && hasSupabaseSessionCookie(request.cookies.getAll(), url));
+  const hasSsrSession = Boolean(
+    url && hasSupabaseSessionCookie(request.cookies.getAll(), url),
+  );
   let response = NextResponse.next();
-  let hasSession = Boolean(request.cookies.get(AUTH_ACCESS_TOKEN_COOKIE_NAME)?.value);
+  let hasSession = Boolean(
+    request.cookies.get(AUTH_ACCESS_TOKEN_COOKIE_NAME)?.value,
+  );
 
   if (hasSsrSession && url && anonKey) {
     const supabase = createServerClient(url, anonKey, {
       cookies: {
         getAll: () => request.cookies.getAll(),
         setAll: (cookiesToSet, headers) => {
-          cookiesToSet.forEach(({ name, value }) => request.cookies.set(name, value));
+          cookiesToSet.forEach(({ name, value }) =>
+            request.cookies.set(name, value),
+          );
           response = NextResponse.next({ request });
-          cookiesToSet.forEach(({ name, value, options }) => response.cookies.set(name, value, options));
-          for (const [name, value] of Object.entries(headers ?? {})) response.headers.set(name, value);
+          cookiesToSet.forEach(({ name, value, options }) =>
+            response.cookies.set(name, value, options),
+          );
+          for (const [name, value] of Object.entries(headers ?? {}))
+            response.headers.set(name, value);
           response.headers.set('Cache-Control', 'private, no-store');
         },
       },
@@ -59,13 +70,22 @@ export async function proxy(request: NextRequest) {
 
   if (!hasSession) {
     const redirectUrl = new URL('/giris', request.url);
-    const target = safeRedirectPath(request.nextUrl.pathname + request.nextUrl.search);
+    const target = safeRedirectPath(
+      request.nextUrl.pathname + request.nextUrl.search,
+    );
     if (target && target !== '/' && target !== '/giris') {
       redirectUrl.searchParams.set('redirect', target);
     }
     const redirect = NextResponse.redirect(redirectUrl);
-    response.cookies.getAll().forEach(({ name, value }) => redirect.cookies.set(name, value, response.cookies.get(name)));
-    if (response.headers.has('Cache-Control')) redirect.headers.set('Cache-Control', response.headers.get('Cache-Control')!);
+    response.cookies.getAll().forEach((cookie) => {
+      const { name, value, ...cookieOptions } = cookie;
+      redirect.cookies.set(name, value, cookieOptions);
+    });
+    if (response.headers.has('Cache-Control'))
+      redirect.headers.set(
+        'Cache-Control',
+        response.headers.get('Cache-Control')!,
+      );
     return redirect;
   }
 

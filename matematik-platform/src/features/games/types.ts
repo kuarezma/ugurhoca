@@ -13,6 +13,8 @@ export type GameDefinition = {
   description: string;
   difficulty: string;
   grade: string;
+  grades?: number[];
+  outcomes?: string[];
   icon: LucideIcon;
   id: number;
   rating: number;

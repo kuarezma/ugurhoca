@@ -2,11 +2,13 @@ import type { Metadata } from 'next';
 import { Suspense } from 'react';
 import { HomeAnnouncementsFeed } from '@/features/home/components/HomeAnnouncementsFeed';
 import { HomeRecentDocumentsSection } from '@/features/home/components/HomeRecentDocumentsSection';
+import { HomeWeeklyCurriculumSection } from '@/features/home/components/HomeWeeklyCurriculumSection';
 import HomePage from '@/features/home/containers/HomePage';
 import {
   loadInitialHomeFeed,
   loadRecentHomeDocuments,
 } from '@/features/home/server/loadHomeFeed';
+import { resolveWeeklyCurriculumForDate } from '@/features/home/server/weeklyCurriculum';
 import { createPageMetadata } from '@/lib/site-metadata';
 
 export const metadata: Metadata = createPageMetadata({
@@ -31,8 +33,16 @@ async function HomeRecentDocumentsSlot() {
 }
 
 export default function Home() {
+  const weeklyCurriculum = resolveWeeklyCurriculumForDate();
+
   return (
     <HomePage
+      weeklyCurriculumSlot={
+        <HomeWeeklyCurriculumSection
+          items={weeklyCurriculum.items}
+          weekLabel={weeklyCurriculum.weekLabel}
+        />
+      }
       recentDocumentsSlot={
         <Suspense fallback={null}>
           <HomeRecentDocumentsSlot />

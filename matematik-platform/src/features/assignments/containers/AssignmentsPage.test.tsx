@@ -13,7 +13,10 @@ vi.mock('next/dynamic', async () => {
     default: vi
       .fn()
       .mockReturnValueOnce(AssignmentSubmissionModal)
-      .mockReturnValueOnce(() => null),
+      .mockReturnValueOnce(() => null)
+      .mockReturnValue(
+        ({ children }: { children?: unknown }) => children ?? null,
+      ),
   };
 });
 vi.mock('@/components/ThemeProvider', () => ({

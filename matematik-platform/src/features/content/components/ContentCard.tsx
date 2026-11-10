@@ -1,4 +1,5 @@
 import Image from 'next/image';
+import Link from 'next/link';
 import { createElement, memo, useState } from 'react';
 import { motion } from 'framer-motion';
 import {
@@ -18,7 +19,6 @@ import {
 } from 'lucide-react';
 import {
   getContentPrimaryGradeBadgeTone,
-  getContentTypeColor,
   getContentTypeIcon,
   getContentTypeLabel,
 } from '@/features/content/constants';
@@ -35,6 +35,7 @@ import {
   resolveWorksheetOutcome,
 } from '@/features/content/worksheet-display';
 import { getGoogleDriveThumbnailUrl } from '@/lib/image-url';
+import { buildDocumentSlug } from '@/lib/document-slug';
 import type { ContentPageUser } from '@/features/content/types';
 import type { ContentDocument } from '@/types';
 
@@ -56,12 +57,52 @@ type ContentCardProps = {
   viewMode: 'grid' | 'list';
 };
 
+const AcademicSheetCover = ({
+  content,
+  size = 'md',
+}: {
+  content: ContentDocument;
+  size?: 'sm' | 'md';
+}) => {
+  const gradeLabel = getContentPrimaryGradeLabel(content);
+  const typeLabel = getContentTypeLabel(content.type);
+  const isSm = size === 'sm';
 
-const ContentTypeIcon = ({ type }: { type: string }) => {
-  const Icon = getContentTypeIcon(type);
-  return createElement(Icon, {
-    className: 'w-5 h-5 sm:w-7 sm:h-7 text-white',
-  });
+  return (
+    <div
+      aria-label={`${content.title} akademik föy kapağı`}
+      className={`relative flex flex-col justify-between overflow-hidden rounded-2xl border border-amber-900/15 dark:border-amber-400/20 bg-gradient-to-br from-amber-50/95 via-orange-50/40 to-stone-100 dark:from-stone-900 dark:via-stone-900/95 dark:to-stone-950 shadow-sm ring-1 ring-amber-950/5 group-hover:scale-105 transition-transform duration-300 shrink-0 ${
+        isSm
+          ? 'h-12 w-12 sm:h-14 sm:w-14 p-1.5'
+          : 'h-13 w-13 sm:h-14 sm:w-14 p-1.5'
+      }`}
+    >
+      <span
+        aria-hidden="true"
+        className="pointer-events-none absolute -bottom-1 -right-0.5 select-none font-mono text-[22px] font-black text-amber-900/10 dark:text-amber-200/10 leading-none"
+      >
+        ∑
+      </span>
+
+      <div className="flex items-center justify-between gap-0.5 z-10">
+        <span className="truncate text-[9px] font-black tracking-tight text-amber-900/90 dark:text-amber-200">
+          {gradeLabel}
+        </span>
+        <span className="h-1.5 w-1.5 rounded-full bg-emerald-600 dark:bg-emerald-400 shrink-0" />
+      </div>
+
+      <div className="my-auto flex items-center justify-center z-10">
+        {createElement(getContentTypeIcon(content.type), {
+          className:
+            'h-4 w-4 sm:h-5 sm:w-5 text-amber-800 dark:text-amber-300 shrink-0',
+        })}
+      </div>
+
+      <div className="truncate text-center text-[8px] font-bold text-stone-700 dark:text-stone-300 leading-tight z-10">
+        {typeLabel}
+      </div>
+    </div>
+  );
 };
 
 function ContentCard({
@@ -100,9 +141,11 @@ function ContentCard({
     content.solution_url?.trim() || content.answer_key_text?.trim(),
   );
 
+  const documentSlug = buildDocumentSlug(content);
+
   const handleCopyLink = async (e: React.MouseEvent) => {
     e.stopPropagation();
-    const url = `${window.location.origin}/icerikler?id=${content.id}`;
+    const url = `${window.location.origin}/icerikler/${documentSlug}`;
     const success = await copyToClipboard(url);
     if (success) {
       setCopiedLink(true);
@@ -139,7 +182,7 @@ function ContentCard({
           whileHover={{ scale: 1.02 }}
           whileTap={{ scale: 0.98 }}
           onClick={() => onDownload(content)}
-          className="col-span-1 flex w-full items-center justify-center gap-2 rounded-2xl px-4 py-2.5 sm:py-3 text-xs sm:text-sm font-bold transition-all sm:w-auto sm:px-5 bg-gradient-to-r from-emerald-700 to-teal-800 hover:from-emerald-800 hover:to-teal-900 text-white dark:text-slate-950 dark:from-emerald-400 dark:to-teal-400 dark:hover:from-emerald-300 dark:hover:to-teal-300 shadow-md shadow-emerald-700/25 hover:-translate-y-0.5 active:translate-y-0.5"
+          className="col-span-1 flex w-full items-center justify-center gap-2 rounded-2xl px-4 py-2.5 sm:py-3 text-xs sm:text-sm font-bold transition-all sm:w-auto sm:px-5 bg-gradient-to-r from-emerald-700 to-teal-800 hover:from-emerald-800 hover:to-teal-900 text-on-accent dark:text-slate-950 dark:from-emerald-400 dark:to-teal-400 dark:hover:from-emerald-300 dark:hover:to-teal-300 shadow-md shadow-emerald-700/25 hover:-translate-y-0.5 active:translate-y-0.5"
         >
           <Download className="shrink-0 w-4 h-4" /> İndir
         </motion.button>
@@ -151,7 +194,7 @@ function ContentCard({
             whileTap={{ scale: 0.95 }}
             onClick={() => onEdit(content)}
             title="Düzenle"
-            className="flex-1 sm:flex-none flex items-center justify-center rounded-2xl border border-sky-200 dark:border-sky-800/60 bg-sky-50/80 dark:bg-sky-950/30 p-2.5 text-sky-700 dark:text-sky-300 transition-all hover:bg-sky-600 hover:border-sky-500 hover:text-white"
+            className="flex-1 sm:flex-none flex items-center justify-center rounded-2xl border border-sky-200 dark:border-sky-800/60 bg-sky-50/80 dark:bg-sky-950/30 p-2.5 text-sky-700 dark:text-sky-300 transition-all hover:bg-sky-600 hover:border-sky-500 hover:text-on-accent"
           >
             <Edit3 className="shrink-0 w-4 h-4" />
           </motion.button>
@@ -160,7 +203,7 @@ function ContentCard({
             whileTap={{ scale: 0.95 }}
             onClick={() => onDelete(content)}
             title="Sil"
-            className="flex-1 sm:flex-none flex items-center justify-center rounded-2xl border border-red-200 dark:border-red-800/60 bg-red-50/80 dark:bg-red-950/30 p-2.5 text-red-700 dark:text-red-300 transition-all hover:bg-red-600 hover:border-red-600 hover:text-white"
+            className="flex-1 sm:flex-none flex items-center justify-center rounded-2xl border border-red-200 dark:border-red-800/60 bg-red-50/80 dark:bg-red-950/30 p-2.5 text-red-700 dark:text-red-300 transition-all hover:bg-red-600 hover:border-red-600 hover:text-on-accent"
           >
             <Trash2 className="shrink-0 w-4 h-4" />
           </motion.button>
@@ -175,7 +218,6 @@ function ContentCard({
         viewMode === 'grid' ? 'mb-2' : ''
       }`}
     >
-      {/* Metrics counters (left) */}
       <div className="flex items-center gap-3.5 text-xs font-bold text-slate-700 dark:text-slate-200">
         <button
           onClick={() => onPreview(content)}
@@ -193,7 +235,9 @@ function ContentCard({
             isLiked ? 'text-rose-500 font-extrabold' : 'hover:text-rose-500'
           }`}
         >
-          <Heart className={`w-4 h-4 ${isLiked ? 'fill-current text-rose-500' : 'text-slate-500 dark:text-slate-400'}`} />
+          <Heart
+            className={`w-4 h-4 ${isLiked ? 'fill-current text-rose-500' : 'text-slate-500 dark:text-slate-400'}`}
+          />
           <span>{content.likes || 0}</span>
         </button>
 
@@ -230,7 +274,6 @@ function ContentCard({
         )}
       </div>
 
-      {/* Interactive utility chips (right) */}
       <div className="flex items-center gap-1.5">
         <button
           onClick={() => onToggleFavorite(content.id)}
@@ -241,23 +284,29 @@ function ContentCard({
               : 'border-2 border-amber-700 dark:border-amber-400 bg-white dark:bg-slate-800 text-amber-900 dark:text-amber-200 font-bold hover:bg-amber-50 dark:hover:bg-amber-950/40'
           }`}
         >
-          <Star className={`w-3.5 h-3.5 ${isFavorite ? 'fill-current text-amber-500' : 'text-amber-600'}`} />
-          <span className="text-xs">
-            {isFavorite ? 'Favori' : 'Ekle'}
-          </span>
+          <Star
+            className={`w-3.5 h-3.5 ${isFavorite ? 'fill-current text-amber-500' : 'text-amber-600'}`}
+          />
+          <span className="text-xs">{isFavorite ? 'Favori' : 'Ekle'}</span>
         </button>
 
         {onToggleCompleted && (
           <button
             onClick={() => onToggleCompleted(content)}
-            title={isCompleted ? 'Çözüldü işaretini kaldır' : 'Çözüldü olarak işaretle'}
+            title={
+              isCompleted
+                ? 'Çözüldü işaretini kaldır'
+                : 'Çözüldü olarak işaretle'
+            }
             className={`flex items-center gap-1.5 rounded-full px-2.5 py-1 text-xs transition-all duration-200 ${
               isCompleted
                 ? 'border-2 border-emerald-700 bg-emerald-500/25 text-emerald-900 dark:text-emerald-100 font-extrabold shadow-xs'
                 : 'border-2 border-emerald-700 dark:border-emerald-400 bg-white dark:bg-slate-800 text-emerald-900 dark:text-emerald-200 font-bold hover:bg-emerald-50 dark:hover:bg-emerald-950/40'
             }`}
           >
-            <CheckCircle2 className={`w-3.5 h-3.5 ${isCompleted ? 'fill-emerald-400/20 text-emerald-600 dark:text-emerald-400' : 'text-emerald-600'}`} />
+            <CheckCircle2
+              className={`w-3.5 h-3.5 ${isCompleted ? 'fill-emerald-400/20 text-emerald-600 dark:text-emerald-400' : 'text-emerald-600'}`}
+            />
             <span className="text-xs">
               {isCompleted ? 'Çözüldü' : 'Tamamla'}
             </span>
@@ -310,15 +359,17 @@ function ContentCard({
                     unoptimized
                   />
                 </div>
-              ) : null}
-              <div
-                className={`w-12 h-12 sm:w-14 sm:h-14 rounded-2xl bg-gradient-to-br ${getContentTypeColor(content.type)} flex items-center justify-center flex-shrink-0 shadow-md group-hover:scale-105 transition-transform duration-300 ${showDriveThumbnail ? 'hidden' : ''}`}
-              >
-                <ContentTypeIcon type={content.type} />
-              </div>
+              ) : (
+                <AcademicSheetCover content={content} size="sm" />
+              )}
               <div className="min-w-0">
                 <h3 className="text-base sm:text-xl font-black leading-snug text-purple-900 dark:text-purple-200 group-hover:text-purple-600 dark:group-hover:text-purple-300 transition-colors truncate">
-                  {content.title}
+                  <Link
+                    href={`/icerikler/${documentSlug}`}
+                    className="hover:underline focus:outline-hidden"
+                  >
+                    {content.title}
+                  </Link>
                 </h3>
                 <p className="text-xs sm:text-sm text-purple-700/80 dark:text-purple-300/80 font-bold">
                   {getContentTypeLabel(content.type)}
@@ -353,7 +404,9 @@ function ContentCard({
 
           {outcomeLabel && (
             <div className="inline-flex max-w-full items-center gap-1.5 rounded-xl border-2 border-sky-400/60 bg-gradient-to-r from-sky-500/20 via-blue-500/15 to-transparent px-3 py-1.5 text-[11px] font-bold text-sky-950 dark:text-sky-100 shadow-2xs">
-              <span className="font-black text-sky-950 dark:text-sky-200 shrink-0">🎯 Kazanım:</span>
+              <span className="font-black text-sky-950 dark:text-sky-200 shrink-0">
+                🎯 Kazanım:
+              </span>
               <span className="truncate">{outcomeLabel}</span>
             </div>
           )}
@@ -369,7 +422,9 @@ function ContentCard({
               <Users className="w-4 h-4 text-purple-600 dark:text-purple-400 shrink-0" />
               <span className="truncate">{getContentAuthorLabel(content)}</span>
             </div>
-            <span className="text-purple-700 dark:text-purple-300 font-black">•</span>
+            <span className="text-purple-700 dark:text-purple-300 font-black">
+              •
+            </span>
             <div className="flex items-center gap-1.5 shrink-0">
               <Calendar className="w-4 h-4 text-purple-600 dark:text-purple-400 shrink-0" />
               <span>{formatContentDate(content.created_at)}</span>
@@ -390,15 +445,12 @@ function ContentCard({
       transition={{ duration: 0.2, delay: Math.min(index * 0.025, 0.2) }}
       className="group relative flex flex-col justify-between overflow-hidden rounded-3xl border-2 border-purple-400/90 dark:border-purple-600/70 bg-gradient-to-br from-white via-indigo-50/35 to-purple-50/45 dark:from-slate-900 dark:via-slate-900/95 dark:to-purple-950/30 shadow-lg shadow-purple-500/10 hover:shadow-2xl hover:shadow-purple-500/20 hover:border-purple-500 dark:hover:border-purple-500 hover:-translate-y-1 transition-[transform,box-shadow,border-color] duration-200 ease-out defer-card"
     >
-      {/* Ambient glowing top accent line */}
       <div className="absolute top-0 inset-x-0 h-2 bg-gradient-to-r from-violet-600 via-fuchsia-500 to-amber-400 group-hover:h-2.5 transition-all duration-200" />
 
-      {/* Subtle corner light glow */}
       <div className="pointer-events-none absolute -top-20 -right-20 h-44 w-44 rounded-full bg-gradient-to-br from-purple-500/20 via-pink-500/15 to-transparent blur-3xl group-hover:scale-125 transition-transform duration-500" />
 
       <div className="p-5 sm:p-6 flex flex-col h-full justify-between gap-4">
         <div>
-          {/* Header row: thumbnail & badges */}
           <div className="flex items-start justify-between gap-3 mb-4">
             {showDriveThumbnail ? (
               <div className="relative h-13 w-13 sm:h-14 sm:w-14 shrink-0 overflow-hidden rounded-2xl border-2 border-purple-300 dark:border-purple-700 shadow-md ring-2 ring-purple-500/20 group-hover:scale-105 transition-transform duration-300">
@@ -412,12 +464,9 @@ function ContentCard({
                   unoptimized
                 />
               </div>
-            ) : null}
-            <div
-              className={`h-13 w-13 sm:h-14 sm:w-14 rounded-2xl bg-gradient-to-br ${getContentTypeColor(content.type)} flex items-center justify-center shrink-0 shadow-lg shadow-purple-500/15 group-hover:scale-105 transition-transform duration-300 ${showDriveThumbnail ? 'hidden' : ''}`}
-            >
-              <ContentTypeIcon type={content.type} />
-            </div>
+            ) : (
+              <AcademicSheetCover content={content} size="md" />
+            )}
 
             <div className="flex max-w-[65%] flex-wrap items-center justify-end gap-1.5">
               <span className="px-2.5 py-1 rounded-full bg-amber-500/20 text-amber-900 dark:text-amber-100 text-[11px] font-black border-2 border-amber-400/40 shadow-xs">
@@ -449,14 +498,20 @@ function ContentCard({
             </div>
           </div>
 
-          {/* Title & description */}
           <h3 className="text-base sm:text-lg font-black leading-snug text-purple-900 dark:text-purple-200 mb-2 line-clamp-2 group-hover:text-purple-600 dark:group-hover:text-purple-300 transition-colors">
-            {content.title}
+            <Link
+              href={`/icerikler/${documentSlug}`}
+              className="hover:underline focus:outline-hidden"
+            >
+              {content.title}
+            </Link>
           </h3>
 
           {outcomeLabel && (
             <div className="mb-2.5 inline-flex max-w-full items-center gap-1.5 rounded-xl border-2 border-sky-400/60 bg-gradient-to-r from-sky-500/20 via-blue-500/15 to-transparent px-3 py-1.5 text-[11px] font-bold text-sky-950 dark:text-sky-100 shadow-2xs">
-              <span className="font-black text-sky-950 dark:text-sky-200 shrink-0">🎯 Kazanım:</span>
+              <span className="font-black text-sky-950 dark:text-sky-200 shrink-0">
+                🎯 Kazanım:
+              </span>
               <span className="truncate">{outcomeLabel}</span>
             </div>
           )}
@@ -465,13 +520,14 @@ function ContentCard({
             {visibleDescription || getContentTypeLabel(content.type)}
           </p>
 
-          {/* Meta row */}
           <div className="flex items-center gap-3 text-xs font-bold text-slate-700 dark:text-slate-300 pt-3 border-t border-purple-200/80 dark:border-purple-800/40">
             <div className="flex items-center gap-1.5 min-w-0">
               <Users className="w-4 h-4 text-purple-600 dark:text-purple-400 shrink-0" />
               <span className="truncate">{getContentAuthorLabel(content)}</span>
             </div>
-            <span className="text-purple-700 dark:text-purple-300 font-black">•</span>
+            <span className="text-purple-700 dark:text-purple-300 font-black">
+              •
+            </span>
             <div className="flex items-center gap-1.5 shrink-0">
               <Calendar className="w-4 h-4 text-purple-600 dark:text-purple-400 shrink-0" />
               <span>{formatContentDate(content.created_at)}</span>
@@ -479,7 +535,6 @@ function ContentCard({
           </div>
         </div>
 
-        {/* Action and stats section */}
         <div className="space-y-3">
           {statsBar}
           {actionButtons}

@@ -72,6 +72,10 @@ type ActiveQuizViewProps = {
   isShortcutsOpen: boolean;
   isOpticalSheetOpen: boolean;
   isGlossaryOpen: boolean;
+  textAnswers?: Record<number, string>;
+  setTextAnswers?: Dispatch<SetStateAction<Record<number, string>>>;
+  rubricEvaluations?: Record<number, number[]>;
+  setRubricEvaluations?: Dispatch<SetStateAction<Record<number, number[]>>>;
 };
 
 export function ActiveQuizView({
@@ -128,7 +132,15 @@ export function ActiveQuizView({
   isShortcutsOpen,
   isOpticalSheetOpen,
   isGlossaryOpen,
+  textAnswers = {},
+  setTextAnswers,
+  rubricEvaluations = {},
+  setRubricEvaluations,
 }: ActiveQuizViewProps) {
+  const isCurrentAnswered =
+    selectedAnswer !== null ||
+    (textAnswers[currentQuestion] !== undefined &&
+      textAnswers[currentQuestion].trim().length > 0);
   return (
     <main
       className={`page-surface testler-page min-h-screen gradient-bg flex flex-col items-center justify-center p-3 sm:p-6 transition-all ${
@@ -250,6 +262,23 @@ export function ActiveQuizView({
               setIsHintLadderOpen={setIsHintLadderOpen}
               setShowSmartboardSolution={setShowSmartboardSolution}
               showSmartboardSolution={showSmartboardSolution}
+              textAnswers={textAnswers}
+              onTextAnswerChange={(text, qIdx) => {
+                const targetIdx = qIdx !== undefined ? qIdx : currentQuestion;
+                setTextAnswers?.((prev) => ({ ...prev, [targetIdx]: text }));
+              }}
+              rubricEvaluations={rubricEvaluations}
+              onToggleRubric={(rIdx, qIdx) => {
+                const targetIdx = qIdx !== undefined ? qIdx : currentQuestion;
+                setRubricEvaluations?.((prev) => {
+                  const current = prev[targetIdx] || [];
+                  const next = current.includes(rIdx)
+                    ? current.filter((x) => x !== rIdx)
+                    : [...current, rIdx];
+                  return { ...prev, [targetIdx]: next };
+                });
+              }}
+              onOpenScratchpad={() => setIsScratchpadOpen(true)}
             />
 
             {/* İleri / Geri Butonları */}
@@ -266,7 +295,7 @@ export function ActiveQuizView({
               <button
                 type="button"
                 onClick={nextQuestion}
-                disabled={selectedAnswer === null}
+                disabled={!isCurrentAnswered}
                 className={`inline-flex h-12 items-center justify-center gap-2 rounded-xl font-bold transition-all duration-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-border-strong focus-visible:ring-offset-2 focus-visible:ring-offset-slate-900 ${
                   selectedAnswer !== null
                     ? 'hover:-translate-y-0.5 bg-accent-bg hover:bg-accent-bg text-primary dark:text-primary shadow-btn-3d-green active:translate-y-1 active:shadow-none'

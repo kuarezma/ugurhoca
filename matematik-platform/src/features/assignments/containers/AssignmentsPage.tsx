@@ -13,6 +13,7 @@ import {
   ChevronRight,
   ArrowLeft,
   Calendar,
+  PenTool,
 } from 'lucide-react';
 import { ThemeToggle } from '@/components/ThemeToggle';
 import { useToast } from '@/components/Toast';
@@ -44,6 +45,8 @@ const HomeworkLoadCalendarModal = dynamic(
     ),
   { ssr: false },
 );
+
+const MathText = dynamic(() => import('@/components/MathText'));
 
 type AssignmentsPageProps = {
   initialAssignments?: Assignment[];
@@ -524,11 +527,17 @@ export default function OdevlerPage({
                   >
                     {assignment.title}
                   </h3>
-                  <p
+                  <div
                     className={`text-sm mb-5 line-clamp-2 ${isLight ? 'text-slate-600' : 'text-slate-400'}`}
                   >
-                    {assignment.description}
-                  </p>
+                    {assignment.description ? (
+                      assignment.description.includes('$') ? (
+                        <MathText>{assignment.description}</MathText>
+                      ) : (
+                        assignment.description
+                      )
+                    ) : null}
+                  </div>
 
                   {assignment.due_date && (
                     <p className="mb-4 text-xs font-medium text-slate-500 dark:text-slate-400">
@@ -543,13 +552,26 @@ export default function OdevlerPage({
 
                   <div className="flex items-center justify-between flex-wrap gap-3">
                     {isSubmitted ? (
-                      <div className="flex items-center gap-2 text-accent-success-ink text-sm font-bold">
-                        <CheckCircle2 className="w-5 h-5" aria-hidden="true" />
-                        Puan:{' '}
-                        {submission.grade !== null &&
-                        submission.grade !== undefined
-                          ? submission.grade
-                          : 'Bekliyor'}
+                      <div className="flex items-center gap-2 flex-wrap">
+                        <div className="flex items-center gap-1.5 text-accent-success-ink text-sm font-bold">
+                          <CheckCircle2
+                            className="w-5 h-5"
+                            aria-hidden="true"
+                          />
+                          <span>
+                            Puan:{' '}
+                            {submission.grade !== null &&
+                            submission.grade !== undefined
+                              ? submission.grade
+                              : 'Bekliyor'}
+                          </span>
+                        </div>
+                        {submission.annotated_feedback_url && (
+                          <span className="inline-flex items-center gap-1 text-[11px] font-bold text-rose-700 dark:text-rose-300 bg-rose-500/10 border border-rose-500/30 rounded-lg px-2 py-0.5">
+                            <PenTool className="w-3 h-3" />
+                            <span>Çizimli Not</span>
+                          </span>
+                        )}
                       </div>
                     ) : (
                       <div className="text-xs font-semibold uppercase tracking-wider text-slate-500 dark:text-slate-400">

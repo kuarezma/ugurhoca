@@ -1,21 +1,19 @@
 import { MetadataRoute } from 'next';
-import { buildCanonicalUrl } from '@/lib/site-metadata';
+import { createClient } from '@supabase/supabase-js';
+import { buildCanonicalUrl, SITE_URL } from '@/lib/site-metadata';
+import { buildDocumentSlug } from '@/lib/document-slug';
 
-export default function sitemap(): MetadataRoute.Sitemap {
-  // NOT: lastModified bilerek YOK. Eskiden her girdiye `new Date()` yazılıyordu:
-  // her build tüm URL'leri "az önce değişti" gösteriyordu, arama motoru için
-  // gürültü. lastModified opsiyoneldir; gerçek değişiklik tarihi üreten bir
-  // boru hattı kurulana kadar (örn. git log / CMS mtime) boş bırakılır.
-  return [
+export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
+  const staticRoutes: MetadataRoute.Sitemap = [
     { url: buildCanonicalUrl('/'), changeFrequency: 'weekly', priority: 1 },
-    // /testler, /oyunlar, /meydan-okuma, /odak-pomodoro buradan çıkarıldı:
-    // hepsi oturum gerektiriyor ve artık middleware anonim ziyaretçiyi
-    // /giris'e yönlendiriyor (bkz. src/middleware.ts). Bir sitemap girdisi
-    // yönlendiren bir URL'yi işaret edemez — sayfa meta verisinde de
-    // `noIndex: true` var (bkz. ilgili page.tsx dosyaları).
     {
       url: buildCanonicalUrl('/icerikler'),
       changeFrequency: 'daily',
+      priority: 0.9,
+    },
+    {
+      url: buildCanonicalUrl('/deneme-salonu'),
+      changeFrequency: 'weekly',
       priority: 0.9,
     },
     {
@@ -64,6 +62,11 @@ export default function sitemap(): MetadataRoute.Sitemap {
       priority: 0.8,
     },
     {
+      url: buildCanonicalUrl('/iletisim'),
+      changeFrequency: 'monthly',
+      priority: 0.7,
+    },
+    {
       url: buildCanonicalUrl('/gizlilik'),
       changeFrequency: 'yearly',
       priority: 0.3,
@@ -73,5 +76,44 @@ export default function sitemap(): MetadataRoute.Sitemap {
       changeFrequency: 'yearly',
       priority: 0.3,
     },
+    {
+      url: buildCanonicalUrl('/cerez'),
+      changeFrequency: 'yearly',
+      priority: 0.3,
+    },
   ];
+
+  const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
+  const supabaseKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
+
+  if (!supabaseUrl || !supabaseKey) {
+    return staticRoutes;
+  }
+
+  try {
+    const supabase = createClient(supabaseUrl, supabaseKey, {
+      auth: { persistSession: false },
+    });
+
+    const { data: documents, error } = await supabase
+      .from('documents')
+      .select('id, title, grade, created_at')
+      .eq('is_admin_only', false)
+      .order('created_at', { ascending: false })
+      .limit(500);
+
+    if (error || !Array.isArray(documents)) {
+      return staticRoutes;
+    }
+
+    const documentRoutes: MetadataRoute.Sitemap = documents.map((doc) => ({
+      url: `${SITE_URL}/icerikler/${buildDocumentSlug(doc)}`,
+      changeFrequency: 'monthly',
+      priority: 0.7,
+    }));
+
+    return [...staticRoutes, ...documentRoutes];
+  } catch {
+    return staticRoutes;
+  }
 }

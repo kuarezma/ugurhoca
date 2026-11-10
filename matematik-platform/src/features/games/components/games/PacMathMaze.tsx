@@ -101,6 +101,40 @@ export const WALL_SET = new Set<string>([
   '5-5',
 ]);
 
+function generateMazeMathLock() {
+  const types = ['mul', 'root', 'addsub'];
+  const t = types[Math.floor(Math.random() * types.length)];
+  let question = '';
+  let answer = 0;
+  if (t === 'mul') {
+    const a = Math.floor(Math.random() * 8) + 3;
+    const b = Math.floor(Math.random() * 8) + 2;
+    question = `${a} × ${b}`;
+    answer = a * b;
+  } else if (t === 'root') {
+    const base = Math.floor(Math.random() * 7) + 3;
+    question = `√${base * base}`;
+    answer = base;
+  } else {
+    const a = Math.floor(Math.random() * 40) + 20;
+    const b = Math.floor(Math.random() * 20) + 10;
+    question = `${a} - ${b}`;
+    answer = a - b;
+  }
+  const opts = new Set<number>([answer]);
+  while (opts.size < 3) {
+    const offset =
+      (Math.floor(Math.random() * 5) + 1) * (Math.random() > 0.5 ? 1 : -1);
+    const fake = answer + offset;
+    if (fake > 0 && fake !== answer) opts.add(fake);
+  }
+  return {
+    question,
+    answer,
+    options: Array.from(opts).sort(() => Math.random() - 0.5),
+  };
+}
+
 export const INITIAL_POWER_PELLETS = ['0-0', '0-6', '6-0', '6-6'];
 
 export const INITIAL_FRUITS: Record<string, GridItemType> = {
@@ -196,8 +230,8 @@ export function PacMathMaze({
 
   // Labirent Nesneleri & Karakter Pozisyonları
   const [pacPos, setPacPos] = useState<[number, number]>([3, 3]);
-  const [gridItems, setGridItems] = useState<Record<string, GridItemType>>(
-    () => createInitialGrid(),
+  const [gridItems, setGridItems] = useState<Record<string, GridItemType>>(() =>
+    createInitialGrid(),
   );
   const [ghosts, setGhosts] = useState<GhostState[]>(() => INITIAL_GHOSTS);
   const [scaredTimer, setScaredTimer] = useState(0);
@@ -214,6 +248,14 @@ export function PacMathMaze({
     message: string;
     type: 'correct' | 'wrong';
   } | null>(null);
+
+  // Hızlı Matematik Kilidi
+  const [mathLock, setMathLock] = useState<{
+    question: string;
+    answer: number;
+    options: number[];
+  } | null>(null);
+  const [isMathLockOpen, setIsMathLockOpen] = useState(false);
 
   const hasSubmittedRef = useRef(false);
   const feedbackTimerRef = useRef<NodeJS.Timeout | null>(null);
@@ -376,6 +418,27 @@ export function PacMathMaze({
     [],
   );
 
+  const handleMathLockAnswer = useCallback(
+    (chosen: number) => {
+      if (!mathLock) return;
+      if (chosen === mathLock.answer) {
+        gameAudio.playLevelUp();
+        setScore((s) => s + 250);
+        setScaredTimer(10);
+        showFeedback(
+          '🎯 Matematik Kilidi Kırıldı! Hayaletler Dondu! (+250 Puan)',
+          'correct',
+        );
+      } else {
+        gameAudio.playWrong();
+        showFeedback('⚠️ Yanlış Cevap! Hayaletler Hızlandı!', 'wrong');
+      }
+      setIsMathLockOpen(false);
+      setMathLock(null);
+    },
+    [mathLock, showFeedback],
+  );
+
   const startGame = useCallback(() => {
     setScore(0);
     setLives(3);
@@ -481,10 +544,10 @@ export function PacMathMaze({
           showFeedback(`Nefis Meyve! 🍒 (+${bonus} Puan)`, 'correct');
         } else if (currentItem === 'power') {
           gameAudio.playNitro();
-          setScore((s) => s + 150);
           setDotsEaten((d) => d + 1);
-          setScaredTimer(6);
-          showFeedback('⚡ Güç Kristali! Hayaletleri Avla!', 'correct');
+          const lock = generateMazeMathLock();
+          setMathLock(lock);
+          setIsMathLockOpen(true);
         }
       } else {
         gameAudio.playPop();
@@ -687,8 +750,8 @@ export function PacMathMaze({
               Labirente Girmeye Hazır mısın?
             </h3>
             <p className="text-sm text-slate-600 dark:text-slate-300 leading-relaxed">
-              Neon labirentte ok tuşlarıyla koş, altın yemleri ve kirazları topla!
-              Ekrandaki süper ok kombolarını tamamla, güç kristaliyle
+              Neon labirentte ok tuşlarıyla koş, altın yemleri ve kirazları
+              topla! Ekrandaki süper ok kombolarını tamamla, güç kristaliyle
               hayaletleri avla ve altın hazineye ulaş!
             </p>
           </div>
@@ -825,8 +888,8 @@ export function PacMathMaze({
                         isPast
                           ? 'bg-emerald-500/30 border-emerald-400 text-emerald-300 dark:text-emerald-300 shadow-[0_0_10px_rgba(52,211,153,0.5)]'
                           : isCurrent
-                          ? 'bg-amber-500/25 border-amber-400 text-amber-300 dark:text-amber-300 shadow-[0_0_15px_rgba(251,191,36,0.7)] animate-pulse scale-105'
-                          : 'bg-slate-800/60 dark:bg-slate-900/60 border-slate-700 dark:border-slate-800 text-slate-400 dark:text-slate-500 opacity-60'
+                            ? 'bg-amber-500/25 border-amber-400 text-amber-300 dark:text-amber-300 shadow-[0_0_15px_rgba(251,191,36,0.7)] animate-pulse scale-105'
+                            : 'bg-slate-800/60 dark:bg-slate-900/60 border-slate-700 dark:border-slate-800 text-slate-400 dark:text-slate-500 opacity-60'
                       }`}
                     >
                       <span className="text-lg sm:text-xl">{meta.arrow}</span>
@@ -888,7 +951,35 @@ export function PacMathMaze({
           </div>
 
           {/* 7x7 NEON ARCADE PAC-MAN LABİRENT IZGARASI */}
-          <div className="w-full max-w-[340px] sm:max-w-[390px] aspect-square mx-auto p-2 sm:p-2.5 rounded-3xl bg-slate-950 dark:bg-slate-950 border-4 border-blue-600/70 dark:border-blue-500/70 shadow-[0_0_30px_rgba(37,99,235,0.3)] grid grid-cols-7 grid-rows-7 gap-1">
+          <div className="relative w-full max-w-[340px] sm:max-w-[390px] aspect-square mx-auto p-2 sm:p-2.5 rounded-3xl bg-slate-950 dark:bg-slate-950 border-4 border-blue-600/70 dark:border-blue-500/70 shadow-[0_0_30px_rgba(37,99,235,0.3)] grid grid-cols-7 grid-rows-7 gap-1">
+            {isMathLockOpen && mathLock && (
+              <div className="absolute inset-0 z-30 flex items-center justify-center bg-slate-950/90 backdrop-blur-xs rounded-3xl p-4">
+                <div className="bg-slate-900 border-2 border-amber-400 p-5 rounded-2xl max-w-xs w-full text-center space-y-4 shadow-2xl animate-fade-in text-white">
+                  <div className="flex items-center justify-center gap-1.5 text-xs font-black text-amber-400 uppercase tracking-wider">
+                    <Sparkles className="w-4 h-4" />
+                    <span>Matematik Şifre Kilidi</span>
+                  </div>
+                  <div className="text-2xl font-black font-display text-white">
+                    {mathLock.question} = ?
+                  </div>
+                  <div className="grid grid-cols-3 gap-2">
+                    {mathLock.options.map((opt, i) => (
+                      <button
+                        key={i}
+                        type="button"
+                        onClick={() => handleMathLockAnswer(opt)}
+                        className="py-3 px-2 rounded-xl bg-slate-800 hover:bg-amber-500 hover:text-slate-950 border border-slate-700 font-bold text-base transition active:scale-95 text-white"
+                      >
+                        {opt}
+                      </button>
+                    ))}
+                  </div>
+                  <p className="text-[11px] text-slate-400">
+                    Doğru cevapta hayaletler donar ve +250 puan kazanırsın!
+                  </p>
+                </div>
+              </div>
+            )}
             {[0, 1, 2, 3, 4, 5, 6].map((r) =>
               [0, 1, 2, 3, 4, 5, 6].map((c) => {
                 const cellKey = `${r}-${c}`;
@@ -897,8 +988,7 @@ export function PacMathMaze({
                 const activeGhost = ghosts.find(
                   (g) => g.pos[0] === r && g.pos[1] === c,
                 );
-                const isTreasure =
-                  treasurePos[0] === r && treasurePos[1] === c;
+                const isTreasure = treasurePos[0] === r && treasurePos[1] === c;
                 const item = gridItems[cellKey];
 
                 return (
@@ -908,8 +998,8 @@ export function PacMathMaze({
                       isWall
                         ? 'bg-blue-950/60 dark:bg-slate-900 border-2 border-blue-500/40 dark:border-blue-600/40 shadow-inner'
                         : isTreasure
-                        ? 'bg-amber-500/20 dark:bg-amber-950/40 border-2 border-amber-400 dark:border-amber-400 shadow-[0_0_15px_rgba(251,191,36,0.6)]'
-                        : 'bg-slate-900/60 dark:bg-slate-950/80 border border-blue-500/20 dark:border-blue-500/20'
+                          ? 'bg-amber-500/20 dark:bg-amber-950/40 border-2 border-amber-400 dark:border-amber-400 shadow-[0_0_15px_rgba(251,191,36,0.6)]'
+                          : 'bg-slate-900/60 dark:bg-slate-950/80 border border-blue-500/20 dark:border-blue-500/20'
                     }`}
                   >
                     {/* Pac-Man Karakteri */}
@@ -1063,8 +1153,8 @@ export function PacMathMaze({
               {dotsEaten >= 25
                 ? '👑 Labirentin Büyük Efendisi!'
                 : dotsEaten >= 10
-                ? '🍒 Hızlı Pac-Matik Ustası!'
-                : '🎮 Labirent Macerası Tamamlandı!'}
+                  ? '🍒 Hızlı Pac-Matik Ustası!'
+                  : '🎮 Labirent Macerası Tamamlandı!'}
             </h3>
             <p className="text-sm text-slate-600 dark:text-slate-300 mt-1 max-w-md">
               Toplam {dotsEaten} yem ve meyve topladın, {ghostsEaten} hayalet

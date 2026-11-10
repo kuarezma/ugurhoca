@@ -129,23 +129,6 @@ function buildRateLimitResponse(reset: number): NextResponse {
   );
 }
 
-function buildFailClosedResponse(): NextResponse {
-  return NextResponse.json(
-    {
-      error:
-        'Bu işlem şu anda geçici olarak kullanılamıyor. Lütfen daha sonra tekrar deneyin.',
-      code: 'RATE_LIMIT_UNAVAILABLE',
-    },
-    {
-      status: 503,
-      headers: {
-        'Retry-After': '300',
-        'Cache-Control': 'no-store',
-      },
-    },
-  );
-}
-
 /**
  * İstek limiti aşıldıysa hazır 429 yanıtı, aksi halde null döndürür.
  * Production modunda Upstash yoksa veya çalışma anında hata verirse bellek-içi sınırlayıcıya düşer.
@@ -164,15 +147,12 @@ export async function enforceRateLimit(
     if (!isProd) {
       return null;
     }
-    if (options.failClosed) {
-      if (!failClosedConfigErrored) {
-        failClosedConfigErrored = true;
-        logger.error(
-          '[rate-limit] Hassas rota Upstash yapılandırılmadığı için reddedildi (failClosed)',
-          { name },
-        );
-      }
-      return buildFailClosedResponse();
+    if (options.failClosed && !failClosedConfigErrored) {
+      failClosedConfigErrored = true;
+      logger.warn(
+        '[rate-limit] Hassas rota için Upstash yapılandırılmamış; servis kesintisini (503) önlemek için bellek-içi sınırlayıcıya geçildi',
+        { name },
+      );
     }
     const memoryResult = checkMemoryRateLimit(
       `${name}:${identifier}`,

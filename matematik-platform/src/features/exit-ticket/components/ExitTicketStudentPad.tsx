@@ -18,6 +18,8 @@ import type { ExitTicketSession } from '../types';
 import {
   getSessionByCode,
   submitExitTicketResponse,
+  fetchStudentCloudSession,
+  submitCloudExitTicketResponse,
 } from '../lib/exitTicketStorage';
 
 const MathText = dynamic(() => import('@/components/MathText'));
@@ -31,27 +33,38 @@ const OPTION_LETTERS = ['A', 'B', 'C', 'D'];
 const OPTION_THEMES = [
   {
     letterBg: 'bg-rose-500 text-white',
-    border: 'border-rose-500/40 hover:border-rose-400 bg-rose-500/10 active:bg-rose-500/20',
-    selected: 'border-brand-primary bg-brand-primary/25 ring-2 ring-brand-primary',
+    border:
+      'border-rose-500/40 hover:border-rose-400 bg-rose-500/10 active:bg-rose-500/20',
+    selected:
+      'border-brand-primary bg-brand-primary/25 ring-2 ring-brand-primary',
   },
   {
     letterBg: 'bg-sky-500 text-white',
-    border: 'border-sky-500/40 hover:border-sky-400 bg-sky-500/10 active:bg-sky-500/20',
-    selected: 'border-brand-primary bg-brand-primary/25 ring-2 ring-brand-primary',
+    border:
+      'border-sky-500/40 hover:border-sky-400 bg-sky-500/10 active:bg-sky-500/20',
+    selected:
+      'border-brand-primary bg-brand-primary/25 ring-2 ring-brand-primary',
   },
   {
     letterBg: 'bg-amber-500 text-white',
-    border: 'border-amber-500/40 hover:border-amber-400 bg-amber-500/10 active:bg-amber-500/20',
-    selected: 'border-brand-primary bg-brand-primary/25 ring-2 ring-brand-primary',
+    border:
+      'border-amber-500/40 hover:border-amber-400 bg-amber-500/10 active:bg-amber-500/20',
+    selected:
+      'border-brand-primary bg-brand-primary/25 ring-2 ring-brand-primary',
   },
   {
     letterBg: 'bg-emerald-500 text-slate-950',
-    border: 'border-emerald-500/40 hover:border-emerald-400 bg-emerald-500/10 active:bg-emerald-500/20',
-    selected: 'border-brand-primary bg-brand-primary/25 ring-2 ring-brand-primary',
+    border:
+      'border-emerald-500/40 hover:border-emerald-400 bg-emerald-500/10 active:bg-emerald-500/20',
+    selected:
+      'border-brand-primary bg-brand-primary/25 ring-2 ring-brand-primary',
   },
 ];
 
-export function ExitTicketStudentPad({ initialCode = '', onExit }: ExitTicketStudentPadProps) {
+export function ExitTicketStudentPad({
+  initialCode = '',
+  onExit,
+}: ExitTicketStudentPadProps) {
   const [code, setCode] = useState(initialCode);
   const [studentName, setStudentName] = useState('');
   const [isJoined, setIsJoined] = useState(false);
@@ -63,14 +76,17 @@ export function ExitTicketStudentPad({ initialCode = '', onExit }: ExitTicketStu
     if (!session) return;
     const latest = getSessionByCode(session.code);
     if (latest) {
-      setSession(latest);
+      setSession((prev) => ({
+        ...latest,
+        isCloudSession: prev?.isCloudSession ?? latest.isCloudSession,
+      }));
     }
   }, [session]);
 
   useEffect(() => {
     if (!isJoined || !session) return;
 
-    // 1.2 saniyede bir veya storage event'i ile oturum durumunu güncelle (öğretmen soru değiştirdiğinde veya dağılımı açtığında)
+    // 1.2 saniyede bir veya storage event'i ile yerel oturum durumunu güncelle
     const interval = setInterval(refreshSession, 1200);
     const handleStorage = (e: StorageEvent) => {
       if (e.key?.includes('exit_ticket')) {
@@ -85,17 +101,69 @@ export function ExitTicketStudentPad({ initialCode = '', onExit }: ExitTicketStu
     };
   }, [isJoined, session, refreshSession]);
 
+  // Bulut oturumu için 2.5 saniyede bir polling
+  useEffect(() => {
+    if (!isJoined || !session?.isCloudSession) return;
+    let isCancelled = false;
+
+    const pollCloud = async () => {
+      const cloudData = await fetchStudentCloudSession(session.code);
+      if (!isCancelled && cloudData) {
+        setSession((prev) => {
+          if (!prev) return prev;
+          if (
+            prev.currentQuestionIndex !== cloudData.currentQuestionIndex ||
+            prev.showDistribution !== cloudData.showDistribution ||
+            prev.status !== cloudData.status
+          ) {
+            return {
+              ...prev,
+              currentQuestionIndex: cloudData.currentQuestionIndex,
+              showDistribution: cloudData.showDistribution,
+              status: cloudData.status,
+            };
+          }
+          return prev;
+        });
+      }
+    };
+
+    const cloudInterval = setInterval(pollCloud, 2500);
+    return () => {
+      isCancelled = true;
+      clearInterval(cloudInterval);
+    };
+  }, [isJoined, session?.isCloudSession, session?.code]);
+
   // Önceden girilmiş kod varsa otomatik bulmayı dene
   useEffect(() => {
     if (initialCode && initialCode.length === 6) {
       const found = getSessionByCode(initialCode);
       if (found) {
         setSession(found);
+      } else {
+        void fetchStudentCloudSession(initialCode).then((cloudData) => {
+          if (cloudData) {
+            setSession({
+              id: cloudData.id,
+              code: cloudData.code,
+              title: cloudData.title,
+              grade: cloudData.grade,
+              status: cloudData.status,
+              currentQuestionIndex: cloudData.currentQuestionIndex,
+              showDistribution: cloudData.showDistribution,
+              questions: cloudData.questions,
+              responses: [],
+              createdAt: new Date().toISOString(),
+              isCloudSession: true,
+            });
+          }
+        });
       }
     }
   }, [initialCode]);
 
-  const handleJoin = (e?: React.FormEvent) => {
+  const handleJoin = async (e?: React.FormEvent) => {
     if (e) e.preventDefault();
     setJoinError(null);
 
@@ -111,9 +179,30 @@ export function ExitTicketStudentPad({ initialCode = '', onExit }: ExitTicketStu
       return;
     }
 
-    const found = getSessionByCode(cleanCode);
+    let found = getSessionByCode(cleanCode);
     if (!found) {
-      setJoinError('Bu koda sahip aktif bir çıkış bileti oturumu bulunamadı. Lütfen tahtadaki kodu kontrol edin.');
+      const cloudData = await fetchStudentCloudSession(cleanCode);
+      if (cloudData) {
+        found = {
+          id: cloudData.id,
+          code: cloudData.code,
+          title: cloudData.title,
+          grade: cloudData.grade,
+          status: cloudData.status,
+          currentQuestionIndex: cloudData.currentQuestionIndex,
+          showDistribution: cloudData.showDistribution,
+          questions: cloudData.questions,
+          responses: [],
+          createdAt: new Date().toISOString(),
+          isCloudSession: true,
+        };
+      }
+    }
+
+    if (!found) {
+      setJoinError(
+        'Bu koda sahip aktif bir çıkış bileti oturumu bulunamadı. Lütfen tahtadaki kodu kontrol edin.',
+      );
       return;
     }
 
@@ -125,9 +214,33 @@ export function ExitTicketStudentPad({ initialCode = '', onExit }: ExitTicketStu
     if (!session) return;
     const qIndex = session.currentQuestionIndex;
 
-    const updated = submitExitTicketResponse(session.id, qIndex, studentName, optionIndex);
+    const updated = submitExitTicketResponse(
+      session.id,
+      qIndex,
+      studentName,
+      optionIndex,
+    );
     if (updated) {
-      setSession({ ...updated });
+      setSession({ ...updated, isCloudSession: session.isCloudSession });
+    }
+
+    if (session.isCloudSession) {
+      let studentKey = '';
+      if (typeof window !== 'undefined') {
+        studentKey =
+          localStorage.getItem('ugurhoca_exit_ticket_student_key') || '';
+        if (!studentKey) {
+          studentKey = `st_${Date.now()}_${Math.random().toString(36).slice(2, 8)}`;
+          localStorage.setItem('ugurhoca_exit_ticket_student_key', studentKey);
+        }
+      }
+      void submitCloudExitTicketResponse(
+        session.code,
+        studentKey || `st_${Date.now()}`,
+        studentName,
+        qIndex,
+        optionIndex,
+      );
     }
   };
 
@@ -141,7 +254,9 @@ export function ExitTicketStudentPad({ initialCode = '', onExit }: ExitTicketStu
               <Sparkles className="w-8 h-8 text-amber-500 dark:text-amber-400" />
             </div>
           </div>
-          <h2 className="text-2xl font-black text-slate-900 dark:text-white">Çıkış Bileti Öğrenci Girişi</h2>
+          <h2 className="text-2xl font-black text-slate-900 dark:text-white">
+            Çıkış Bileti Öğrenci Girişi
+          </h2>
           <p className="text-sm text-slate-600 dark:text-slate-400 mt-1">
             Akıllı tahtada veya ekranda gördüğünüz 6 haneli PIN kodunu girin.
           </p>
@@ -156,8 +271,12 @@ export function ExitTicketStudentPad({ initialCode = '', onExit }: ExitTicketStu
 
         <form onSubmit={handleJoin} className="space-y-4">
           <div>
-            <label htmlFor="ticket-pin-input" className="block text-xs font-semibold text-slate-700 dark:text-slate-300 mb-1.5 flex items-center gap-1.5">
-              <Hash className="w-4 h-4 text-amber-500 dark:text-amber-400" /> 6 Haneli Katılım Kodu (PIN)
+            <label
+              htmlFor="ticket-pin-input"
+              className="block text-xs font-semibold text-slate-700 dark:text-slate-300 mb-1.5 flex items-center gap-1.5"
+            >
+              <Hash className="w-4 h-4 text-amber-500 dark:text-amber-400" /> 6
+              Haneli Katılım Kodu (PIN)
             </label>
             <input
               id="ticket-pin-input"
@@ -172,8 +291,12 @@ export function ExitTicketStudentPad({ initialCode = '', onExit }: ExitTicketStu
           </div>
 
           <div>
-            <label htmlFor="student-name-input" className="block text-xs font-semibold text-slate-700 dark:text-slate-300 mb-1.5 flex items-center gap-1.5">
-              <User className="w-4 h-4 text-sky-500 dark:text-sky-400" /> Adınız / Takma Adınız
+            <label
+              htmlFor="student-name-input"
+              className="block text-xs font-semibold text-slate-700 dark:text-slate-300 mb-1.5 flex items-center gap-1.5"
+            >
+              <User className="w-4 h-4 text-sky-500 dark:text-sky-400" /> Adınız
+              / Takma Adınız
             </label>
             <input
               id="student-name-input"
@@ -210,7 +333,9 @@ export function ExitTicketStudentPad({ initialCode = '', onExit }: ExitTicketStu
 
   // Öğrencinin bu soruya verdiği cevap
   const studentResponse = session.responses.find(
-    (r) => r.questionIndex === currentQIndex && r.studentName.toLowerCase() === studentName.trim().toLowerCase(),
+    (r) =>
+      r.questionIndex === currentQIndex &&
+      r.studentName.toLowerCase() === studentName.trim().toLowerCase(),
   );
   const hasAnswered = studentResponse !== undefined;
   const isRevealed = session.showDistribution || isSessionCompleted;
@@ -233,26 +358,42 @@ export function ExitTicketStudentPad({ initialCode = '', onExit }: ExitTicketStu
         <span className="inline-block px-3 py-1 rounded-full bg-emerald-500/10 dark:bg-emerald-500/20 text-emerald-700 dark:text-emerald-300 text-xs font-bold uppercase tracking-wider mb-2">
           Bilet Tamamlandı!
         </span>
-        <h2 className="text-2xl sm:text-3xl font-black text-slate-900 dark:text-white">Harika Katılım, {studentName}!</h2>
+        <h2 className="text-2xl sm:text-3xl font-black text-slate-900 dark:text-white">
+          Harika Katılım, {studentName}!
+        </h2>
         <p className="text-slate-600 dark:text-slate-400 text-sm mt-2 max-w-sm mx-auto">
-          Ders sonu değerlendirmeni başarıyla tamamladın. Öğretmenin sonuçları incelediğinde eksiklerini birlikte kapatacaksınız.
+          Ders sonu değerlendirmeni başarıyla tamamladın. Öğretmenin sonuçları
+          incelediğinde eksiklerini birlikte kapatacaksınız.
         </p>
 
         <div className="my-6 p-4 rounded-2xl bg-slate-50 dark:bg-slate-950/60 border border-slate-200 dark:border-white/10 flex items-center justify-around">
           <div>
-            <span className="block text-xs text-slate-500 uppercase font-semibold">Toplam Soru</span>
-            <span className="text-2xl font-black text-slate-900 dark:text-white">{session.questions.length}</span>
+            <span className="block text-xs text-slate-500 uppercase font-semibold">
+              Toplam Soru
+            </span>
+            <span className="text-2xl font-black text-slate-900 dark:text-white">
+              {session.questions.length}
+            </span>
           </div>
           <div className="h-8 w-px bg-slate-200 dark:bg-white/10" />
           <div>
-            <span className="block text-xs text-slate-500 uppercase font-semibold">Doğru Cevabın</span>
-            <span className="text-2xl font-black text-accent-success-ink dark:text-emerald-400">{correctAnswers}</span>
+            <span className="block text-xs text-slate-500 uppercase font-semibold">
+              Doğru Cevabın
+            </span>
+            <span className="text-2xl font-black text-accent-success-ink dark:text-emerald-400">
+              {correctAnswers}
+            </span>
           </div>
           <div className="h-8 w-px bg-slate-200 dark:bg-white/10" />
           <div>
-            <span className="block text-xs text-slate-500 uppercase font-semibold">Başarın</span>
+            <span className="block text-xs text-slate-500 uppercase font-semibold">
+              Başarın
+            </span>
             <span className="text-2xl font-black text-amber-600 dark:text-amber-400">
-              %{Math.round((correctAnswers / Math.max(1, session.questions.length)) * 100)}
+              %
+              {Math.round(
+                (correctAnswers / Math.max(1, session.questions.length)) * 100,
+              )}
             </span>
           </div>
         </div>
@@ -282,7 +423,9 @@ export function ExitTicketStudentPad({ initialCode = '', onExit }: ExitTicketStu
         </div>
         <div className="flex items-center gap-2 text-xs">
           <span className="text-slate-500 dark:text-slate-400">Öğrenci:</span>
-          <span className="font-bold text-amber-700 dark:text-amber-400">{studentName}</span>
+          <span className="font-bold text-amber-700 dark:text-amber-400">
+            {studentName}
+          </span>
         </div>
       </div>
 
@@ -293,7 +436,9 @@ export function ExitTicketStudentPad({ initialCode = '', onExit }: ExitTicketStu
             <span className="px-2.5 py-1 rounded-lg bg-indigo-500/10 dark:bg-indigo-500/20 border border-indigo-500/30 text-indigo-700 dark:text-indigo-300 text-xs font-bold">
               Soru {currentQIndex + 1} / {session.questions.length}
             </span>
-            <span className="text-xs text-slate-500 dark:text-slate-400">Tek Seferde Cevapla</span>
+            <span className="text-xs text-slate-500 dark:text-slate-400">
+              Tek Seferde Cevapla
+            </span>
           </div>
 
           <div className="flex items-center gap-1.5 text-xs text-slate-500 dark:text-slate-400">
@@ -320,9 +465,11 @@ export function ExitTicketStudentPad({ initialCode = '', onExit }: ExitTicketStu
               buttonStyle = `${theme.selected}`;
             }
             if (isCorrect) {
-              buttonStyle = 'border-emerald-500 bg-emerald-500/25 ring-2 ring-emerald-500';
+              buttonStyle =
+                'border-emerald-500 bg-emerald-500/25 ring-2 ring-emerald-500';
             } else if (isWrongSelected) {
-              buttonStyle = 'border-rose-500 bg-rose-500/25 ring-2 ring-rose-500';
+              buttonStyle =
+                'border-rose-500 bg-rose-500/25 ring-2 ring-rose-500';
             }
 
             return (
@@ -338,8 +485,8 @@ export function ExitTicketStudentPad({ initialCode = '', onExit }: ExitTicketStu
                     isCorrect
                       ? 'bg-emerald-500 text-slate-950'
                       : isWrongSelected
-                      ? 'bg-rose-500 text-white'
-                      : theme.letterBg
+                        ? 'bg-rose-500 text-white'
+                        : theme.letterBg
                   }`}
                 >
                   {OPTION_LETTERS[idx]}
@@ -375,9 +522,14 @@ export function ExitTicketStudentPad({ initialCode = '', onExit }: ExitTicketStu
           <div className="rounded-2xl bg-amber-50 dark:bg-amber-500/10 border border-amber-200 dark:border-amber-500/30 p-4 flex items-center gap-3 text-amber-800 dark:text-amber-300 text-sm">
             <CheckCircle2 className="w-5 h-5 flex-shrink-0 text-amber-500 dark:text-amber-400" />
             <div>
-              <p className="font-semibold">Cevabın Alındı: {OPTION_LETTERS[studentResponse.selectedIndex]} {' '}Şıkkı</p>
+              <p className="font-semibold">
+                Cevabın Alındı: {OPTION_LETTERS[studentResponse.selectedIndex]}{' '}
+                Şıkkı
+              </p>
               <p className="text-xs text-amber-700 dark:text-amber-400/80">
-                Öğretmen sınıf dağılımını açtığında doğru cevabı ve pedagojik açıklamayı burada göreceksin. Şıkkını değiştirmek istersen başka bir şıkka dokunabilirsin.
+                Öğretmen sınıf dağılımını açtığında doğru cevabı ve pedagojik
+                açıklamayı burada göreceksin. Şıkkını değiştirmek istersen başka
+                bir şıkka dokunabilirsin.
               </p>
             </div>
           </div>
@@ -389,37 +541,48 @@ export function ExitTicketStudentPad({ initialCode = '', onExit }: ExitTicketStu
             {/* Yanlış Seçilmişse Kavram Yanılgısı Teşhis Kartı */}
             {hasAnswered &&
               studentResponse.selectedIndex !== currentQ.correctIndex &&
-              currentQ.distractorExplanations?.[studentResponse.selectedIndex] && (
+              currentQ.distractorExplanations?.[
+                studentResponse.selectedIndex
+              ] && (
                 <div className="rounded-2xl border border-rose-200 dark:border-rose-500/40 bg-rose-50 dark:bg-rose-500/10 p-4 sm:p-5 flex items-start gap-3.5">
                   <div className="p-2 rounded-xl bg-rose-100 dark:bg-rose-500/20 text-rose-600 dark:text-rose-400 flex-shrink-0 mt-0.5">
                     <AlertCircle className="w-5 h-5" />
                   </div>
                   <div>
                     <h4 className="font-bold text-rose-800 dark:text-rose-300 text-sm flex items-center gap-2">
-                      💡 Kavram Yanılgısı Teşhisi: Neden {' '}{OPTION_LETTERS[studentResponse.selectedIndex]} Şıkkını Seçtin?
+                      💡 Kavram Yanılgısı Teşhisi: Neden{' '}
+                      {OPTION_LETTERS[studentResponse.selectedIndex]} Şıkkını
+                      Seçtin?
                     </h4>
                     <p className="text-xs sm:text-sm text-slate-700 dark:text-slate-300 mt-1.5 leading-relaxed">
-                      {currentQ.distractorExplanations[studentResponse.selectedIndex]}
+                      {
+                        currentQ.distractorExplanations[
+                          studentResponse.selectedIndex
+                        ]
+                      }
                     </p>
                   </div>
                 </div>
               )}
 
             {/* Doğru Yapılmışsa Tebrik */}
-            {hasAnswered && studentResponse.selectedIndex === currentQ.correctIndex && (
-              <div className="rounded-2xl border border-emerald-200 dark:border-emerald-500/40 bg-emerald-50 dark:bg-emerald-500/10 p-4 flex items-center gap-3 text-emerald-800 dark:text-emerald-300">
-                <CheckCircle2 className="w-6 h-6 flex-shrink-0 text-accent-success-ink dark:text-emerald-400" />
-                <div className="text-sm">
-                  <span className="font-bold">Tebrikler, doğru cevap! </span>
-                  Kazanımı eksiksiz kavramışsın.
+            {hasAnswered &&
+              studentResponse.selectedIndex === currentQ.correctIndex && (
+                <div className="rounded-2xl border border-emerald-200 dark:border-emerald-500/40 bg-emerald-50 dark:bg-emerald-500/10 p-4 flex items-center gap-3 text-emerald-800 dark:text-emerald-300">
+                  <CheckCircle2 className="w-6 h-6 flex-shrink-0 text-accent-success-ink dark:text-emerald-400" />
+                  <div className="text-sm">
+                    <span className="font-bold">Tebrikler, doğru cevap! </span>
+                    Kazanımı eksiksiz kavramışsın.
+                  </div>
                 </div>
-              </div>
-            )}
+              )}
 
             {/* Sorunun Genel Çözüm Açıklaması */}
             {currentQ.explanation && (
               <div className="rounded-2xl border border-sky-200 dark:border-sky-500/30 bg-sky-50 dark:bg-sky-500/10 p-4 text-xs sm:text-sm text-sky-900 dark:text-sky-200">
-                <span className="font-bold text-sky-800 dark:text-sky-300 block mb-1">📖 Çözüm Adımı:</span>
+                <span className="font-bold text-sky-800 dark:text-sky-300 block mb-1">
+                  📖 Çözüm Adımı:
+                </span>
                 <MathText>{currentQ.explanation}</MathText>
               </div>
             )}

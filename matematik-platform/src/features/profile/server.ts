@@ -183,7 +183,8 @@ export const loadInitialProfileDashboardData =
         .from('quiz_results')
         .select('*, quizzes(title, difficulty, grade)')
         .eq('user_id', user.id)
-        .order('completed_at', { ascending: false }),
+        .order('completed_at', { ascending: false })
+        .limit(2000),
       availableQuizzesQuery,
       supabase
         .from('study_sessions')

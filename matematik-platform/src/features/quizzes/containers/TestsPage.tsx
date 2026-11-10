@@ -48,6 +48,10 @@ export default function TestsPage({
   const [currentQuestion, setCurrentQuestion] = useState(0);
   const [selectedAnswer, setSelectedAnswer] = useState<number | null>(null);
   const [answers, setAnswers] = useState<{ [key: number]: number }>({});
+  const [textAnswers, setTextAnswers] = useState<Record<number, string>>({});
+  const [rubricEvaluations, setRubricEvaluations] = useState<
+    Record<number, number[]>
+  >({});
   const [showResult, setShowResult] = useState(false);
   const [quizStarted, setQuizStarted] = useState(false);
   const [quizzes, setQuizzes] = useState<Quiz[]>(initialQuizzes);
@@ -365,6 +369,8 @@ export default function TestsPage({
     setQuestionElapsedSeconds,
     setQuestionTimes,
     currentQuestion,
+    textAnswers,
+    rubricEvaluations,
   });
 
   const resetQuiz = () => {
@@ -376,6 +382,8 @@ export default function TestsPage({
     setQuizStarted(false);
     setCurrentQuestion(0);
     setAnswers({});
+    setTextAnswers({});
+    setRubricEvaluations({});
     setSelectedAnswer(null);
     setShowResult(false);
     setStartTime(null);
@@ -455,6 +463,10 @@ export default function TestsPage({
         isShortcutsOpen={isShortcutsOpen}
         isOpticalSheetOpen={isOpticalSheetOpen}
         isGlossaryOpen={isGlossaryOpen}
+        textAnswers={textAnswers}
+        setTextAnswers={setTextAnswers}
+        rubricEvaluations={rubricEvaluations}
+        setRubricEvaluations={setRubricEvaluations}
       />
     );
   }
@@ -518,6 +530,8 @@ export default function TestsPage({
           questionTimes={questionTimes}
           confidenceRatings={confidenceRatings}
           startTime={startTime}
+          textAnswers={textAnswers}
+          rubricEvaluations={rubricEvaluations}
           onRetake={() => startQuiz(selectedQuiz)}
           onBackToLobby={resetQuiz}
           onOpenOutcomeAnalysis={() => setIsOutcomeAnalysisOpen(true)}

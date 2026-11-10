@@ -30,6 +30,7 @@ export interface ExitTicketSession {
   questions: ExitTicketQuestion[];
   responses: ExitTicketResponse[];
   createdAt: string;
+  isCloudSession?: boolean;
 }
 
 export interface QuestionDistribution {

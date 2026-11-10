@@ -11,6 +11,7 @@ import {
 } from 'lucide-react';
 import { useAccessibleModal } from '@/hooks/useAccessibleModal';
 import type { Assignment, Submission } from '@/types';
+import MathText from '@/components/MathText';
 
 type HomeworkLoadCalendarModalProps = {
   isOpen: boolean;
@@ -82,7 +83,7 @@ export function HomeworkLoadCalendarModal({
 
       const totalMinutes = dayAssignments.reduce(
         (sum, a) => sum + calculateEstimatedMinutes(a),
-        0
+        0,
       );
 
       list.push({
@@ -102,7 +103,9 @@ export function HomeworkLoadCalendarModal({
 
   const activeDay = useMemo(() => {
     if (!selectedDate) return daysForecast[0];
-    return (daysForecast.find((d) => d.dateStr === selectedDate) || daysForecast[0]);
+    return (
+      daysForecast.find((d) => d.dateStr === selectedDate) || daysForecast[0]
+    );
   }, [selectedDate, daysForecast]);
 
   if (!isOpen) return null;
@@ -126,7 +129,10 @@ export function HomeworkLoadCalendarModal({
             </div>
             <div>
               <div className="flex items-center gap-2">
-                <h2 id={titleId} className="text-base font-bold tracking-tight text-slate-900 dark:text-white">
+                <h2
+                  id={titleId}
+                  className="text-base font-bold tracking-tight text-slate-900 dark:text-white"
+                >
                   Ödev Yükü Takvimi & Çakışma Radarı
                 </h2>
                 <span className="rounded-full bg-amber-500/15 border border-amber-500/25 px-2 py-0.5 text-[10px] font-bold text-amber-700 dark:text-amber-300">
@@ -134,7 +140,8 @@ export function HomeworkLoadCalendarModal({
                 </span>
               </div>
               <p className="text-xs text-slate-500 dark:text-slate-400">
-                Günlük çalışma sürenizi dengeleyin, teslim tarihlerinin aynı güne yığılmasını önleyin.
+                Günlük çalışma sürenizi dengeleyin, teslim tarihlerinin aynı
+                güne yığılmasını önleyin.
               </p>
             </div>
           </div>
@@ -152,16 +159,21 @@ export function HomeworkLoadCalendarModal({
         {/* 14 Günlük Yük Şeridi (Radar) */}
         <div className="p-4 border-b border-slate-200 dark:border-white/10 bg-slate-100/60 dark:bg-slate-950/40 space-y-2">
           <div className="flex items-center justify-between text-xs">
-            <span className="font-semibold text-slate-700 dark:text-slate-300">Önümüzdeki 14 Günün Ödev Yoğunluğu</span>
+            <span className="font-semibold text-slate-700 dark:text-slate-300">
+              Önümüzdeki 14 Günün Ödev Yoğunluğu
+            </span>
             <div className="flex items-center gap-3 text-[11px]">
               <span className="flex items-center gap-1 text-accent-success-ink dark:text-emerald-400">
-                <span className="w-2 h-2 rounded-full bg-emerald-500" /> Rahat (&lt;45 dk)
+                <span className="w-2 h-2 rounded-full bg-emerald-500" /> Rahat
+                (&lt;45 dk)
               </span>
               <span className="flex items-center gap-1 text-amber-600 dark:text-amber-400">
-                <span className="w-2 h-2 rounded-full bg-amber-500" /> Dengeli (45-90 dk)
+                <span className="w-2 h-2 rounded-full bg-amber-500" /> Dengeli
+                (45-90 dk)
               </span>
               <span className="flex items-center gap-1 text-rose-600 dark:text-rose-400">
-                <span className="w-2 h-2 rounded-full bg-rose-500" /> Yoğun / Çakışma (&gt;90 dk)
+                <span className="w-2 h-2 rounded-full bg-rose-500" /> Yoğun /
+                Çakışma (&gt;90 dk)
               </span>
             </div>
           </div>
@@ -169,17 +181,21 @@ export function HomeworkLoadCalendarModal({
           <div className="grid grid-cols-7 sm:grid-cols-14 gap-1.5 pt-1">
             {daysForecast.map((day) => {
               const isSelected = activeDay?.dateStr === day.dateStr;
-              let barColor = 'bg-white border-slate-200 text-slate-600 dark:bg-slate-800 dark:text-slate-400 dark:border-white/5';
+              let barColor =
+                'bg-white border-slate-200 text-slate-600 dark:bg-slate-800 dark:text-slate-400 dark:border-white/5';
               let indicatorColor = 'bg-slate-400 dark:bg-slate-600';
 
               if (day.totalEstimatedMinutes > 90) {
-                barColor = 'bg-rose-500/15 text-rose-800 dark:text-rose-200 border-rose-500/40';
+                barColor =
+                  'bg-rose-500/15 text-rose-800 dark:text-rose-200 border-rose-500/40';
                 indicatorColor = 'bg-rose-500';
               } else if (day.totalEstimatedMinutes > 45) {
-                barColor = 'bg-amber-500/15 text-amber-800 dark:text-amber-200 border-amber-500/40';
+                barColor =
+                  'bg-amber-500/15 text-amber-800 dark:text-amber-200 border-amber-500/40';
                 indicatorColor = 'bg-amber-500';
               } else if (day.totalEstimatedMinutes > 0) {
-                barColor = 'bg-emerald-500/15 text-emerald-800 dark:text-emerald-200 border-emerald-500/40';
+                barColor =
+                  'bg-emerald-500/15 text-emerald-800 dark:text-emerald-200 border-emerald-500/40';
                 indicatorColor = 'bg-emerald-500';
               }
 
@@ -189,14 +205,22 @@ export function HomeworkLoadCalendarModal({
                   type="button"
                   onClick={() => setSelectedDate(day.dateStr)}
                   className={`flex flex-col items-center justify-between p-2 rounded-xl border text-center transition ${barColor} ${
-                    isSelected ? 'ring-2 ring-brand-primary scale-105 shadow-md' : 'hover:opacity-90'
+                    isSelected
+                      ? 'ring-2 ring-brand-primary scale-105 shadow-md'
+                      : 'hover:opacity-90'
                   }`}
                 >
-                  <span className="text-[10px] font-bold uppercase">{day.dayName}</span>
-                  <span className="text-xs sm:text-sm font-extrabold my-0.5">{day.dayNumber}</span>
+                  <span className="text-[10px] font-bold uppercase">
+                    {day.dayName}
+                  </span>
+                  <span className="text-xs sm:text-sm font-extrabold my-0.5">
+                    {day.dayNumber}
+                  </span>
                   <div className="w-full flex justify-center items-center gap-0.5 mt-1">
                     {day.assignments.length > 0 ? (
-                      <span className={`w-1.5 h-1.5 rounded-full ${indicatorColor}`} />
+                      <span
+                        className={`w-1.5 h-1.5 rounded-full ${indicatorColor}`}
+                      />
                     ) : (
                       <span className="w-1.5 h-1.5 rounded-full bg-transparent" />
                     )}
@@ -220,14 +244,20 @@ export function HomeworkLoadCalendarModal({
                 )}
               </h3>
               <p className="text-xs text-slate-500 dark:text-slate-400 mt-0.5">
-                Toplam Tahmini Süre: {' '}<strong className="text-slate-900 dark:text-white">{activeDay?.totalEstimatedMinutes} dakika</strong> {' '}• {activeDay?.assignments.length} Ödev
+                Toplam Tahmini Süre:{' '}
+                <strong className="text-slate-900 dark:text-white">
+                  {activeDay?.totalEstimatedMinutes} dakika
+                </strong>{' '}
+                • {activeDay?.assignments.length} Ödev
               </p>
             </div>
 
             {activeDay?.hasConflict && (
               <div className="flex items-center gap-1.5 rounded-xl bg-rose-500/15 border border-rose-500/30 px-3 py-1.5 text-xs text-rose-700 dark:text-rose-300">
                 <AlertTriangle className="w-4 h-4 text-rose-600 dark:text-rose-400 shrink-0" />
-                <span>Yüksek Yük Uyarısı: Ödevleri günlere bölerek çalışın.</span>
+                <span>
+                  Yüksek Yük Uyarısı: Ödevleri günlere bölerek çalışın.
+                </span>
               </div>
             )}
           </div>
@@ -235,9 +265,12 @@ export function HomeworkLoadCalendarModal({
           {activeDay?.assignments.length === 0 ? (
             <div className="p-8 text-center rounded-2xl border border-dashed border-slate-200 dark:border-white/10">
               <CheckCircle2 className="w-8 h-8 text-accent-success-ink dark:text-emerald-400 mx-auto mb-2 opacity-80" />
-              <p className="text-sm font-bold text-slate-700 dark:text-slate-300">Bu gün için planlanmış teslim yok</p>
+              <p className="text-sm font-bold text-slate-700 dark:text-slate-300">
+                Bu gün için planlanmış teslim yok
+              </p>
               <p className="text-xs text-slate-500 mt-1">
-                Dinlenmek, konu tekrarı yapmak veya geçmiş eksikleri kapatmak için harika bir fırsat!
+                Dinlenmek, konu tekrarı yapmak veya geçmiş eksikleri kapatmak
+                için harika bir fırsat!
               </p>
             </div>
           ) : (
@@ -256,9 +289,15 @@ export function HomeworkLoadCalendarModal({
                         <span className="px-2 py-0.5 rounded text-[10px] font-bold bg-indigo-500/10 dark:bg-indigo-500/20 text-indigo-700 dark:text-indigo-300">
                           {assignment.grade}. Sınıf
                         </span>
-                        <h4 className="text-xs sm:text-sm font-bold text-slate-900 dark:text-white">{assignment.title}</h4>
+                        <h4 className="text-xs sm:text-sm font-bold text-slate-900 dark:text-white">
+                          {assignment.title}
+                        </h4>
                       </div>
-                      <p className="text-xs text-slate-600 dark:text-slate-300 line-clamp-1">{assignment.description}</p>
+                      <div className="text-xs text-slate-600 dark:text-slate-300 line-clamp-1">
+                        {assignment.description ? (
+                          <MathText>{assignment.description}</MathText>
+                        ) : null}
+                      </div>
                       <div className="flex items-center gap-3 text-[11px] text-slate-500 dark:text-slate-400">
                         <span className="flex items-center gap-1">
                           <Clock className="w-3.5 h-3.5 text-amber-500 dark:text-amber-400" />
@@ -266,11 +305,13 @@ export function HomeworkLoadCalendarModal({
                         </span>
                         {isSubmitted ? (
                           <span className="flex items-center gap-1 text-accent-success-ink dark:text-emerald-400 font-semibold">
-                            <CheckCircle2 className="w-3.5 h-3.5" /> Teslim Edildi
+                            <CheckCircle2 className="w-3.5 h-3.5" /> Teslim
+                            Edildi
                           </span>
                         ) : (
                           <span className="flex items-center gap-1 text-amber-600 dark:text-amber-300 font-semibold">
-                            <Flame className="w-3.5 h-3.5 text-amber-500 dark:text-amber-400" /> {' '}Teslim Bekleniyor
+                            <Flame className="w-3.5 h-3.5 text-amber-500 dark:text-amber-400" />{' '}
+                            Teslim Bekleniyor
                           </span>
                         )}
                       </div>

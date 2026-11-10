@@ -4,7 +4,10 @@ import { useState, useId } from 'react';
 import { X, Sparkles, BookOpen, Layers, Check, ArrowRight } from 'lucide-react';
 import { useAccessibleModal } from '@/hooks/useAccessibleModal';
 import { EXIT_TICKET_TEMPLATES } from '../lib/exitTicketTemplates';
-import { createExitTicketSession } from '../lib/exitTicketStorage';
+import {
+  createExitTicketSession,
+  createCloudExitTicketSession,
+} from '../lib/exitTicketStorage';
 import type { ExitTicketSession } from '../types';
 
 export interface ExitTicketCreateModalProps {
@@ -30,7 +33,7 @@ export function ExitTicketCreateModal({
     EXIT_TICKET_TEMPLATES.find((t) => t.id === selectedTemplateId) ||
     EXIT_TICKET_TEMPLATES[0];
 
-  const handleLaunch = () => {
+  const handleLaunch = async () => {
     const session = createExitTicketSession(
       selectedTemplate.title,
       selectedTemplate.grade,
@@ -38,6 +41,19 @@ export function ExitTicketCreateModal({
     );
     onSessionCreated(session);
     onClose();
+
+    try {
+      const cloud = await createCloudExitTicketSession(
+        selectedTemplate.title,
+        selectedTemplate.grade,
+        selectedTemplate.questions,
+      );
+      if (cloud) {
+        onSessionCreated(cloud);
+      }
+    } catch {
+      // offline fallback
+    }
   };
 
   return (
@@ -57,11 +73,15 @@ export function ExitTicketCreateModal({
               <Sparkles className="w-5 h-5" />
             </div>
             <div>
-              <h3 id={titleId} className="text-lg sm:text-xl font-bold text-slate-900 dark:text-white">
+              <h3
+                id={titleId}
+                className="text-lg sm:text-xl font-bold text-slate-900 dark:text-white"
+              >
                 Yeni Çıkış Bileti Oturumu Başlat
               </h3>
               <p className="text-xs sm:text-sm text-slate-500 dark:text-slate-400">
-                Ders sonu 3 dakikalık hızlı teşhis oturumu açın ve tahtaya yansıtın
+                Ders sonu 3 dakikalık hızlı teşhis oturumu açın ve tahtaya
+                yansıtın
               </p>
             </div>
           </div>
@@ -127,7 +147,9 @@ export function ExitTicketCreateModal({
           <div className="mt-4 rounded-2xl bg-slate-50 dark:bg-slate-950/60 border border-slate-200 dark:border-white/10 p-4">
             <div className="flex items-center gap-2 mb-3 text-xs font-semibold text-slate-700 dark:text-slate-300">
               <Layers className="w-4 h-4 text-amber-500 dark:text-amber-400" />
-              <span>Oturum İçeriği ({selectedTemplate.questions.length} Soru)</span>
+              <span>
+                Oturum İçeriği ({selectedTemplate.questions.length} Soru)
+              </span>
             </div>
             <div className="space-y-2">
               {selectedTemplate.questions.map((q, idx) => (

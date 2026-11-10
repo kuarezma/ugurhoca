@@ -33,33 +33,136 @@ import { FloatingParticles } from './FloatingParticles';
 import { GameCard } from './GameCard';
 import type { GameDefinition } from '../types';
 
-const BalloonPop = dynamic(() => import('./games/BalloonPop').then(m => ({ default: m.BalloonPop })), { ssr: false });
-const ColorMath = dynamic(() => import('./games/ColorMath').then(m => ({ default: m.ColorMath })), { ssr: false });
-const Hangman = dynamic(() => import('./games/Hangman').then(m => ({ default: m.Hangman })), { ssr: false });
-const MatMatik = dynamic(() => import('./games/MatMatik').then(m => ({ default: m.MatMatik })), { ssr: false });
-const MathNinja = dynamic(() => import('./games/MathNinja').then(m => ({ default: m.MathNinja })), { ssr: false });
-const MathPuzzle = dynamic(() => import('./games/MathPuzzle').then(m => ({ default: m.MathPuzzle })), { ssr: false });
-const MemoryGame = dynamic(() => import('./games/MemoryGame').then(m => ({ default: m.MemoryGame })), { ssr: false });
-const MoleWhack = dynamic(() => import('./games/MoleWhack').then(m => ({ default: m.MoleWhack })), { ssr: false });
-const MultiplicationRace = dynamic(() => import('./games/MultiplicationRace').then(m => ({ default: m.MultiplicationRace })), { ssr: false });
-const EquationHunter = dynamic(() => import('./games/EquationHunter').then(m => ({ default: m.EquationHunter })), { ssr: false });
-const FractionDuel = dynamic(() => import('./games/FractionDuel').then(m => ({ default: m.FractionDuel })), { ssr: false });
-const NumberPuzzle = dynamic(() => import('./games/NumberPuzzle').then(m => ({ default: m.NumberPuzzle })), { ssr: false });
-const PercentStorm = dynamic(() => import('./games/PercentStorm').then(m => ({ default: m.PercentStorm })), { ssr: false });
-const PizzaChef = dynamic(() => import('./games/PizzaChef').then(m => ({ default: m.PizzaChef })), { ssr: false });
-const SpaceRocket = dynamic(() => import('./games/SpaceRocket').then(m => ({ default: m.SpaceRocket })), { ssr: false });
-const SpeedRacer = dynamic(() => import('./games/SpeedRacer').then(m => ({ default: m.SpeedRacer })), { ssr: false });
-const TowerBlock = dynamic(() => import('./games/TowerBlock').then(m => ({ default: m.TowerBlock })), { ssr: false });
-const TreasurePirate = dynamic(() => import('./games/TreasurePirate').then(m => ({ default: m.TreasurePirate })), { ssr: false });
-const MathDuel = dynamic(() => import('./games/MathDuel').then(m => ({ default: m.MathDuel })), { ssr: false });
-const PenaltyShootout = dynamic(() => import('./games/PenaltyShootout').then(m => ({ default: m.PenaltyShootout })), { ssr: false });
-const PotionLab = dynamic(() => import('./games/PotionLab').then(m => ({ default: m.PotionLab })), { ssr: false });
-const DinoRunner = dynamic(() => import('./games/DinoRunner').then(m => ({ default: m.DinoRunner })), { ssr: false });
-const MeteorDefense = dynamic(() => import('./games/MeteorDefense').then(m => ({ default: m.MeteorDefense })), { ssr: false });
-const SecretAgent = dynamic(() => import('./games/SecretAgent').then(m => ({ default: m.SecretAgent })), { ssr: false });
-const GeometryArcher = dynamic(() => import('./games/GeometryArcher').then(m => ({ default: m.GeometryArcher })), { ssr: false });
-const ToggCyberRacer = dynamic(() => import('./games/ToggCyberRacer').then(m => ({ default: m.ToggCyberRacer })), { ssr: false });
-const PacMathMaze = dynamic(() => import('./games/PacMathMaze').then(m => ({ default: m.PacMathMaze })), { ssr: false });
+const BalloonPop = dynamic(
+  () => import('./games/BalloonPop').then((m) => ({ default: m.BalloonPop })),
+  { ssr: false },
+);
+const ColorMath = dynamic(
+  () => import('./games/ColorMath').then((m) => ({ default: m.ColorMath })),
+  { ssr: false },
+);
+const Hangman = dynamic(
+  () => import('./games/Hangman').then((m) => ({ default: m.Hangman })),
+  { ssr: false },
+);
+const MatMatik = dynamic(
+  () => import('./games/MatMatik').then((m) => ({ default: m.MatMatik })),
+  { ssr: false },
+);
+const MathNinja = dynamic(
+  () => import('./games/MathNinja').then((m) => ({ default: m.MathNinja })),
+  { ssr: false },
+);
+const MathPuzzle = dynamic(
+  () => import('./games/MathPuzzle').then((m) => ({ default: m.MathPuzzle })),
+  { ssr: false },
+);
+const MemoryGame = dynamic(
+  () => import('./games/MemoryGame').then((m) => ({ default: m.MemoryGame })),
+  { ssr: false },
+);
+const MoleWhack = dynamic(
+  () => import('./games/MoleWhack').then((m) => ({ default: m.MoleWhack })),
+  { ssr: false },
+);
+const MultiplicationRace = dynamic(
+  () =>
+    import('./games/MultiplicationRace').then((m) => ({
+      default: m.MultiplicationRace,
+    })),
+  { ssr: false },
+);
+const EquationHunter = dynamic(
+  () =>
+    import('./games/EquationHunter').then((m) => ({
+      default: m.EquationHunter,
+    })),
+  { ssr: false },
+);
+const FractionDuel = dynamic(
+  () =>
+    import('./games/FractionDuel').then((m) => ({ default: m.FractionDuel })),
+  { ssr: false },
+);
+const NumberPuzzle = dynamic(
+  () =>
+    import('./games/NumberPuzzle').then((m) => ({ default: m.NumberPuzzle })),
+  { ssr: false },
+);
+const PercentStorm = dynamic(
+  () =>
+    import('./games/PercentStorm').then((m) => ({ default: m.PercentStorm })),
+  { ssr: false },
+);
+const PizzaChef = dynamic(
+  () => import('./games/PizzaChef').then((m) => ({ default: m.PizzaChef })),
+  { ssr: false },
+);
+const SpaceRocket = dynamic(
+  () => import('./games/SpaceRocket').then((m) => ({ default: m.SpaceRocket })),
+  { ssr: false },
+);
+const SpeedRacer = dynamic(
+  () => import('./games/SpeedRacer').then((m) => ({ default: m.SpeedRacer })),
+  { ssr: false },
+);
+const TowerBlock = dynamic(
+  () => import('./games/TowerBlock').then((m) => ({ default: m.TowerBlock })),
+  { ssr: false },
+);
+const TreasurePirate = dynamic(
+  () =>
+    import('./games/TreasurePirate').then((m) => ({
+      default: m.TreasurePirate,
+    })),
+  { ssr: false },
+);
+const MathDuel = dynamic(
+  () => import('./games/MathDuel').then((m) => ({ default: m.MathDuel })),
+  { ssr: false },
+);
+const PenaltyShootout = dynamic(
+  () =>
+    import('./games/PenaltyShootout').then((m) => ({
+      default: m.PenaltyShootout,
+    })),
+  { ssr: false },
+);
+const PotionLab = dynamic(
+  () => import('./games/PotionLab').then((m) => ({ default: m.PotionLab })),
+  { ssr: false },
+);
+const DinoRunner = dynamic(
+  () => import('./games/DinoRunner').then((m) => ({ default: m.DinoRunner })),
+  { ssr: false },
+);
+const MeteorDefense = dynamic(
+  () =>
+    import('./games/MeteorDefense').then((m) => ({ default: m.MeteorDefense })),
+  { ssr: false },
+);
+const SecretAgent = dynamic(
+  () => import('./games/SecretAgent').then((m) => ({ default: m.SecretAgent })),
+  { ssr: false },
+);
+const GeometryArcher = dynamic(
+  () =>
+    import('./games/GeometryArcher').then((m) => ({
+      default: m.GeometryArcher,
+    })),
+  { ssr: false },
+);
+const ToggCyberRacer = dynamic(
+  () =>
+    import('./games/ToggCyberRacer').then((m) => ({
+      default: m.ToggCyberRacer,
+    })),
+  { ssr: false },
+);
+const PacMathMaze = dynamic(
+  () => import('./games/PacMathMaze').then((m) => ({ default: m.PacMathMaze })),
+  { ssr: false },
+);
 
 export { FloatingParticles, GameCard };
 export type {
@@ -74,6 +177,8 @@ export const games: GameDefinition[] = [
     title: 'Çarpım Tablosu',
     description: 'Çarpım tablosunu hızlıca öğren!',
     grade: '5-8',
+    grades: [5, 6],
+    outcomes: ['Çarpma İşlemi ve Temel Refleksler'],
     rating: 4.9,
     difficulty: 'Kolay',
     color: 'from-pink-500 to-purple-500',
@@ -85,6 +190,8 @@ export const games: GameDefinition[] = [
     title: 'Matematik Zihin Jimnastiği',
     description: 'Zor problemleri çöz, seviye atla!',
     grade: '5-8',
+    grades: [5, 6, 7, 8],
+    outcomes: ['Zihinden Problem Çözme', 'Mantık'],
     rating: 4.8,
     difficulty: 'Orta',
     color: 'from-purple-500 to-pink-500',
@@ -96,6 +203,8 @@ export const games: GameDefinition[] = [
     title: 'Renkli Matematik',
     description: 'Renkleri oku, doğruyu bul!',
     grade: '5-8',
+    grades: [5, 6, 7],
+    outcomes: ['Dikkat & İşlem Sırası'],
     rating: 4.7,
     difficulty: 'Zor',
     color: 'from-cyan-500 to-blue-500',
@@ -107,6 +216,8 @@ export const games: GameDefinition[] = [
     title: 'Matematik Adam Asmaca',
     description: 'Matematik terimlerini tahmin et!',
     grade: '5-8',
+    grades: [5, 6, 7, 8],
+    outcomes: ['Matematik Terimleri & Kavram Bilgisi'],
     rating: 4.8,
     difficulty: 'Orta',
     color: 'from-indigo-500 to-purple-500',
@@ -118,6 +229,8 @@ export const games: GameDefinition[] = [
     title: 'Sayı Bulmaca',
     description: 'Eksik sayıyı bul, puan topla!',
     grade: '5-8',
+    grades: [5, 6, 7],
+    outcomes: ['Sayı Dizileri & Örüntüler'],
     rating: 4.6,
     difficulty: 'Orta',
     color: 'from-amber-500 to-orange-500',
@@ -129,6 +242,8 @@ export const games: GameDefinition[] = [
     title: 'Matematik Memory',
     description: 'Eşleşen sembolleri bul!',
     grade: '5-8',
+    grades: [5, 6],
+    outcomes: ['Geometrik Şekiller & Hafıza'],
     rating: 4.9,
     difficulty: 'Kolay',
     color: 'from-emerald-500 to-teal-500',
@@ -140,6 +255,8 @@ export const games: GameDefinition[] = [
     title: 'Kesir Düellosu',
     description: 'İki kesri karşılaştır — hangisi büyük?',
     grade: '6-8',
+    grades: [5, 6, 7],
+    outcomes: ['Kesir Sıralama & Sadeleştirme'],
     rating: 4.5,
     difficulty: 'Zor',
     color: 'from-rose-500 to-red-600',
@@ -151,6 +268,8 @@ export const games: GameDefinition[] = [
     title: 'Denklem Avcısı',
     description: "x'i bul: parantez ve birleşik terimler.",
     grade: '6-8',
+    grades: [7, 8],
+    outcomes: ['Birinci Dereceden Denklemler'],
     rating: 4.4,
     difficulty: 'Zor',
     color: 'from-violet-600 to-indigo-700',
@@ -162,6 +281,8 @@ export const games: GameDefinition[] = [
     title: 'Yüzde Fırtınası',
     description: 'Oran, artış ve yüzde hesapları.',
     grade: '6-8',
+    grades: [7, 8],
+    outcomes: ['Yüzde Hesapları & Oran-Orantı'],
     rating: 4.3,
     difficulty: 'Zor',
     color: 'from-sky-500 to-cyan-600',
@@ -173,6 +294,8 @@ export const games: GameDefinition[] = [
     title: 'MatMatik',
     description: 'Çarpımları işaretle, dört hücrelik diziyi tamamla.',
     grade: '5-8',
+    grades: [5, 6, 7, 8],
+    outcomes: ['Çarpanlar & Katlar'],
     rating: 4.8,
     difficulty: 'Orta',
     color: 'from-emerald-500 to-cyan-500',
@@ -184,6 +307,8 @@ export const games: GameDefinition[] = [
     title: 'Balon Patlatma',
     description: 'Doğru cevabın balonunu patlat!',
     grade: '5-8',
+    grades: [5, 6],
+    outcomes: ['Doğal Sayılarla Dört İşlem'],
     rating: 4.9,
     difficulty: 'Kolay',
     color: 'from-pink-500 to-cyan-500',
@@ -195,6 +320,8 @@ export const games: GameDefinition[] = [
     title: 'Uzay Roketi',
     description: 'Roketi doğru cevap kapısına uçur!',
     grade: '6-8',
+    grades: [6, 7, 8],
+    outcomes: ['Tam Sayılar & Koordinatlar'],
     rating: 4.9,
     difficulty: 'Orta',
     color: 'from-indigo-500 to-amber-500',
@@ -206,6 +333,8 @@ export const games: GameDefinition[] = [
     title: 'Pizza Ustası',
     description: 'Pizzanın istenen kesrini hazırla, fırına ver!',
     grade: '5-7',
+    grades: [5, 6, 7],
+    outcomes: ['Birim Kesirler & Kesir Modelleme'],
     rating: 4.9,
     difficulty: 'Kolay',
     color: 'from-amber-500 to-red-500',
@@ -217,6 +346,8 @@ export const games: GameDefinition[] = [
     title: 'Matematik Ninja',
     description: 'Kurala uyan meyveleri dilimle, kombo patlat!',
     grade: '5-8',
+    grades: [5, 6, 7, 8],
+    outcomes: ['Asal Sayılar & Kat Kuralları'],
     rating: 4.9,
     difficulty: 'Orta',
     color: 'from-rose-500 to-amber-500',
@@ -228,6 +359,8 @@ export const games: GameDefinition[] = [
     title: 'Köstebek Avı',
     description: 'Doğru işlemin köstebeğine hızla çekiçle vur!',
     grade: '5-6',
+    grades: [5, 6],
+    outcomes: ['Hızlı Toplama & Çıkarma'],
     rating: 4.8,
     difficulty: 'Kolay',
     color: 'from-emerald-500 to-teal-600',
@@ -239,6 +372,8 @@ export const games: GameDefinition[] = [
     title: 'Hızlı Şoför',
     description: 'İşlemi çöz, doğru şeride girip nitro kazan!',
     grade: '5-8',
+    grades: [5, 6, 7, 8],
+    outcomes: ['Hızlı Bölme & Çarpma'],
     rating: 4.9,
     difficulty: 'Orta',
     color: 'from-cyan-500 to-blue-600',
@@ -250,6 +385,8 @@ export const games: GameDefinition[] = [
     title: 'Koordinat Korsanı',
     description: 'Pusulayı ayarla, koordinattaki hazineyi kaz!',
     grade: '6-8',
+    grades: [6, 7, 8],
+    outcomes: ['Kartezyen Koordinat Sistemi'],
     rating: 4.8,
     difficulty: 'Orta',
     color: 'from-amber-600 to-yellow-500',
@@ -261,6 +398,8 @@ export const games: GameDefinition[] = [
     title: 'Sayı Kulesi',
     description: 'Sayı örüntüsünü çöz, kuleyi bulutlara yükselt!',
     grade: '5-8',
+    grades: [5, 6, 7, 8],
+    outcomes: ['Aritmetik Örüntüler'],
     rating: 4.8,
     difficulty: 'Orta',
     color: 'from-indigo-500 to-purple-600',
@@ -270,8 +409,11 @@ export const games: GameDefinition[] = [
   {
     id: 19,
     title: 'Matematik Düellosu',
-    description: '1v1 hızlı işlem düellosu: süreyle yarış, kombo yap ve zirveye çık!',
+    description:
+      '1v1 hızlı işlem düellosu: süreyle yarış, kombo yap ve zirveye çık!',
     grade: '5-8',
+    grades: [5, 6, 7, 8],
+    outcomes: ['Refleks Dört İşlem'],
     rating: 4.9,
     difficulty: 'Orta',
     color: 'from-amber-500 to-rose-500',
@@ -281,8 +423,11 @@ export const games: GameDefinition[] = [
   {
     id: 20,
     title: 'Penaltı Şampiyonu',
-    description: 'İşlemi çöz, doğru köşeye şut çek ve kaleciyi ters köşeye yatır!',
+    description:
+      'İşlemi çöz, doğru köşeye şut çek ve kaleciyi ters köşeye yatır!',
     grade: '5-8',
+    grades: [5, 6, 7, 8],
+    outcomes: ['Zihinden Çarpma & Bölme'],
     rating: 5.0,
     difficulty: 'Kolay',
     color: 'from-emerald-500 to-green-600',
@@ -292,8 +437,11 @@ export const games: GameDefinition[] = [
   {
     id: 21,
     title: 'İksir Laboratuvarı',
-    description: 'Büyülü tarifteki kesir ve oranları hesapla, doğru iksiri kazana dök!',
+    description:
+      'Büyülü tarifteki kesir ve oranları hesapla, doğru iksiri kazana dök!',
     grade: '5-8',
+    grades: [6, 7, 8],
+    outcomes: ['Oran & Orantı Problemleri'],
     rating: 4.9,
     difficulty: 'Orta',
     color: 'from-purple-500 to-fuchsia-600',
@@ -303,8 +451,11 @@ export const games: GameDefinition[] = [
   {
     id: 22,
     title: 'Dinozor Macerası',
-    description: 'T-Rex ile engellerin üzerinden zıpla, altın dinozor yumurtalarını topla!',
+    description:
+      'T-Rex ile engellerin üzerinden zıpla, altın dinozor yumurtalarını topla!',
     grade: '5-8',
+    grades: [5, 6],
+    outcomes: ['Doğal Sayı Sayma & Geometri'],
     rating: 4.9,
     difficulty: 'Kolay',
     color: 'from-lime-500 to-emerald-600',
@@ -314,8 +465,11 @@ export const games: GameDefinition[] = [
   {
     id: 23,
     title: 'Meteor Savunması',
-    description: 'Uzay üssüne yaklaşan alevli meteorları doğru lazer frekansıyla patlat!',
+    description:
+      'Uzay üssüne yaklaşan alevli meteorları doğru lazer frekansıyla patlat!',
     grade: '5-8',
+    grades: [6, 7, 8],
+    outcomes: ['Üslü İfadeler & Kuvvetler'],
     rating: 4.9,
     difficulty: 'Orta',
     color: 'from-orange-500 to-red-600',
@@ -325,8 +479,11 @@ export const games: GameDefinition[] = [
   {
     id: 24,
     title: 'Gizli Ajan: Kasa Şifresi',
-    description: 'İpuçlarını ve işlem zincirlerini takip et, elmas kasasının şifresini kır!',
+    description:
+      'İpuçlarını ve işlem zincirlerini takip et, elmas kasasının şifresini kır!',
     grade: '5-8',
+    grades: [6, 7, 8],
+    outcomes: ['Mantık & Mantıksal Akıl Yürütme'],
     rating: 4.9,
     difficulty: 'Orta',
     color: 'from-amber-500 to-indigo-600',
@@ -336,8 +493,11 @@ export const games: GameDefinition[] = [
   {
     id: 25,
     title: 'Okçu Şampiyonu',
-    description: 'Açı, çevre ve alan hedeflerini tam 12’den vur, altın oku kazan!',
+    description:
+      'Açı, çevre ve alan hedeflerini tam 12’den vur, altın oku kazan!',
     grade: '5-8',
+    grades: [5, 6, 7, 8],
+    outcomes: ['Açılar & Alan Ölçme'],
     rating: 4.9,
     difficulty: 'Orta',
     color: 'from-teal-500 to-cyan-600',
@@ -347,8 +507,11 @@ export const games: GameDefinition[] = [
   {
     id: 26,
     title: 'TOGG & Süper Garaj Yarışı',
-    description: 'TOGG T10X veya süper aracını garajdan seç, trafiği solla, Trugo nitro ateşle ve rekor puan topla!',
+    description:
+      'TOGG T10X veya süper aracını garajdan seç, trafiği solla, Trugo nitro ateşle ve rekor puan topla!',
     grade: '5-8',
+    grades: [5, 6, 7, 8],
+    outcomes: ['Zihinden Matematik Kapıları & Hızlı İşlem'],
     rating: 5.0,
     difficulty: 'Kolay',
     color: 'from-rose-600 to-cyan-600',
@@ -358,8 +521,11 @@ export const games: GameDefinition[] = [
   {
     id: 27,
     title: 'Pac-Matik: Ok Labirenti',
-    description: 'Ekrandaki ok kombolarını yakala, neon labirentte yemleri ve kirazları toplayıp hayaletleri avla!',
+    description:
+      'Ekrandaki ok kombolarını yakala, neon labirentte yemleri ve kirazları toplayıp hayaletleri avla!',
     grade: '5-8',
+    grades: [5, 6, 7, 8],
+    outcomes: ['Matematik Kilitleri & Dört İşlem'],
     rating: 5.0,
     difficulty: 'Kolay',
     color: 'from-fuchsia-500 to-amber-500',

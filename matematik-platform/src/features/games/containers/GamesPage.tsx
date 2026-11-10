@@ -16,6 +16,7 @@ import type { GameDefinition } from '@/features/games/types';
 import { useToast } from '@/components/Toast';
 import { games } from '@/features/games/components/gameLibrary';
 import { Skeleton } from '@/components/ui/Skeleton';
+import { useAccessibleModal } from '@/hooks/useAccessibleModal';
 
 const GAME_SCORE_MULTIPLIER = 1;
 
@@ -31,6 +32,7 @@ function GameAliasModal({
   saving: boolean;
 }) {
   const [alias, setAlias] = useState('');
+  const modalRef = useAccessibleModal<HTMLDivElement>(true, onClose);
 
   const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
@@ -41,7 +43,13 @@ function GameAliasModal({
   };
 
   return (
-    <div className="fixed inset-0 z-[120] flex items-center justify-center bg-scrim px-4 backdrop-blur-sm">
+    <div
+      ref={modalRef}
+      role="dialog"
+      aria-modal="true"
+      aria-labelledby="game-alias-title"
+      className="fixed inset-0 z-[120] flex items-center justify-center bg-scrim px-4 backdrop-blur-sm"
+    >
       <form
         onSubmit={handleSubmit}
         className="relative w-full max-w-sm rounded-3xl border border-default bg-surface-1 p-5 shadow-2xl text-primary"
@@ -59,7 +67,10 @@ function GameAliasModal({
             <ShieldCheck className="h-6 w-6" aria-hidden="true" />
           </div>
           <div>
-            <h2 className="text-lg font-bold text-primary">
+            <h2
+              id="game-alias-title"
+              className="text-lg font-bold text-primary"
+            >
               Oyun rumuzunu seç
             </h2>
             <p className="text-xs text-secondary">

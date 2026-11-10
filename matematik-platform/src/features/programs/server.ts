@@ -1,4 +1,5 @@
 import 'server-only';
+import { unstable_cache } from 'next/cache';
 
 import {
   MINIMUM_FULL_LGS_ROW_COUNT,
@@ -49,7 +50,7 @@ async function fetchAllProgramRows<T>(
   }
 }
 
-export async function loadLgsSchoolPageData(
+async function fetchLgsSchoolPageDataInternal(
   preferredYear = 2026,
 ): Promise<LgsSchoolPageData> {
   const supabase = createServiceRoleClient();
@@ -180,7 +181,22 @@ export async function loadLgsSchoolPageData(
   };
 }
 
-export async function loadYksProgramPageData(
+const getCachedLgsData = unstable_cache(
+  async (year: number) => fetchLgsSchoolPageDataInternal(year),
+  ['lgs-school-page-data'],
+  { revalidate: 3600, tags: ['lgs-school-targets'] },
+);
+
+export async function loadLgsSchoolPageData(
+  preferredYear = 2026,
+): Promise<LgsSchoolPageData> {
+  if (process.env.NODE_ENV === 'test') {
+    return fetchLgsSchoolPageDataInternal(preferredYear);
+  }
+  return getCachedLgsData(preferredYear);
+}
+
+async function fetchYksProgramPageDataInternal(
   preferredYear = 2026,
 ): Promise<{ dataYear: number; error: string; rows: YksProgramTarget[] }> {
   const supabase = createServerSupabaseClient();
@@ -251,4 +267,19 @@ export async function loadYksProgramPageData(
       : 'YKS hedef program verisi bulunamadı. Supabase tablosuna resmi veriler yüklenmeli.',
     rows,
   };
+}
+
+const getCachedYksData = unstable_cache(
+  async (year: number) => fetchYksProgramPageDataInternal(year),
+  ['yks-program-page-data'],
+  { revalidate: 3600, tags: ['yks-program-targets'] },
+);
+
+export async function loadYksProgramPageData(
+  preferredYear = 2026,
+): Promise<{ dataYear: number; error: string; rows: YksProgramTarget[] }> {
+  if (process.env.NODE_ENV === 'test') {
+    return fetchYksProgramPageDataInternal(preferredYear);
+  }
+  return getCachedYksData(preferredYear);
 }

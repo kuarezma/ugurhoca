@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import {
   Users,
   Eye,
@@ -16,7 +16,12 @@ import {
 } from 'lucide-react';
 import MathText from '@/components/MathText';
 import type { ExitTicketSession } from '../types';
-import { calculateDistribution, saveSession } from '../lib/exitTicketStorage';
+import {
+  calculateDistribution,
+  saveSession,
+  fetchCloudExitTicketSession,
+  updateCloudExitTicketSession,
+} from '../lib/exitTicketStorage';
 
 export interface ExitTicketTeacherPresenterProps {
   session: ExitTicketSession;
@@ -31,7 +36,12 @@ const OPTION_COLORS = [
   'border-amber-500/40 bg-amber-500/10 text-amber-700 dark:text-amber-300',
   'border-emerald-500/40 bg-emerald-500/10 text-emerald-700 dark:text-emerald-300',
 ];
-const OPTION_BAR_COLORS = ['bg-rose-500', 'bg-sky-500', 'bg-amber-500', 'bg-emerald-500'];
+const OPTION_BAR_COLORS = [
+  'bg-rose-500',
+  'bg-sky-500',
+  'bg-amber-500',
+  'bg-emerald-500',
+];
 
 export function ExitTicketTeacherPresenter({
   session,
@@ -53,17 +63,61 @@ export function ExitTicketTeacherPresenter({
     }
   };
 
+  // 2.5 saniyede bir bulut oturumundan canlı yanıtları çek
+  useEffect(() => {
+    let isCancelled = false;
+
+    const pollCloudSession = async () => {
+      const cloud = await fetchCloudExitTicketSession(session.code);
+      if (!isCancelled && cloud) {
+        // Yerel yanıtlar ile sunucu yanıtlarını birleştir
+        const existingIds = new Set(session.responses.map((r) => r.id));
+        const hasNewResponses = cloud.responses.some(
+          (r) => !existingIds.has(r.id),
+        );
+        if (hasNewResponses || cloud.status !== session.status) {
+          const merged: ExitTicketSession = {
+            ...session,
+            status: cloud.status,
+            responses: cloud.responses,
+            isCloudSession: true,
+          };
+          saveSession(merged);
+          onUpdateSession(merged);
+        }
+      }
+    };
+
+    const interval = setInterval(pollCloudSession, 2500);
+    return () => {
+      isCancelled = true;
+      clearInterval(interval);
+    };
+  }, [session, onUpdateSession]);
+
   const toggleDistribution = () => {
-    const next = { ...session, showDistribution: !session.showDistribution };
+    const nextShow = !session.showDistribution;
+    const next = { ...session, showDistribution: nextShow };
     saveSession(next);
     onUpdateSession(next);
+    void updateCloudExitTicketSession(session.code, {
+      showDistribution: nextShow,
+    });
   };
 
   const changeQuestion = (newIndex: number) => {
     if (newIndex < 0 || newIndex >= session.questions.length) return;
-    const next = { ...session, currentQuestionIndex: newIndex, showDistribution: false };
+    const next = {
+      ...session,
+      currentQuestionIndex: newIndex,
+      showDistribution: false,
+    };
     saveSession(next);
     onUpdateSession(next);
+    void updateCloudExitTicketSession(session.code, {
+      currentQuestionIndex: newIndex,
+      showDistribution: false,
+    });
   };
 
   const handleCompleteSession = () => {
@@ -74,6 +128,10 @@ export function ExitTicketTeacherPresenter({
     };
     saveSession(next);
     onUpdateSession(next);
+    void updateCloudExitTicketSession(session.code, {
+      status: 'completed',
+      showDistribution: true,
+    });
     onEndSession?.();
   };
 
@@ -113,7 +171,11 @@ export function ExitTicketTeacherPresenter({
             title="Kodu Kopyala"
             className="p-2 rounded-xl bg-slate-100 hover:bg-slate-200 dark:bg-white/5 dark:hover:bg-white/10 text-slate-600 hover:text-slate-900 dark:text-slate-300 dark:hover:text-white transition"
           >
-            {copied ? (<Check className="w-5 h-5 text-accent-success-ink dark:text-emerald-400" /> ): (<Copy className="w-5 h-5" />)}
+            {copied ? (
+              <Check className="w-5 h-5 text-accent-success-ink dark:text-emerald-400" />
+            ) : (
+              <Copy className="w-5 h-5" />
+            )}
           </button>
         </div>
       </div>
@@ -133,9 +195,13 @@ export function ExitTicketTeacherPresenter({
               }`}
             >
               <span>Soru {idx + 1}</span>
-              {session.responses.filter((r) => r.questionIndex === idx).length > 0 && (
+              {session.responses.filter((r) => r.questionIndex === idx).length >
+                0 && (
                 <span className="rounded-full bg-slate-200 dark:bg-black/40 text-slate-800 dark:text-white px-1.5 py-0.5 text-[10px]">
-                  {session.responses.filter((r) => r.questionIndex === idx).length}
+                  {
+                    session.responses.filter((r) => r.questionIndex === idx)
+                      .length
+                  }
                 </span>
               )}
             </button>
@@ -217,8 +283,16 @@ export function ExitTicketTeacherPresenter({
                   {/* Canlı Yüzde ve Kişi Sayısı */}
                   {session.showDistribution && (
                     <div className="relative z-10 mt-3 pt-2 border-t border-slate-200 dark:border-white/10 flex items-center justify-between text-xs font-bold">
-                      <span className="text-slate-600 dark:text-slate-300">{count} Öğrenci</span>
-                      <span className={isCorrect ? 'text-emerald-700 dark:text-emerald-300 font-extrabold' : 'text-slate-500 dark:text-slate-400'}>
+                      <span className="text-slate-600 dark:text-slate-300">
+                        {count} Öğrenci
+                      </span>
+                      <span
+                        className={
+                          isCorrect
+                            ? 'text-emerald-700 dark:text-emerald-300 font-extrabold'
+                            : 'text-slate-500 dark:text-slate-400'
+                        }
+                      >
                         %{pct}
                       </span>
                     </div>
@@ -236,23 +310,25 @@ export function ExitTicketTeacherPresenter({
                 <span>Kavram Yanılgısı & Hata Teşhisi</span>
               </div>
               <div className="grid grid-cols-1 gap-2 text-xs text-amber-900 dark:text-amber-100">
-                {Object.entries(currentQ.distractorExplanations).map(([idxStr, explanation]) => {
-                  const idx = parseInt(idxStr, 10);
-                  const count = dist.counts[idx];
-                  if (count === 0 && !isCompleted) return null;
+                {Object.entries(currentQ.distractorExplanations).map(
+                  ([idxStr, explanation]) => {
+                    const idx = parseInt(idxStr, 10);
+                    const count = dist.counts[idx];
+                    if (count === 0 && !isCompleted) return null;
 
-                  return (
-                    <div
-                      key={idx}
-                      className="p-2.5 rounded-xl bg-white dark:bg-amber-950/40 border border-amber-200 dark:border-amber-500/20 flex items-start gap-2 shadow-xs"
-                    >
-                      <span className="font-bold text-amber-700 dark:text-amber-400 shrink-0">
-                        {OPTION_LETTERS[idx]} Şıkkı ({count} öğrenci):
-                      </span>
-                      <MathText as="span">{explanation}</MathText>
-                    </div>
-                  );
-                })}
+                    return (
+                      <div
+                        key={idx}
+                        className="p-2.5 rounded-xl bg-white dark:bg-amber-950/40 border border-amber-200 dark:border-amber-500/20 flex items-start gap-2 shadow-xs"
+                      >
+                        <span className="font-bold text-amber-700 dark:text-amber-400 shrink-0">
+                          {OPTION_LETTERS[idx]} Şıkkı ({count} öğrenci):
+                        </span>
+                        <MathText as="span">{explanation}</MathText>
+                      </div>
+                    );
+                  },
+                )}
               </div>
             </div>
           )}
@@ -323,7 +399,8 @@ export function ExitTicketTeacherPresenter({
                 Ders Sonu Çıkış Bileti Raporu
               </h2>
               <p className="text-xs text-slate-600 dark:text-slate-300">
-                Sınıfın anlık kavrama durumu ve bir sonraki derste pekiştirilmesi gereken noktalar
+                Sınıfın anlık kavrama durumu ve bir sonraki derste
+                pekiştirilmesi gereken noktalar
               </p>
             </div>
           </div>

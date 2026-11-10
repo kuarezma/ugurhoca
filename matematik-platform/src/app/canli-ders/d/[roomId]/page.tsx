@@ -1,3 +1,4 @@
+import type { Metadata } from 'next';
 import { redirect } from 'next/navigation';
 import { RoomPageShell } from '@/features/live-lessons/components/room/RoomPageShell';
 import {
@@ -7,7 +8,15 @@ import {
 } from '@/features/live-lessons/server/liveLessons';
 import type { LiveLesson } from '@/features/live-lessons/types';
 import { getVerifiedServerUser } from '@/lib/auth-verify.server';
+import { createPageMetadata } from '@/lib/site-metadata';
 import { createServiceRoleClient } from '@/lib/supabase/server';
+
+export const metadata: Metadata = createPageMetadata({
+  title: 'Canlı Ders Odası',
+  description: 'Uğur Hoca canlı matematik ders odası.',
+  path: '/canli-ders',
+  noIndex: true,
+});
 
 type Props = {
   params: Promise<{ roomId: string }>;

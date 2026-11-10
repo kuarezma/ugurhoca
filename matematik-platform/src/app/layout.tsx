@@ -1,30 +1,36 @@
-import type { Metadata, Viewport } from "next";
-import { Outfit, Baloo_2 } from "next/font/google";
-import { SpeedInsights } from "@vercel/speed-insights/next";
-import { Providers } from "@/components/Providers";
-import { SiteBackground } from "@/components/SiteBackground";
-import { PerformanceRuntimeProvider } from "@/components/PerformanceRuntimeProvider";
-import { THEME_STORAGE_KEY, THEME_LIGHT_MIGRATION_KEY, PALETTE_STORAGE_KEY, DESIGN_MODE_STORAGE_KEY } from "@/components/theme-constants";
-import { SITE_URL, SITE_NAME } from "@/lib/site-metadata";
+import type { Metadata, Viewport } from 'next';
+import { Outfit, Baloo_2 } from 'next/font/google';
+import { SpeedInsights } from '@vercel/speed-insights/next';
+import { Providers } from '@/components/Providers';
+import { SiteBackground } from '@/components/SiteBackground';
+import { PerformanceRuntimeProvider } from '@/components/PerformanceRuntimeProvider';
+import { GlobalFooterGate } from '@/components/GlobalFooterGate';
+import {
+  THEME_STORAGE_KEY,
+  THEME_LIGHT_MIGRATION_KEY,
+  PALETTE_STORAGE_KEY,
+  DESIGN_MODE_STORAGE_KEY,
+} from '@/components/theme-constants';
+import { SITE_URL, SITE_NAME } from '@/lib/site-metadata';
 // Not: `@livekit/components-styles` ve `katex/dist/katex.min.css` buradan
 // kaldirildi. Kok layout'tan import edilen her stil sayfasi TUM rotalarda
 // render'i bloke eden CSS'e giriyordu; oysa LiveKit stilleri yalnizca canli
 // ders odasinda, KaTeX stilleri yalnizca matematik render eden bilesenlerde
 // gerekli. Artik ilgili chunk'lariyla birlikte yukleniyorlar.
-import "./globals.css";
+import './globals.css';
 
 const outfit = Outfit({
-  subsets: ["latin", "latin-ext"],
-  weight: ["400", "500", "600", "700"],
-  variable: "--font-poppins",
-  display: "swap",
+  subsets: ['latin', 'latin-ext'],
+  weight: ['400', '500', '600', '700'],
+  variable: '--font-poppins',
+  display: 'swap',
 });
 
 const baloo = Baloo_2({
-  subsets: ["latin", "latin-ext"],
-  weight: "variable",
-  variable: "--font-display",
-  display: "swap",
+  subsets: ['latin', 'latin-ext'],
+  weight: 'variable',
+  variable: '--font-display',
+  display: 'swap',
 });
 
 function getSupabasePreconnectOrigin(): string | null {
@@ -57,7 +63,7 @@ export const metadata: Metadata = {
     'uğur hoca',
     'meb müfredatı',
   ],
-  authors: [{ name: "Uğur Hoca" }],
+  authors: [{ name: 'Uğur Hoca' }],
   formatDetection: {
     address: false,
     date: false,
@@ -66,17 +72,18 @@ export const metadata: Metadata = {
   },
   icons: {
     icon: [
-      { url: "/favicon.ico", sizes: "32x32" },
-      { url: "/icon.svg", type: "image/svg+xml" },
-      { url: "/icon-512.png", sizes: "512x512", type: "image/png" },
+      { url: '/favicon.ico', sizes: '32x32' },
+      { url: '/icon.svg', type: 'image/svg+xml' },
+      { url: '/icon-512.png', sizes: '512x512', type: 'image/png' },
     ],
-    apple: [{ url: "/apple-icon.png", sizes: "180x180", type: "image/png" }],
+    apple: [{ url: '/apple-icon.png', sizes: '180x180', type: 'image/png' }],
   },
   openGraph: {
     title: SITE_NAME,
-    description: "Çalışma kağıtları, testler, oyunlar ve daha fazlasıyla matematik öğrenmeyi keşfet!",
-    type: "website",
-    locale: "tr_TR",
+    description:
+      'Çalışma kağıtları, testler, oyunlar ve daha fazlasıyla matematik öğrenmeyi keşfet!',
+    type: 'website',
+    locale: 'tr_TR',
     siteName: SITE_NAME,
     url: SITE_URL,
     images: [
@@ -89,9 +96,10 @@ export const metadata: Metadata = {
     ],
   },
   twitter: {
-    card: "summary_large_image",
+    card: 'summary_large_image',
     title: SITE_NAME,
-    description: "Çalışma kağıtları, testler, oyunlar ve daha fazlasıyla matematik öğrenmeyi keşfet!",
+    description:
+      'Çalışma kağıtları, testler, oyunlar ve daha fazlasıyla matematik öğrenmeyi keşfet!',
     images: [`${SITE_URL}/opengraph-image`],
   },
   robots: {
@@ -106,14 +114,14 @@ export const metadata: Metadata = {
 
 // Mobil klavye açılmalarında CLS'yi engelleyen interactive-widget ve dynamic viewport ayarları
 export const viewport: Viewport = {
-  width: "device-width",
+  width: 'device-width',
   initialScale: 1,
   maximumScale: 5,
-  viewportFit: "cover",
-  interactiveWidget: "resizes-visual",
+  viewportFit: 'cover',
+  interactiveWidget: 'resizes-visual',
   themeColor: [
-    { media: "(prefers-color-scheme: dark)", color: "#0C1222" },
-    { media: "(prefers-color-scheme: light)", color: "#FAF8F5" },
+    { media: '(prefers-color-scheme: dark)', color: '#0C1222' },
+    { media: '(prefers-color-scheme: light)', color: '#FAF8F5' },
   ],
 };
 
@@ -122,39 +130,40 @@ export const viewport: Viewport = {
 const speculationRulesConfig = {
   prefetch: [
     {
-      source: "document",
+      source: 'document',
       where: {
         and: [
-          { href_matches: "/*" },
+          { href_matches: '/*' },
           {
             not: {
               href_matches: [
-                "/api/*",
-                "/admin*",
-                "/giris*",
-                "/kayit*",
-                "/cikis*",
-                "/canli-ders*",
-                "/profil*",
-                "/testler*",
-                "/odevler*",
-                "/ilerleme*",
-                "/oyunlar*",
-                "/meydan-okuma*",
-                "/odak-pomodoro*",
-                "/*\\?*logout*",
-                "/*\\?*auth*",
+                '/api/*',
+                '/admin*',
+                '/giris*',
+                '/kayit*',
+                '/cikis*',
+                '/canli-ders*',
+                '/profil*',
+                '/testler*',
+                '/odevler*',
+                '/ilerleme*',
+                '/oyunlar*',
+                '/meydan-okuma*',
+                '/odak-pomodoro*',
+                '/*\\?*logout*',
+                '/*\\?*auth*',
               ],
             },
           },
           {
             not: {
-              selector_matches: "[rel~=nofollow], [data-no-prefetch], [target=_blank]",
+              selector_matches:
+                '[rel~=nofollow], [data-no-prefetch], [target=_blank]',
             },
           },
         ],
       },
-      eagerness: "moderate",
+      eagerness: 'moderate',
     },
   ],
 };
@@ -162,7 +171,11 @@ const speculationRulesConfig = {
 // Service worker kaydı: Sayfa yükleme süresini (FCP/LCP) etkilememesi için load sonrasında çalışır
 const serviceWorkerRegistrationScript = `if('serviceWorker' in navigator && (location.protocol === 'https:' || location.hostname === 'localhost')){window.addEventListener('load',function(){navigator.serviceWorker.register('/sw.js').catch(function(){});});}`;
 
-export default function RootLayout({ children }: { children: React.ReactNode }) {
+export default function RootLayout({
+  children,
+}: {
+  children: React.ReactNode;
+}) {
   const supabaseOrigin = getSupabasePreconnectOrigin();
 
   return (
@@ -191,12 +204,13 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           type="application/ld+json"
           dangerouslySetInnerHTML={{
             __html: JSON.stringify({
-              "@context": "https://schema.org",
-              "@type": "EducationalOrganization",
+              '@context': 'https://schema.org',
+              '@type': 'EducationalOrganization',
               name: SITE_NAME,
               url: SITE_URL,
-              description: "Çalışma kağıtları, testler, oyunlar ve daha fazlasıyla matematik öğrenme platformu.",
-              inLanguage: "tr-TR",
+              description:
+                'Çalışma kağıtları, testler, oyunlar ve daha fazlasıyla matematik öğrenme platformu.',
+              inLanguage: 'tr-TR',
             }),
           }}
         />
@@ -208,11 +222,19 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         {supabaseOrigin ? (
           <>
             <link rel="dns-prefetch" href={supabaseOrigin} />
-            <link rel="preconnect" href={supabaseOrigin} crossOrigin="anonymous" />
+            <link
+              rel="preconnect"
+              href={supabaseOrigin}
+              crossOrigin="anonymous"
+            />
           </>
         ) : null}
         <link rel="dns-prefetch" href="https://vitals.vercel-insights.com" />
-        <link rel="preconnect" href="https://vitals.vercel-insights.com" crossOrigin="anonymous" />
+        <link
+          rel="preconnect"
+          href="https://vitals.vercel-insights.com"
+          crossOrigin="anonymous"
+        />
       </head>
       <body>
         <a href="#ana-icerik" className="skip-link">
@@ -221,8 +243,13 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <Providers>
           <PerformanceRuntimeProvider />
           <SiteBackground />
-          <div id="ana-icerik" tabIndex={-1} className="relative z-10 w-full max-w-full overflow-x-clip">
+          <div
+            id="ana-icerik"
+            tabIndex={-1}
+            className="relative z-10 w-full max-w-full overflow-x-clip"
+          >
             {children}
+            <GlobalFooterGate />
           </div>
         </Providers>
         <SpeedInsights />

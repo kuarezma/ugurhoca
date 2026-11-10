@@ -113,9 +113,53 @@ export const TOGG_COLORS: ToggColor[] = [
   { name: 'Anadolu Kırmızısı', hex: '#e11d48', bgClass: 'bg-rose-600' },
   { name: 'Gemlik Mavisi', hex: '#0284c7', bgClass: 'bg-sky-600' },
   { name: 'Kapadokya Beji', hex: '#d97706', bgClass: 'bg-amber-600' },
-  { name: 'Pamukkale Beyazı', hex: '#f8fafc', bgClass: 'bg-slate-100 dark:bg-slate-100 border border-slate-300 dark:border-slate-600' },
-  { name: 'Oltu Siyahı', hex: '#0f172a', bgClass: 'bg-slate-900 dark:bg-slate-900 border border-slate-700 dark:border-slate-600' },
+  {
+    name: 'Pamukkale Beyazı',
+    hex: '#f8fafc',
+    bgClass:
+      'bg-slate-100 dark:bg-slate-100 border border-slate-300 dark:border-slate-600',
+  },
+  {
+    name: 'Oltu Siyahı',
+    hex: '#0f172a',
+    bgClass:
+      'bg-slate-900 dark:bg-slate-900 border border-slate-700 dark:border-slate-600',
+  },
 ];
+
+function generateRacerMathGate() {
+  const types = ['pow', 'mul', 'addsub'];
+  const t = types[Math.floor(Math.random() * types.length)];
+  let question = '';
+  let answer = 0;
+  if (t === 'pow') {
+    const base = Math.floor(Math.random() * 6) + 2;
+    question = `${base}²`;
+    answer = base * base;
+  } else if (t === 'mul') {
+    const a = Math.floor(Math.random() * 7) + 3;
+    const b = Math.floor(Math.random() * 8) + 3;
+    question = `${a} × ${b}`;
+    answer = a * b;
+  } else {
+    const a = Math.floor(Math.random() * 30) + 25;
+    const b = Math.floor(Math.random() * 20) + 10;
+    question = `${a} + ${b}`;
+    answer = a + b;
+  }
+  const opts = new Set<number>([answer]);
+  while (opts.size < 3) {
+    const offset =
+      (Math.floor(Math.random() * 5) + 1) * (Math.random() > 0.5 ? 1 : -1);
+    const fake = answer + offset;
+    if (fake > 0 && fake !== answer) opts.add(fake);
+  }
+  return {
+    question,
+    answer,
+    options: Array.from(opts).sort(() => Math.random() - 0.5),
+  };
+}
 
 export const RACE_TRACKS: RaceTrack[] = [
   {
@@ -191,7 +235,14 @@ function PlayerCarSVG({
         xmlns="http://www.w3.org/2000/svg"
       >
         <defs>
-          <linearGradient id={`car-body-${carId}`} x1="0" y1="0" x2="64" y2="100" gradientUnits="userSpaceOnUse">
+          <linearGradient
+            id={`car-body-${carId}`}
+            x1="0"
+            y1="0"
+            x2="64"
+            y2="100"
+            gradientUnits="userSpaceOnUse"
+          >
             <stop offset="0%" stopColor={colorHex} />
             <stop offset="100%" stopColor="#0f172a" />
           </linearGradient>
@@ -206,8 +257,16 @@ function PlayerCarSVG({
         </defs>
 
         {/* Ön Far Işık Hüzmeleri */}
-        <polygon points="12,14 4,-8 24,-8 18,14" fill="url(#headlight-beam)" opacity="0.45" />
-        <polygon points="46,14 40,-8 60,-8 52,14" fill="url(#headlight-beam)" opacity="0.45" />
+        <polygon
+          points="12,14 4,-8 24,-8 18,14"
+          fill="url(#headlight-beam)"
+          opacity="0.45"
+        />
+        <polygon
+          points="46,14 40,-8 60,-8 52,14"
+          fill="url(#headlight-beam)"
+          opacity="0.45"
+        />
 
         {/* Tekerlekler */}
         <rect x="4" y="20" width="7" height="15" rx="3" fill="#1e293b" />
@@ -234,7 +293,15 @@ function PlayerCarSVG({
           stroke="#38bdf8"
           strokeWidth="0.8"
         />
-        <line x1="20" y1="46" x2="44" y2="46" stroke="#38bdf8" strokeWidth="0.5" strokeOpacity="0.5" />
+        <line
+          x1="20"
+          y1="46"
+          x2="44"
+          y2="46"
+          stroke="#38bdf8"
+          strokeWidth="0.5"
+          strokeOpacity="0.5"
+        />
 
         {/* Ön LED Farlar */}
         <ellipse cx="15" cy="14" rx="3" ry="2" fill="#e0f2fe" />
@@ -262,7 +329,15 @@ function PlayerCarSVG({
         )}
 
         {/* Arka Kesintisiz LED Stop Şeridi */}
-        <line x1="16" y1="89" x2="48" y2="89" stroke="#ef4444" strokeWidth="2.5" strokeLinecap="round" />
+        <line
+          x1="16"
+          y1="89"
+          x2="48"
+          y2="89"
+          stroke="#ef4444"
+          strokeWidth="2.5"
+          strokeLinecap="round"
+        />
         <rect x="28" y="87" width="8" height="2" rx="1" fill="#38bdf8" />
       </svg>
     </div>
@@ -287,7 +362,15 @@ function RivalCarSVG({ colorHex }: { colorHex: string }) {
           d="M 18 32 C 24 30, 40 30, 46 32 C 48 40, 48 56, 45 64 C 39 66, 25 66, 19 64 C 16 56, 16 40, 18 32 Z"
           fill="#1e293b"
         />
-        <line x1="18" y1="88" x2="46" y2="88" stroke="#ef4444" strokeWidth="2" strokeLinecap="round" />
+        <line
+          x1="18"
+          y1="88"
+          x2="46"
+          y2="88"
+          stroke="#ef4444"
+          strokeWidth="2"
+          strokeLinecap="round"
+        />
       </svg>
     </div>
   );
@@ -357,12 +440,19 @@ export function ToggCyberRacer({
   scoreMultiplier = 1,
 }: GameComponentProps) {
   // Oyun Durumu
-  const [gameState, setGameState] = useState<'idle' | 'playing' | 'ended'>('idle');
+  const [gameState, setGameState] = useState<'idle' | 'playing' | 'ended'>(
+    'idle',
+  );
 
   // Garaj ve Özelleştirme
-  const [selectedCarId, setSelectedCarId] = useState<'toggx' | 'toggf' | 'gtr' | 'cyber'>('toggx');
-  const [selectedColor, setSelectedColor] = useState<string>('Anadolu Kırmızısı');
-  const [selectedTrackId, setSelectedTrackId] = useState<'bosphorus' | 'cappadocia' | 'gemlik'>('bosphorus');
+  const [selectedCarId, setSelectedCarId] = useState<
+    'toggx' | 'toggf' | 'gtr' | 'cyber'
+  >('toggx');
+  const [selectedColor, setSelectedColor] =
+    useState<string>('Anadolu Kırmızısı');
+  const [selectedTrackId, setSelectedTrackId] = useState<
+    'bosphorus' | 'cappadocia' | 'gemlik'
+  >('bosphorus');
 
   // Skor ve Telemetri
   const [score, setScore] = useState(0);
@@ -385,6 +475,14 @@ export function ToggCyberRacer({
     message: string;
     type: 'correct' | 'wrong';
   } | null>(null);
+
+  // Hızlı Matematik Turbo Kapısı
+  const [mathGate, setMathGate] = useState<{
+    question: string;
+    answer: number;
+    options: number[];
+  } | null>(null);
+  const [isMathGateActive, setIsMathGateActive] = useState(false);
 
   // Otoyol Varlıkları (Rakipler, Bataryalar, Altınlar, Kalkanlar)
   const [entities, setEntities] = useState<RoadEntity[]>([]);
@@ -412,7 +510,9 @@ export function ToggCyberRacer({
 
   // Seçilen Araç ve Pist Nesneleri
   const selectedCar = useMemo(() => {
-    return RACE_VEHICLES.find((v) => v.id === selectedCarId) || RACE_VEHICLES[0];
+    return (
+      RACE_VEHICLES.find((v) => v.id === selectedCarId) || RACE_VEHICLES[0]
+    );
   }, [selectedCarId]);
 
   const selectedTrack = useMemo(() => {
@@ -432,6 +532,40 @@ export function ToggCyberRacer({
     setGameState('ended');
     gameAudio.playFanfare();
   }, []);
+
+  const handleMathGateAnswer = useCallback(
+    (chosen: number) => {
+      if (!mathGate) return;
+      if (chosen === mathGate.answer) {
+        gameAudio.playNitro();
+        gameAudio.playCorrect();
+        scoreRef.current += 300;
+        setScore(scoreRef.current);
+        nitroRef.current = 100;
+        setTrugoNitro(100);
+        speedRef.current = 260;
+        setSpeedKmh(260);
+        setStreak((s) => s + 2);
+        setFeedback({
+          message: '🚀 HARİKA! MATEMATİK TURBO BOOST (+300)',
+          type: 'correct',
+        });
+      } else {
+        gameAudio.playWrong();
+        speedRef.current = 110;
+        setSpeedKmh(110);
+        nitroRef.current = 0;
+        setTrugoNitro(0);
+        setFeedback({
+          message: '⚠️ YANLIŞ İŞLEM! HIZ DÜŞTÜ!',
+          type: 'wrong',
+        });
+      }
+      setIsMathGateActive(false);
+      setMathGate(null);
+    },
+    [mathGate],
+  );
 
   // Skor Gönderimi (En fazla 4800 puan)
   useEffect(() => {
@@ -476,7 +610,12 @@ export function ToggCyberRacer({
 
   // Trugo Süper Nitro Ateşleme
   const activateNitro = useCallback(() => {
-    if (gameState !== 'playing' || nitroRef.current < 50 || nitroActiveRef.current) return;
+    if (
+      gameState !== 'playing' ||
+      nitroRef.current < 50 ||
+      nitroActiveRef.current
+    )
+      return;
 
     nitroRef.current = Math.max(0, nitroRef.current - 50);
     setTrugoNitro(nitroRef.current);
@@ -583,14 +722,15 @@ export function ToggCyberRacer({
             { icon: '🚚', color: '#64748b' },
             { icon: '🏎️', color: '#ef4444' },
           ];
-          const chosenRival = rivalTypes[Math.floor(Math.random() * rivalTypes.length)];
+          const chosenRival =
+            rivalTypes[Math.floor(Math.random() * rivalTypes.length)];
           icon = chosenRival.icon;
           color = chosenRival.color;
         } else if (randType < 0.74) {
           entityType = 'battery';
           icon = '⚡';
           color = '#06b6d4';
-        } else if (randType < 0.90) {
+        } else if (randType < 0.9) {
           entityType = 'coin';
           icon = '🪙';
           color = '#f59e0b';
@@ -635,7 +775,8 @@ export function ToggCyberRacer({
           if (entity.type === 'battery') {
             entity.collected = true;
             entity.cleared = true;
-            const trugoBonusMultiplier = selectedCar.id === 'toggx' ? 1.15 : 1.0;
+            const trugoBonusMultiplier =
+              selectedCar.id === 'toggx' ? 1.15 : 1.0;
             const points = Math.round(75 * trugoBonusMultiplier);
 
             scoreRef.current += points;
@@ -645,8 +786,11 @@ export function ToggCyberRacer({
             setCollectedItems((c) => c + 1);
 
             gameAudio.playCorrect();
+            const gate = generateRacerMathGate();
+            setMathGate(gate);
+            setIsMathGateActive(true);
             setFeedback({
-              message: `+${points} Trugo Bataryası Toplandı! ⚡`,
+              message: `+${points} Trugo Bataryası! Matematik Kapısı Açıldı ⚡`,
               type: 'correct',
             });
           } else if (entity.type === 'coin') {
@@ -729,7 +873,12 @@ export function ToggCyberRacer({
         }
 
         // Oyuncuyu Geçen Araçlar (Overtaken - Sollama Puanı)
-        if (entity.type === 'rival' && entity.y > 90 && !entity.collected && !entity.cleared) {
+        if (
+          entity.type === 'rival' &&
+          entity.y > 90 &&
+          !entity.collected &&
+          !entity.cleared
+        ) {
           entity.cleared = true;
           overtakenRef.current += 1;
           streakRef.current += 1;
@@ -802,7 +951,8 @@ export function ToggCyberRacer({
               </span>
             </h2>
             <p className="text-xs sm:text-sm text-slate-500 dark:text-slate-400">
-              Trafikten sıyrıl, Trugo bataryaları ve altınları topla, nitro ile rekor kır!
+              Trafikten sıyrıl, Trugo bataryaları ve altınları topla, nitro ile
+              rekor kır!
             </p>
           </div>
         </div>
@@ -826,7 +976,10 @@ export function ToggCyberRacer({
 
             {/* Süre */}
             <div className="flex items-center gap-1.5 px-3 py-1.5 bg-slate-100 dark:bg-slate-800/80 rounded-xl border border-slate-200 dark:border-slate-700">
-              <Timer className="w-4 h-4 text-amber-500 dark:text-amber-400 animate-spin" style={{ animationDuration: '4s' }} />
+              <Timer
+                className="w-4 h-4 text-amber-500 dark:text-amber-400 animate-spin"
+                style={{ animationDuration: '4s' }}
+              />
               <span
                 className={`font-mono text-base font-black ${
                   timeLeft <= 10
@@ -897,8 +1050,9 @@ export function ToggCyberRacer({
               Süper Garaja Hoş Geldin!
             </h3>
             <p className="text-sm text-slate-600 dark:text-slate-300 leading-relaxed">
-              Aracını ve yarış pistini seç. 4 şeritli otoyolda trafiği solla, Trugo bataryalarını ve altın kupaları topla,
-              Süper Nitro ateşleyerek en yüksek skora ulaş!
+              Aracını ve yarış pistini seç. 4 şeritli otoyolda trafiği solla,
+              Trugo bataryalarını ve altın kupaları topla, Süper Nitro
+              ateşleyerek en yüksek skora ulaş!
             </p>
           </div>
 
@@ -986,7 +1140,9 @@ export function ToggCyberRacer({
                           : 'border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-300 hover:border-slate-300'
                       }`}
                     >
-                      <span className={`w-3.5 h-3.5 rounded-full ${c.bgClass}`} />
+                      <span
+                        className={`w-3.5 h-3.5 rounded-full ${c.bgClass}`}
+                      />
                       <span>{c.name}</span>
                     </div>
                   );
@@ -1050,7 +1206,8 @@ export function ToggCyberRacer({
                   {selectedTrack.name}
                 </div>
                 <div className="text-[11px] text-slate-500 dark:text-slate-400">
-                  {selectedCar.name} • {selectedCar.isTogg ? selectedColor : selectedCar.colorName}
+                  {selectedCar.name} •{' '}
+                  {selectedCar.isTogg ? selectedColor : selectedCar.colorName}
                 </div>
               </div>
             </div>
@@ -1126,28 +1283,44 @@ export function ToggCyberRacer({
                 <motion.div
                   className="w-full h-full bg-[linear-gradient(to_bottom,transparent_50%,rgba(255,255,255,0.4)_50%)] bg-[length:100%_40px]"
                   animate={{ backgroundPositionY: ['0px', '40px'] }}
-                  transition={{ repeat: Infinity, ease: 'linear', duration: isNitroActive ? 0.12 : 0.28 }}
+                  transition={{
+                    repeat: Infinity,
+                    ease: 'linear',
+                    duration: isNitroActive ? 0.12 : 0.28,
+                  }}
                 />
               </div>
               <div className="w-1/4 border-r-2 border-dashed border-white/20 dark:border-white/20 h-full relative overflow-hidden">
                 <motion.div
                   className="w-full h-full bg-[linear-gradient(to_bottom,transparent_50%,rgba(255,255,255,0.4)_50%)] bg-[length:100%_40px]"
                   animate={{ backgroundPositionY: ['0px', '40px'] }}
-                  transition={{ repeat: Infinity, ease: 'linear', duration: isNitroActive ? 0.12 : 0.28 }}
+                  transition={{
+                    repeat: Infinity,
+                    ease: 'linear',
+                    duration: isNitroActive ? 0.12 : 0.28,
+                  }}
                 />
               </div>
               <div className="w-1/4 border-r-2 border-dashed border-white/20 dark:border-white/20 h-full relative overflow-hidden">
                 <motion.div
                   className="w-full h-full bg-[linear-gradient(to_bottom,transparent_50%,rgba(255,255,255,0.4)_50%)] bg-[length:100%_40px]"
                   animate={{ backgroundPositionY: ['0px', '40px'] }}
-                  transition={{ repeat: Infinity, ease: 'linear', duration: isNitroActive ? 0.12 : 0.28 }}
+                  transition={{
+                    repeat: Infinity,
+                    ease: 'linear',
+                    duration: isNitroActive ? 0.12 : 0.28,
+                  }}
                 />
               </div>
               <div className="w-1/4 h-full relative overflow-hidden">
                 <motion.div
                   className="w-full h-full bg-[linear-gradient(to_bottom,transparent_50%,rgba(255,255,255,0.4)_50%)] bg-[length:100%_40px]"
                   animate={{ backgroundPositionY: ['0px', '40px'] }}
-                  transition={{ repeat: Infinity, ease: 'linear', duration: isNitroActive ? 0.12 : 0.28 }}
+                  transition={{
+                    repeat: Infinity,
+                    ease: 'linear',
+                    duration: isNitroActive ? 0.12 : 0.28,
+                  }}
                 />
               </div>
             </div>
@@ -1167,6 +1340,36 @@ export function ToggCyberRacer({
             {entities.map((entity) => (
               <RoadEntityItem key={entity.id} entity={entity} />
             ))}
+
+            {/* HIZLI MATEMATİK TURBO KAPISI MODAL/OVERLAY */}
+            {isMathGateActive && mathGate && (
+              <div className="absolute inset-0 z-30 flex items-center justify-center bg-slate-950/85 backdrop-blur-xs p-3">
+                <div className="bg-slate-900 border-2 border-cyan-400 p-4 rounded-2xl max-w-xs w-full text-center space-y-3 shadow-2xl animate-fade-in text-white">
+                  <div className="flex items-center justify-center gap-1.5 text-xs font-black text-cyan-400 uppercase tracking-wider">
+                    <Zap className="w-4 h-4" />
+                    <span>Matematik Turbo Kapısı</span>
+                  </div>
+                  <div className="text-xl font-black font-display text-white">
+                    {mathGate.question} = ?
+                  </div>
+                  <div className="grid grid-cols-3 gap-2">
+                    {mathGate.options.map((opt, i) => (
+                      <button
+                        key={i}
+                        type="button"
+                        onClick={() => handleMathGateAnswer(opt)}
+                        className="py-2.5 px-2 rounded-xl bg-slate-800 hover:bg-cyan-500 hover:text-slate-950 border border-slate-700 font-bold text-base transition active:scale-95 text-white"
+                      >
+                        {opt}
+                      </button>
+                    ))}
+                  </div>
+                  <p className="text-[10px] text-slate-400">
+                    Doğru kapıdan geçerek +300 puan ve Turbo Boost kazan!
+                  </p>
+                </div>
+              </div>
+            )}
 
             {/* OYUNCU ARACI (Seçilen şeride doğru yumuşak yaylanarak geçer) */}
             <motion.div
@@ -1250,7 +1453,11 @@ export function ToggCyberRacer({
               }`}
             >
               <Zap className="w-4 h-4 fill-current" />
-              <span>{isNitroActive ? 'NİTRO AKTİF! 🔥' : `TRUGO NİTRO (%${trugoNitro})`}</span>
+              <span>
+                {isNitroActive
+                  ? 'NİTRO AKTİF! 🔥'
+                  : `TRUGO NİTRO (%${trugoNitro})`}
+              </span>
             </button>
 
             <button
@@ -1277,41 +1484,52 @@ export function ToggCyberRacer({
               {overtaken >= 20
                 ? '🏆 Pistin Şampiyonu & Hız Efsanesi!'
                 : overtaken >= 10
-                ? '⚡ Süper Sürücü & Milli Teknoloji!'
-                : '🏁 Yarış Tamamlandı!'}
+                  ? '⚡ Süper Sürücü & Milli Teknoloji!'
+                  : '🏁 Yarış Tamamlandı!'}
             </h3>
             <p className="text-sm text-slate-600 dark:text-slate-300 mt-1">
-              {selectedTrack.name} etabında {selectedCar.name} ile toplam {overtaken} araç solladın!
+              {selectedTrack.name} etabında {selectedCar.name} ile toplam{' '}
+              {overtaken} araç solladın!
             </p>
           </div>
 
           <div className="grid grid-cols-2 sm:grid-cols-5 gap-3 w-full max-w-2xl">
             <div className="p-3 bg-white dark:bg-slate-800/80 rounded-xl border border-slate-200 dark:border-slate-700/60 shadow-xs">
-              <div className="text-xs text-slate-500 dark:text-slate-400">Toplam Puan</div>
+              <div className="text-xs text-slate-500 dark:text-slate-400">
+                Toplam Puan
+              </div>
               <div className="text-xl font-black text-rose-600 dark:text-rose-400 font-mono">
                 {Math.min(4800, Math.round(score * (scoreMultiplier || 1)))}
               </div>
             </div>
             <div className="p-3 bg-white dark:bg-slate-800/80 rounded-xl border border-slate-200 dark:border-slate-700/60 shadow-xs">
-              <div className="text-xs text-slate-500 dark:text-slate-400">Maksimum Hız</div>
+              <div className="text-xs text-slate-500 dark:text-slate-400">
+                Maksimum Hız
+              </div>
               <div className="text-xl font-black text-cyan-600 dark:text-cyan-400 font-mono">
                 {maxSpeedKmh} km/s
               </div>
             </div>
             <div className="p-3 bg-white dark:bg-slate-800/80 rounded-xl border border-slate-200 dark:border-slate-700/60 shadow-xs">
-              <div className="text-xs text-slate-500 dark:text-slate-400">Sollanan Araç</div>
+              <div className="text-xs text-slate-500 dark:text-slate-400">
+                Sollanan Araç
+              </div>
               <div className="text-xl font-black text-amber-600 dark:text-amber-400 font-mono">
                 {overtaken}
               </div>
             </div>
             <div className="p-3 bg-white dark:bg-slate-800/80 rounded-xl border border-slate-200 dark:border-slate-700/60 shadow-xs">
-              <div className="text-xs text-slate-500 dark:text-slate-400">En Uzun Seri</div>
+              <div className="text-xs text-slate-500 dark:text-slate-400">
+                En Uzun Seri
+              </div>
               <div className="text-xl font-black text-indigo-600 dark:text-indigo-400 font-mono">
                 {maxStreak}
               </div>
             </div>
             <div className="p-3 bg-white dark:bg-slate-800/80 rounded-xl border border-slate-200 dark:border-slate-700/60 shadow-xs col-span-2 sm:col-span-1">
-              <div className="text-xs text-slate-500 dark:text-slate-400">Toplanan Öğe</div>
+              <div className="text-xs text-slate-500 dark:text-slate-400">
+                Toplanan Öğe
+              </div>
               <div className="text-xl font-black text-emerald-600 dark:text-emerald-400 font-mono">
                 {collectedItems}
               </div>
@@ -1349,7 +1567,10 @@ export function ToggCyberRacer({
 
       {/* 5. ALT BİLGİ & KONTROL REHBERİ */}
       <div className="pt-4 border-t border-slate-200 dark:border-slate-700/60 flex flex-wrap items-center justify-between text-xs text-slate-500 dark:text-slate-400 gap-2">
-        <span>Klavye: [1, 2, 3, 4] veya [← / → / A / D] ile şerit değiştir, [Boşluk / W / ↑] ile Trugo Nitro ateşle.</span>
+        <span>
+          Klavye: [1, 2, 3, 4] veya [← / → / A / D] ile şerit değiştir, [Boşluk
+          / W / ↑] ile Trugo Nitro ateşle.
+        </span>
         <span>Çarpan: x{scoreMultiplier}</span>
       </div>
     </div>

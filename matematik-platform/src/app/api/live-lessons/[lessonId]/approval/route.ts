@@ -4,7 +4,10 @@ import { z } from 'zod';
 import { enforceRateLimit } from '@/lib/rate-limit';
 import { createServiceRoleClient } from '@/lib/supabase/server';
 import { createLogger } from '@/lib/logger';
-import { isLiveLessonAdmin, requireLiveLessonUser } from '@/features/live-lessons/server/liveLessons';
+import {
+  isLiveLessonAdmin,
+  requireLiveLessonUser,
+} from '@/features/live-lessons/server/liveLessons';
 import { getLiveKitServiceHost } from '@/features/live-lessons/lib/lesson-auth';
 import { deriveLiveKitIdentity } from '@/features/live-lessons/lib/lesson-identity';
 
@@ -40,7 +43,8 @@ export async function GET(_request: Request, context: RouteContext) {
   );
   if (limited) return limited;
 
-  if (isLiveLessonAdmin(auth.user)) return NextResponse.json({ approved: true });
+  if (isLiveLessonAdmin(auth.user))
+    return NextResponse.json({ approved: true });
 
   const { lessonId } = await context.params;
   // Kimlik istemciden gelen bir query parametresinden değil, doğrulanmış
@@ -70,7 +74,10 @@ export async function POST(request: Request, context: RouteContext) {
   const auth = await requireLiveLessonUser();
   if (!auth.ok) return auth.response;
   if (!isLiveLessonAdmin(auth.user)) {
-    return NextResponse.json({ error: 'Bu işlem için admin yetkisi gerekir.' }, { status: 403 });
+    return NextResponse.json(
+      { error: 'Bu işlem için admin yetkisi gerekir.' },
+      { status: 403 },
+    );
   }
 
   const limited = await enforceRateLimit(
@@ -84,7 +91,10 @@ export async function POST(request: Request, context: RouteContext) {
   const body = await request.json().catch(() => null);
   const parsed = approvalBodySchema.safeParse(body);
   if (!parsed.success) {
-    return NextResponse.json({ error: 'Öğrenci kimliği geçersiz.' }, { status: 400 });
+    return NextResponse.json(
+      { error: 'Öğrenci kimliği geçersiz.' },
+      { status: 400 },
+    );
   }
   const { targetIdentity } = parsed.data;
 
@@ -107,7 +117,10 @@ export async function POST(request: Request, context: RouteContext) {
   });
 
   if (error) {
-    return NextResponse.json({ error: 'Öğrenci onayı kaydedilemedi.' }, { status: 400 });
+    return NextResponse.json(
+      { error: 'Öğrenci onayı kaydedilemedi.' },
+      { status: 400 },
+    );
   }
 
   // Onay kaydı, öğrenci yeniden token isteğinde bulunduğunda zaten
@@ -122,17 +135,28 @@ export async function POST(request: Request, context: RouteContext) {
   if (livekitHost && apiKey && apiSecret && lesson?.room_id) {
     try {
       const roomService = new RoomServiceClient(livekitHost, apiKey, apiSecret);
-      await roomService.updateParticipant(lesson.room_id, targetIdentity, undefined, {
-        canPublish: true,
-        canPublishData: true,
-        canSubscribe: true,
-      });
-    } catch (livekitError) {
-      log.warn('LiveKit katılımcı izni anlık yükseltilemedi (öğrenci henüz bağlı olmayabilir)', {
-        error: livekitError instanceof Error ? livekitError.message : String(livekitError),
-        lessonId,
+      await roomService.updateParticipant(
+        lesson.room_id,
         targetIdentity,
-      });
+        undefined,
+        {
+          canPublish: true,
+          canPublishData: true,
+          canSubscribe: true,
+        },
+      );
+    } catch (livekitError) {
+      log.warn(
+        'LiveKit katılımcı izni anlık yükseltilemedi (öğrenci henüz bağlı olmayabilir)',
+        {
+          error:
+            livekitError instanceof Error
+              ? livekitError.message
+              : String(livekitError),
+          lessonId,
+          targetIdentity,
+        },
+      );
     }
   }
 

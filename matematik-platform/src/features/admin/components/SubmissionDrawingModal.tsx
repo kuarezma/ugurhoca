@@ -9,15 +9,19 @@ import {
   Check,
   Palette,
   Eraser,
+  Loader2,
 } from 'lucide-react';
 import { useAccessibleModal } from '@/hooks/useAccessibleModal';
+import { useToast } from '@/components/Toast';
+import { supabase } from '@/lib/supabase/client';
 
 type SubmissionDrawingModalProps = {
   isOpen: boolean;
   onClose: () => void;
   imageUrl: string;
   studentName?: string;
-  onSaveFeedback?: (notes: string) => void;
+  submissionId?: string;
+  onSaveFeedback?: (notes: string, annotatedUrl?: string) => void;
 };
 
 const COLORS = [
@@ -32,8 +36,10 @@ export function SubmissionDrawingModal({
   onClose,
   imageUrl,
   studentName = 'Öğrenci',
+  submissionId,
   onSaveFeedback,
 }: SubmissionDrawingModalProps) {
+  const { showToast } = useToast();
   const modalRef = useAccessibleModal<HTMLDivElement>(isOpen, onClose);
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
   const [isDrawing, setIsDrawing] = useState(false);
@@ -41,6 +47,7 @@ export function SubmissionDrawingModal({
   const [lineWidth, setLineWidth] = useState(3);
   const [isEraser, setIsEraser] = useState(false);
   const [hasDrawn, setHasDrawn] = useState(false);
+  const [isSaving, setIsSaving] = useState(false);
 
   // Initialize canvas with student image
   useEffect(() => {
@@ -62,7 +69,11 @@ export function SubmissionDrawingModal({
     };
   }, [isOpen, imageUrl]);
 
-  const getCoordinates = (e: React.MouseEvent<HTMLCanvasElement> | React.TouchEvent<HTMLCanvasElement>) => {
+  const getCoordinates = (
+    e:
+      | React.MouseEvent<HTMLCanvasElement>
+      | React.TouchEvent<HTMLCanvasElement>,
+  ) => {
     const canvas = canvasRef.current;
     if (!canvas) return { x: 0, y: 0 };
     const rect = canvas.getBoundingClientRect();
@@ -82,7 +93,11 @@ export function SubmissionDrawingModal({
     };
   };
 
-  const startDrawing = (e: React.MouseEvent<HTMLCanvasElement> | React.TouchEvent<HTMLCanvasElement>) => {
+  const startDrawing = (
+    e:
+      | React.MouseEvent<HTMLCanvasElement>
+      | React.TouchEvent<HTMLCanvasElement>,
+  ) => {
     const canvas = canvasRef.current;
     if (!canvas) return;
     const ctx = canvas.getContext('2d');
@@ -98,7 +113,11 @@ export function SubmissionDrawingModal({
     setIsDrawing(true);
   };
 
-  const draw = (e: React.MouseEvent<HTMLCanvasElement> | React.TouchEvent<HTMLCanvasElement>) => {
+  const draw = (
+    e:
+      | React.MouseEvent<HTMLCanvasElement>
+      | React.TouchEvent<HTMLCanvasElement>,
+  ) => {
     if (!isDrawing) return;
     const canvas = canvasRef.current;
     if (!canvas) return;
@@ -140,11 +159,68 @@ export function SubmissionDrawingModal({
     link.click();
   };
 
-  const handleCompleteAnnotation = () => {
-    if (onSaveFeedback) {
-      onSaveFeedback('Ödev üzerinde işaretlemeler ve çizim notları yapıldı.');
+  const handleCompleteAnnotation = async () => {
+    setIsSaving(true);
+    let publicUrl: string | undefined = undefined;
+
+    try {
+      const canvas = canvasRef.current;
+      if (hasDrawn && canvas) {
+        const blob = await new Promise<Blob | null>((resolve) => {
+          canvas.toBlob((b) => resolve(b), 'image/png');
+        });
+
+        if (blob) {
+          const targetId = submissionId || `sub_${Date.now()}`;
+          const filePath = `annotations/${targetId}_${Date.now()}.png`;
+
+          if (supabase && typeof supabase.from === 'function') {
+            const { error: uploadError } = await supabase.storage
+              .from('submissions')
+              .upload(filePath, blob, {
+                contentType: 'image/png',
+                upsert: true,
+              });
+
+            if (!uploadError) {
+              const { data } = supabase.storage
+                .from('submissions')
+                .getPublicUrl(filePath);
+              publicUrl = data?.publicUrl;
+
+              if (submissionId && publicUrl) {
+                await supabase
+                  .from('assignment_submissions')
+                  .update({ annotated_feedback_url: publicUrl })
+                  .eq('id', submissionId);
+              }
+            }
+          }
+        }
+      }
+
+      showToast('success', 'Çizimli geri bildirim kaydedildi.');
+      if (onSaveFeedback) {
+        onSaveFeedback(
+          hasDrawn
+            ? 'Ödev üzerinde işaretlemeler ve çizim notları yapıldı.'
+            : 'Ödev incelendi.',
+          publicUrl,
+        );
+      }
+      onClose();
+    } catch {
+      showToast(
+        'warning',
+        'Çizim kaydedilirken bir sorun oluştu, yerel olarak tamamlandı.',
+      );
+      if (onSaveFeedback) {
+        onSaveFeedback('Ödev üzerinde işaretlemeler ve çizim notları yapıldı.');
+      }
+      onClose();
+    } finally {
+      setIsSaving(false);
     }
-    onClose();
   };
 
   if (!isOpen) return null;
@@ -170,7 +246,8 @@ export function SubmissionDrawingModal({
                 Ödev İnceleme & Çizim Notu
               </h3>
               <p className="text-xs text-slate-500 dark:text-slate-400">
-                {studentName} adlı öğrencinin ödev görseli üzerine kırmızı kalemle işaretleme yapın
+                {studentName} adlı öğrencinin ödev görseli üzerine kırmızı
+                kalemle işaretleme yapın
               </p>
             </div>
           </div>
@@ -238,7 +315,9 @@ export function SubmissionDrawingModal({
 
           <div className="flex items-center gap-4">
             <div className="flex items-center gap-2">
-              <span className="text-slate-600 dark:text-slate-400">Kalınlık:</span>
+              <span className="text-slate-600 dark:text-slate-400">
+                Kalınlık:
+              </span>
               <input
                 type="range"
                 min="1"
@@ -278,7 +357,9 @@ export function SubmissionDrawingModal({
         {/* FOOTER */}
         <div className="flex items-center justify-between p-4 border-t border-slate-200 dark:border-slate-700/80 bg-slate-50 dark:bg-slate-950/70 text-xs">
           <span className="text-slate-500 dark:text-slate-400">
-            {hasDrawn ? '✏️ Görsel üzerine notlar çizildi' : 'Çizim yapmak için tıklayıp sürükleyin'}
+            {hasDrawn
+              ? '✏️ Görsel üzerine notlar çizildi'
+              : 'Çizim yapmak için tıklayıp sürükleyin'}
           </span>
           <div className="flex items-center gap-2">
             <button
@@ -290,11 +371,18 @@ export function SubmissionDrawingModal({
             </button>
             <button
               type="button"
+              disabled={isSaving}
               onClick={handleCompleteAnnotation}
-              className="flex items-center gap-1.5 px-5 py-2 rounded-xl font-bold transition bg-brand-primary hover:bg-brand-primary-soft text-slate-950 dark:text-slate-950 shadow-btn-3d-green active:translate-y-1 active:shadow-none"
+              className="flex items-center gap-1.5 px-5 py-2 rounded-xl font-bold transition bg-brand-primary hover:bg-brand-primary-soft text-slate-950 dark:text-slate-950 shadow-btn-3d-green active:translate-y-1 active:shadow-none disabled:opacity-50"
             >
-              <Check className="w-4 h-4" />
-              <span>Değerlendirmeyi Tamamla</span>
+              {isSaving ? (
+                <Loader2 className="w-4 h-4 animate-spin" />
+              ) : (
+                <Check className="w-4 h-4" />
+              )}
+              <span>
+                {isSaving ? 'Kaydediliyor...' : 'Değerlendirmeyi Tamamla'}
+              </span>
             </button>
           </div>
         </div>

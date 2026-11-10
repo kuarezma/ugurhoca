@@ -138,15 +138,8 @@ if (typeof self !== 'undefined' && 'addEventListener' in self) {
       return;
     }
 
-    // Navigasyon / HTML Sayfa İstekleri
+    // Navigasyon / HTML Sayfa İstekleri (her zaman ağ öncelikli, çevrimdışında offline.html)
     if (request.mode === 'navigate' || request.destination === 'document') {
-      if (isAuthRoute(url.pathname)) {
-        event.respondWith(
-          fetch(request).catch(() => caches.match(OFFLINE_URL)),
-        );
-        return;
-      }
-
       event.respondWith(fetch(request).catch(() => caches.match(OFFLINE_URL)));
     }
   });

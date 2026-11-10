@@ -13,6 +13,7 @@ import { HomeNavbarMessagesButton } from '@/features/home/components/HomeNavbarM
 import { HomeNavbarNotificationBell } from '@/features/home/components/HomeNavbarNotificationBell';
 import { HomeRecentDocumentsSection } from '@/features/home/components/HomeRecentDocumentsSection';
 import { HomeSupportSection } from '@/features/home/components/HomeSupportSection';
+import { HomeWeeklyCurriculumSection } from '@/features/home/components/HomeWeeklyCurriculumSection';
 import type { Announcement, AppUser, ContentDocument } from '@/types';
 
 // Theme classes must come from CSS (`light:` / `dark:` variants on data-theme),
@@ -247,5 +248,9 @@ describe('ana sayfa tema sınıfları ilk boyamada CSS’ten gelir', () => {
 
   it('HomeFooter iki temada aynı işaretlemeyi üretir', () => {
     expectThemeIndependentMarkup(() => <HomeFooter />);
+  });
+
+  it('HomeWeeklyCurriculumSection iki temada aynı işaretlemeyi üretir', () => {
+    expectThemeIndependentMarkup(() => <HomeWeeklyCurriculumSection />);
   });
 });

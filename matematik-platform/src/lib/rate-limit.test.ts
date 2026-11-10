@@ -59,10 +59,14 @@ describe('rate-limit module', () => {
     expect(body.error).toMatch(/Çok fazla istek/);
 
     // Başka bir kullanıcı etkilenmemeli
-    const resOther = await enforceRateLimit('test-prod-no-upstash', 'user-prod-2', {
-      limit: 2,
-      windowSeconds: 60,
-    });
+    const resOther = await enforceRateLimit(
+      'test-prod-no-upstash',
+      'user-prod-2',
+      {
+        limit: 2,
+        windowSeconds: 60,
+      },
+    );
     expect(resOther).toBeNull();
   });
 
@@ -111,7 +115,9 @@ describe('rate-limit module', () => {
     vi.resetModules();
 
     // Ratelimit constructor mock
-    const mockLimit = vi.fn().mockRejectedValue(new Error('Redis connection timeout'));
+    const mockLimit = vi
+      .fn()
+      .mockRejectedValue(new Error('Redis connection timeout'));
     vi.doMock('@upstash/ratelimit', () => {
       class MockRatelimit {
         limit = mockLimit;
@@ -133,7 +139,10 @@ describe('rate-limit module', () => {
     expect(res1).toBeNull();
     expect(warnSpy).toHaveBeenCalledWith(
       expect.stringContaining('Upstash çağrısı başarısız'),
-      expect.objectContaining({ name: 'test-upstash-err', identifier: 'user-err-1' }),
+      expect.objectContaining({
+        name: 'test-upstash-err',
+        identifier: 'user-err-1',
+      }),
     );
 
     // 2. istek: kabul
@@ -152,7 +161,7 @@ describe('rate-limit module', () => {
     expect(res3?.status).toBe(429);
   });
 
-  it('production modunda Upstash yokken failClosed: true ise 503 döner ve logger.error loglar', async () => {
+  it('production modunda Upstash yokken failClosed: true ise 503 vermeden bellek-içi sınırlayıcıya geçer ve limiti aşınca 429 döner', async () => {
     vi.stubEnv('UPSTASH_REDIS_REST_URL', '');
     vi.stubEnv('UPSTASH_REDIS_REST_TOKEN', '');
     vi.stubEnv('NODE_ENV', 'production');
@@ -160,41 +169,30 @@ describe('rate-limit module', () => {
     vi.resetModules();
 
     const { logger } = await import('@/lib/logger');
-    const errorSpy = vi.spyOn(logger, 'error').mockImplementation(() => {});
+    const warnSpy = vi.spyOn(logger, 'warn').mockImplementation(() => {});
 
     const { enforceRateLimit } = await import('./rate-limit');
 
     const res1 = await enforceRateLimit('test-failclosed', 'ip-1', {
-      limit: 5,
+      limit: 1,
       windowSeconds: 60,
       failClosed: true,
     });
 
-    expect(res1).not.toBeNull();
-    expect(res1?.status).toBe(503);
-    expect(res1?.headers.get('Retry-After')).toBe('300');
-    expect(res1?.headers.get('Cache-Control')).toBe('no-store');
-
-    const body = await res1?.json();
-    expect(body).toEqual({
-      error: 'Bu işlem şu anda geçici olarak kullanılamıyor. Lütfen daha sonra tekrar deneyin.',
-      code: 'RATE_LIMIT_UNAVAILABLE',
-    });
-
-    expect(errorSpy).toHaveBeenCalledTimes(1);
-    expect(errorSpy).toHaveBeenCalledWith(
-      expect.stringContaining('Hassas rota Upstash yapılandırılmadığı için reddedildi (failClosed)'),
+    expect(res1).toBeNull();
+    expect(warnSpy).toHaveBeenCalledWith(
+      expect.stringContaining(
+        'Hassas rota için Upstash yapılandırılmamış; servis kesintisini (503) önlemek için bellek-içi sınırlayıcıya geçildi',
+      ),
       expect.objectContaining({ name: 'test-failclosed' }),
     );
 
-    // İkinci çağrıda 503 dönmeye devam eder ancak logger.error tekrar çağrılmaz (örnek başına 1 kez)
-    const res2 = await enforceRateLimit('test-failclosed', 'ip-2', {
-      limit: 5,
+    const res2 = await enforceRateLimit('test-failclosed', 'ip-1', {
+      limit: 1,
       windowSeconds: 60,
       failClosed: true,
     });
-    expect(res2?.status).toBe(503);
-    expect(errorSpy).toHaveBeenCalledTimes(1);
+    expect(res2?.status).toBe(429);
   });
 
   it('development modunda Upstash yokken failClosed: true olsa bile null döner (serbest geçer)', async () => {
@@ -220,7 +218,9 @@ describe('rate-limit module', () => {
 
     vi.resetModules();
 
-    const mockLimit = vi.fn().mockRejectedValue(new Error('Redis connection timeout'));
+    const mockLimit = vi
+      .fn()
+      .mockRejectedValue(new Error('Redis connection timeout'));
     vi.doMock('@upstash/ratelimit', () => {
       class MockRatelimit {
         limit = mockLimit;
@@ -281,21 +281,32 @@ describe('rate-limit module', () => {
     const { enforceRateLimit } = await import('./rate-limit');
 
     // limit: 1 iken ilk çağrı bellek içi sınırlayıcıdan geçer (null)
-    const res1 = await enforceRateLimit('test-upstash-timeout', 'user-timeout-1', {
-      limit: 1,
-      windowSeconds: 60,
-    });
+    const res1 = await enforceRateLimit(
+      'test-upstash-timeout',
+      'user-timeout-1',
+      {
+        limit: 1,
+        windowSeconds: 60,
+      },
+    );
     expect(res1).toBeNull();
     expect(warnSpy).toHaveBeenCalledWith(
       expect.stringContaining('timeout'),
-      expect.objectContaining({ name: 'test-upstash-timeout', identifier: 'user-timeout-1' }),
+      expect.objectContaining({
+        name: 'test-upstash-timeout',
+        identifier: 'user-timeout-1',
+      }),
     );
 
     // 2. çağrı bellek-içi sayacı 1 olduğu için limiti aşar ve 429 döner
-    const res2 = await enforceRateLimit('test-upstash-timeout', 'user-timeout-1', {
-      limit: 1,
-      windowSeconds: 60,
-    });
+    const res2 = await enforceRateLimit(
+      'test-upstash-timeout',
+      'user-timeout-1',
+      {
+        limit: 1,
+        windowSeconds: 60,
+      },
+    );
     expect(res2).not.toBeNull();
     expect(res2?.status).toBe(429);
   });
