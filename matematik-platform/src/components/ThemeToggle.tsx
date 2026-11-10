@@ -1,5 +1,6 @@
 'use client';
 
+import { usePathname } from 'next/navigation';
 import { Moon, Sun } from 'lucide-react';
 import { useTheme } from '@/components/ThemeProvider';
 
@@ -8,7 +9,10 @@ type ThemeToggleProps = {
   className?: string;
 };
 
-export function ThemeToggle({ compact = false, className = '' }: ThemeToggleProps) {
+export function ThemeToggle({
+  compact = false,
+  className = '',
+}: ThemeToggleProps) {
   const { toggleTheme } = useTheme();
 
   return (
@@ -27,8 +31,12 @@ export function ThemeToggle({ compact = false, className = '' }: ThemeToggleProp
       <Moon className="h-5 w-5 block dark:hidden" aria-hidden="true" />
       {!compact && (
         <>
-          <span className="text-sm font-semibold hidden dark:inline">Açık Mod</span>
-          <span className="text-sm font-semibold inline dark:hidden">Koyu Mod</span>
+          <span className="text-sm font-semibold hidden dark:inline">
+            Açık Mod
+          </span>
+          <span className="text-sm font-semibold inline dark:hidden">
+            Koyu Mod
+          </span>
         </>
       )}
     </button>
@@ -36,9 +44,12 @@ export function ThemeToggle({ compact = false, className = '' }: ThemeToggleProp
 }
 
 export function FloatingThemeToggle() {
+  const pathname = usePathname();
+  if (pathname === '/') return null;
+
   return (
-    <div className="hidden md:block fixed bottom-6 left-6 z-[90]">
-      <ThemeToggle className="shadow-lg backdrop-blur-lg" />
+    <div className="hidden md:block fixed bottom-5 left-5 z-[90]">
+      <ThemeToggle compact className="shadow-lg backdrop-blur-lg" />
     </div>
   );
 }

@@ -173,7 +173,9 @@ export function ContentDetailView({
               <BookOpen className="h-4 w-4 text-accent" />
               <span>{doc.author || 'Uğur YAŞAYAN'}</span>
             </div>
-            <span>•</span>
+            <span className="hidden sm:inline" aria-hidden="true">
+              •
+            </span>
             <div className="flex items-center gap-1.5">
               <Calendar className="h-4 w-4 text-accent" />
               <span>
@@ -187,7 +189,9 @@ export function ContentDetailView({
                 )}
               </span>
             </div>
-            <span>•</span>
+            <span className="hidden sm:inline" aria-hidden="true">
+              •
+            </span>
             <div className="flex items-center gap-3">
               <span className="flex items-center gap-1">
                 <Eye className="h-3.5 w-3.5 text-accent" />
@@ -209,6 +213,34 @@ export function ContentDetailView({
       <main className="mx-auto max-w-5xl px-4 py-8 sm:px-6">
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
           <div className="lg:col-span-2 space-y-6">
+            {/* Mobil Hızlı İşlemler Çubuğu */}
+            {(doc.file_url || doc.solution_url) && (
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5 lg:hidden">
+                {doc.file_url && (
+                  <a
+                    href={doc.file_url}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="flex w-full items-center justify-center gap-2 rounded-2xl bg-accent-brand px-4 py-3 text-xs sm:text-sm font-bold text-on-brand transition-all hover:opacity-95 shadow-md shadow-accent/10 hover:-translate-y-0.5 active:translate-y-0.5"
+                  >
+                    <Download className="h-4 w-4" />
+                    Dokümanı İndir (PDF)
+                  </a>
+                )}
+                {doc.solution_url && (
+                  <a
+                    href={doc.solution_url}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="flex w-full items-center justify-center gap-2 rounded-2xl border border-emerald-400/50 bg-emerald-500/10 px-4 py-3 text-xs sm:text-sm font-bold text-emerald-900 dark:text-emerald-200 transition-all hover:bg-emerald-500/20"
+                  >
+                    <CheckCircle2 className="h-4 w-4 text-emerald-600 dark:text-emerald-400" />
+                    Çözüm PDF&apos;ini Aç
+                  </a>
+                )}
+              </div>
+            )}
+
             {cleanDescription && (
               <div className="rounded-3xl border border-subtle bg-surface-1 p-6 shadow-sm">
                 <h2 className="font-display text-base font-bold text-primary mb-2 flex items-center gap-2">

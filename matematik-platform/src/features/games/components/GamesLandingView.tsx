@@ -170,7 +170,7 @@ export function GamesLandingView({
           <div className="max-w-5xl mx-auto mb-8 space-y-4">
             <div className="flex flex-col sm:flex-row items-center justify-between gap-3">
               {/* Sınıf Seçici */}
-              <div className="flex items-center gap-1.5 overflow-x-auto w-full sm:w-auto pb-1 sm:pb-0 scrollbar-none">
+              <div className="flex flex-wrap items-center justify-center sm:justify-start gap-1.5 w-full sm:w-auto">
                 {[
                   { value: 'all' as const, label: 'Tümü' },
                   { value: 5, label: '5. Sınıf' },

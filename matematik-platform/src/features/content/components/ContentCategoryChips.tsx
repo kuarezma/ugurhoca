@@ -46,7 +46,7 @@ export function ContentCategoryChips({
             Sınıf Seviyesi
           </span>
         </div>
-        <div className="flex items-center gap-2 overflow-x-auto pb-1.5 scrollbar-none">
+        <div className="flex flex-wrap items-center gap-2">
           {GRADE_OPTIONS.map((g) => {
             const isSelected = selectedGrade === g.id;
             return (
@@ -63,7 +63,9 @@ export function ContentCategoryChips({
                 {g.dot && (
                   <span
                     className={`h-2 w-2 rounded-full ${g.dot} ${
-                      isSelected ? 'ring-2 ring-white/50 dark:ring-slate-900/50' : 'opacity-80 group-hover:opacity-100'
+                      isSelected
+                        ? 'ring-2 ring-white/50 dark:ring-slate-900/50'
+                        : 'opacity-80 group-hover:opacity-100'
                     }`}
                   />
                 )}
@@ -82,7 +84,7 @@ export function ContentCategoryChips({
             İçerik Türü
           </span>
         </div>
-        <div className="flex items-center gap-2 overflow-x-auto pb-1.5 scrollbar-none">
+        <div className="flex flex-wrap items-center gap-2">
           {TYPE_OPTIONS.map((t) => {
             const isSelected = selectedType === t.id;
             return (

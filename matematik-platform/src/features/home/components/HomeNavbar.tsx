@@ -29,7 +29,7 @@ export function HomeNavbar({ onLogout, user }: HomeNavbarProps) {
 
   return (
     <nav className="fixed left-0 right-0 top-0 z-50 border-b border-subtle bg-surface-1/95 font-sans backdrop-blur-xl transition-all duration-300 pt-[env(safe-area-inset-top)] shadow-xs">
-      <div className="mx-auto max-w-6xl px-4 pl-[max(1rem,env(safe-area-inset-left))] pr-[max(1rem,env(safe-area-inset-right))]">
+      <div className="mx-auto max-w-7xl px-4 pl-[max(1rem,env(safe-area-inset-left))] pr-[max(1rem,env(safe-area-inset-right))]">
         <div className="flex h-16 w-full items-center justify-between gap-2 sm:gap-4">
           <SafeLink
             href="/"
@@ -39,7 +39,7 @@ export function HomeNavbar({ onLogout, user }: HomeNavbarProps) {
                 event.preventDefault();
               }
             }}
-            className="group flex min-w-0 shrink items-center gap-2.5 sm:gap-3"
+            className="group flex shrink-0 items-center gap-2.5 sm:gap-3"
           >
             <div className="relative flex h-10 w-10 sm:h-11 sm:w-11 shrink-0 items-center justify-center rounded-2xl bg-surface-2 border border-subtle text-xl sm:text-2xl transition-transform duration-200 group-hover:scale-105 select-none overflow-hidden p-0.5">
               <Image
@@ -55,91 +55,109 @@ export function HomeNavbar({ onLogout, user }: HomeNavbarProps) {
               <span className="font-display text-base sm:text-xl font-bold leading-tight truncate text-primary">
                 Uğur Hoca
               </span>
-              <span className="hidden sm:block text-xs font-black text-secondary uppercase tracking-wider truncate">
+              <span className="hidden sm:block lg:hidden 2xl:block text-xs font-black text-secondary uppercase tracking-wider whitespace-nowrap">
                 Matematik Maceraları
               </span>
             </div>
           </SafeLink>
 
           {/* Orta Menü Bağlantıları (Masaüstü) */}
-          <div className="hidden lg:flex items-center gap-1 xl:gap-1.5">
+          <div className="hidden lg:flex items-center gap-0.5 xl:gap-1.5 shrink-0">
             <SafeLink
               href="/icerikler?type=yaprak-test"
-              className="inline-flex items-center gap-1.5 rounded-xl px-2.5 py-1.5 text-xs xl:text-sm font-bold text-secondary transition-colors duration-150 hover:bg-surface-2 hover:text-primary"
+              className="inline-flex shrink-0 whitespace-nowrap items-center gap-1.5 rounded-xl px-2 xl:px-2.5 py-1.5 text-xs xl:text-[13px] font-bold text-secondary transition-colors duration-150 hover:bg-surface-2 hover:text-primary"
             >
-              <span>📄 Yaprak Testler</span>
+              <span className="hidden xl:inline" aria-hidden="true">
+                📄
+              </span>
+              <span>Yaprak Test</span>
             </SafeLink>
             <SafeLink
               href="/oyunlar"
               aria-current={
                 pathname?.startsWith('/oyunlar') ? 'page' : undefined
               }
-              className={`inline-flex items-center gap-1.5 rounded-xl px-2.5 py-1.5 text-xs xl:text-sm font-bold transition-colors duration-150 ${
+              className={`inline-flex shrink-0 whitespace-nowrap items-center gap-1.5 rounded-xl px-2 xl:px-2.5 py-1.5 text-xs xl:text-[13px] font-bold transition-colors duration-150 ${
                 pathname?.startsWith('/oyunlar')
                   ? 'bg-accent-bg text-accent-fg'
                   : 'text-secondary hover:bg-surface-2 hover:text-primary'
               }`}
             >
-              <span>🎮 Oyunlar</span>
+              <span className="hidden xl:inline" aria-hidden="true">
+                🎮
+              </span>
+              <span>Oyunlar</span>
             </SafeLink>
             <SafeLink
               href="/testler"
               aria-current={
                 pathname?.startsWith('/testler') ? 'page' : undefined
               }
-              className={`inline-flex items-center gap-1.5 rounded-xl px-2.5 py-1.5 text-xs xl:text-sm font-bold transition-colors duration-150 ${
+              className={`inline-flex shrink-0 whitespace-nowrap items-center gap-1.5 rounded-xl px-2 xl:px-2.5 py-1.5 text-xs xl:text-[13px] font-bold transition-colors duration-150 ${
                 pathname?.startsWith('/testler')
                   ? 'bg-accent-bg text-accent-fg'
                   : 'text-secondary hover:bg-surface-2 hover:text-primary'
               }`}
             >
-              <span>📝 Testler</span>
+              <span className="hidden xl:inline" aria-hidden="true">
+                📝
+              </span>
+              <span>Testler</span>
             </SafeLink>
             <SafeLink
               href="/programlar"
               aria-current={
                 pathname?.startsWith('/programlar') ? 'page' : undefined
               }
-              className={`inline-flex items-center gap-1.5 rounded-xl px-2.5 py-1.5 text-xs xl:text-sm font-bold transition-colors duration-150 ${
+              className={`inline-flex shrink-0 whitespace-nowrap items-center gap-1.5 rounded-xl px-2 xl:px-2.5 py-1.5 text-xs xl:text-[13px] font-bold transition-colors duration-150 ${
                 pathname?.startsWith('/programlar')
                   ? 'bg-accent-bg text-accent-fg'
                   : 'text-secondary hover:bg-surface-2 hover:text-primary'
               }`}
             >
-              <span>🧭 Rehberlik</span>
+              <span className="hidden xl:inline" aria-hidden="true">
+                🧭
+              </span>
+              <span>Rehberlik</span>
             </SafeLink>
             <SafeLink
               href="/araclar"
               aria-current={
                 pathname?.startsWith('/araclar') ? 'page' : undefined
               }
-              className={`inline-flex items-center gap-1.5 rounded-xl px-2.5 py-1.5 text-xs xl:text-sm font-bold transition-colors duration-150 ${
+              className={`inline-flex shrink-0 whitespace-nowrap items-center gap-1.5 rounded-xl px-2 xl:px-2.5 py-1.5 text-xs xl:text-[13px] font-bold transition-colors duration-150 ${
                 pathname?.startsWith('/araclar')
                   ? 'bg-accent-bg text-accent-fg'
                   : 'text-secondary hover:bg-surface-2 hover:text-primary'
               }`}
             >
-              <span>🧮 Araçlar</span>
+              <span className="hidden xl:inline" aria-hidden="true">
+                🧮
+              </span>
+              <span>Araçlar</span>
             </SafeLink>
             <SafeLink
               href="/icerikler"
               aria-current={pathname === '/icerikler' ? 'page' : undefined}
-              className={`inline-flex items-center gap-1.5 rounded-xl px-2.5 py-1.5 text-xs xl:text-sm font-bold transition-colors duration-150 ${
+              className={`inline-flex shrink-0 whitespace-nowrap items-center gap-1.5 rounded-xl px-2 xl:px-2.5 py-1.5 text-xs xl:text-[13px] font-bold transition-colors duration-150 ${
                 pathname === '/icerikler'
                   ? 'bg-accent-bg text-accent-fg'
                   : 'text-secondary hover:bg-surface-2 hover:text-primary'
               }`}
             >
-              <span>📚 Konular</span>
+              <span className="hidden xl:inline" aria-hidden="true">
+                📚
+              </span>
+              <span>Konular</span>
             </SafeLink>
             <SafeLink
               href="/canli-ders"
               aria-current={
                 pathname?.startsWith('/canli-ders') ? 'page' : undefined
               }
-              className="inline-flex items-center gap-1.5 rounded-xl px-2.5 py-1.5 text-xs xl:text-sm font-bold text-tone-danger-fg bg-tone-danger-bg/50 border border-tone-danger-border transition-colors duration-150 hover:bg-tone-danger-bg"
+              className="inline-flex shrink-0 whitespace-nowrap items-center gap-1.5 rounded-xl px-2 xl:px-2.5 py-1.5 text-xs xl:text-[13px] font-bold text-tone-danger-fg bg-tone-danger-bg/50 border border-tone-danger-border transition-colors duration-150 hover:bg-tone-danger-bg"
             >
-              <span className="relative inline-flex rounded-full h-2 w-2 bg-rose-500" />
+              <span className="relative inline-flex rounded-full h-2 w-2 bg-rose-500 shrink-0" />
               <span>Canlı Ders</span>
             </SafeLink>
           </div>
@@ -149,7 +167,7 @@ export function HomeNavbar({ onLogout, user }: HomeNavbarProps) {
               type="button"
               onClick={handleOpenCommandPalette}
               aria-label="Hızlı arama aç"
-              className="inline-flex items-center gap-1.5 rounded-xl border border-strong bg-surface-2/80 px-2.5 py-1.5 text-xs font-semibold text-secondary transition-colors duration-150 hover:border-strong hover:bg-surface-2 hover:text-primary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent-info"
+              className="inline-flex shrink-0 whitespace-nowrap items-center gap-1.5 rounded-xl border border-strong bg-surface-2/80 px-2.5 py-1.5 text-xs font-semibold text-secondary transition-colors duration-150 hover:border-strong hover:bg-surface-2 hover:text-primary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent-info"
             >
               <Search className="h-4 w-4 shrink-0" aria-hidden="true" />
               <span className="hidden xl:inline">Ara</span>
@@ -188,13 +206,13 @@ export function HomeNavbar({ onLogout, user }: HomeNavbarProps) {
               <div className="flex items-center gap-2">
                 <SafeLink
                   href="/giris"
-                  className="inline-flex min-h-10 items-center justify-center rounded-xl border border-subtle bg-surface-1 px-4 text-sm font-bold text-primary hover:bg-surface-2"
+                  className="inline-flex shrink-0 whitespace-nowrap min-h-10 items-center justify-center rounded-xl border border-subtle bg-surface-1 px-3 xl:px-4 text-sm font-bold text-primary hover:bg-surface-2"
                 >
                   Giriş
                 </SafeLink>
                 <SafeLink
                   href="/kayit"
-                  className="inline-flex min-h-10 items-center justify-center rounded-xl border border-transparent bg-[var(--accent-brand)] px-4 text-sm font-bold text-[var(--on-brand)] hover:opacity-90"
+                  className="inline-flex shrink-0 whitespace-nowrap min-h-10 items-center justify-center rounded-xl border border-transparent bg-[var(--accent-brand)] px-3 xl:px-4 text-xs xl:text-sm font-bold text-[var(--on-brand)] hover:opacity-90"
                 >
                   Ücretsiz Katıl! 🌟
                 </SafeLink>

@@ -105,29 +105,29 @@ export function ExitTicketPageContainer() {
             </p>
           </div>
 
-          <div className="flex items-center p-1.5 rounded-2xl bg-surface-2 border border-default">
+          <div className="flex w-full sm:w-auto items-center justify-center p-1 sm:p-1.5 rounded-2xl bg-surface-2 border border-default">
             <button
               type="button"
               onClick={() => setActiveTab('student')}
-              className={`flex items-center gap-2 px-4 py-2 rounded-xl text-xs sm:text-sm font-bold transition ${
+              className={`flex items-center justify-center whitespace-nowrap flex-1 sm:flex-initial gap-1.5 sm:gap-2 px-2.5 sm:px-4 py-2 rounded-xl text-[11px] sm:text-sm font-bold transition ${
                 activeTab === 'student'
                   ? 'bg-brand-primary shadow-md shadow-brand-primary/20 text-slate-950 dark:text-slate-950'
                   : 'text-secondary hover:text-primary'
               }`}
             >
-              <Smartphone className="w-4 h-4" />
+              <Smartphone className="w-3.5 h-3.5 sm:w-4 sm:h-4 shrink-0" />
               <span>Öğrenci Girişi</span>
             </button>
             <button
               type="button"
               onClick={() => setActiveTab('teacher')}
-              className={`flex items-center gap-2 px-4 py-2 rounded-xl text-xs sm:text-sm font-bold transition ${
+              className={`flex items-center justify-center whitespace-nowrap flex-1 sm:flex-initial gap-1.5 sm:gap-2 px-2.5 sm:px-4 py-2 rounded-xl text-[11px] sm:text-sm font-bold transition ${
                 activeTab === 'teacher'
                   ? 'bg-brand-primary shadow-md shadow-brand-primary/30 text-slate-950 dark:text-slate-950'
                   : 'text-secondary hover:text-primary'
               }`}
             >
-              <Presentation className="w-4 h-4" />
+              <Presentation className="w-3.5 h-3.5 sm:w-4 sm:h-4 shrink-0" />
               <span>Öğretmen / Akıllı Tahta</span>
             </button>
           </div>

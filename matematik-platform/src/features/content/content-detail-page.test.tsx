@@ -163,10 +163,11 @@ describe('ContentDetailPage', () => {
     ).toBeInTheDocument();
 
     // Download action
-    const downloadBtn = screen.getByRole('link', {
+    const downloadBtns = screen.getAllByRole('link', {
       name: /Dokümanı İndir \(PDF\)/i,
     });
-    expect(downloadBtn).toHaveAttribute('href', sampleDoc.file_url);
+    expect(downloadBtns.length).toBeGreaterThanOrEqual(1);
+    expect(downloadBtns[0]).toHaveAttribute('href', sampleDoc.file_url);
 
     // Interactive library link
     const libraryBtn = screen.getByRole('link', {

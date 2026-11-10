@@ -39,7 +39,7 @@ export function GuestTrialLobby() {
 
       {/* Sınıf Seçici Tablar */}
       <section className="space-y-6">
-        <div className="flex items-center justify-center gap-2 flex-wrap">
+        <div className="grid grid-cols-2 sm:flex sm:flex-wrap items-center justify-center gap-2">
           {[5, 6, 7, 8].map((grade) => {
             const isSelected = selectedGrade === grade;
             return (
@@ -47,13 +47,13 @@ export function GuestTrialLobby() {
                 key={grade}
                 type="button"
                 onClick={() => setSelectedGrade(grade)}
-                className={`px-5 py-2.5 rounded-2xl font-bold text-sm transition-all shadow-xs flex items-center gap-2 ${
+                className={`justify-center whitespace-nowrap px-3 sm:px-5 py-2.5 rounded-2xl font-bold text-xs sm:text-sm transition-all shadow-xs flex items-center gap-2 ${
                   isSelected
                     ? 'bg-accent-bg text-accent-fg ring-2 ring-accent-fg/30 scale-105'
                     : 'bg-surface-1 hover:bg-surface-2 text-secondary border border-border-default'
                 }`}
               >
-                <GraduationCap className="w-4 h-4" />
+                <GraduationCap className="w-4 h-4 shrink-0" />
                 <span>{grade}. Sınıf Örnekleri</span>
               </button>
             );
@@ -62,7 +62,7 @@ export function GuestTrialLobby() {
 
         {/* Sorular Listesi */}
         <div className="space-y-4">
-          <div className="flex items-center justify-between text-xs font-bold text-tertiary px-1">
+          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-1 text-xs font-bold text-tertiary px-1">
             <span>{selectedGrade}. SINIF MEB KAZANIMLI 3 ÖZEL ÖRNEK</span>
             <span>2 Çoktan Seçmeli + 1 MEB Ortak Yazılı Tipi</span>
           </div>

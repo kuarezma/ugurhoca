@@ -124,6 +124,7 @@ function ContentCard({
 }: ContentCardProps) {
   const { showToast } = useToast();
   const [thumbnailFailed, setThumbnailFailed] = useState(false);
+  const [thumbnailLoaded, setThumbnailLoaded] = useState(false);
   const [copiedLink, setCopiedLink] = useState(false);
   const visibleDescription = getWorksheetVisibleDescription(content);
   const isDriveImage =
@@ -349,12 +350,20 @@ function ContentCard({
             <div className="flex items-center gap-3 sm:gap-4 min-w-0">
               {showDriveThumbnail ? (
                 <div className="relative h-12 w-12 sm:h-14 sm:w-14 flex-shrink-0 overflow-hidden rounded-2xl border-2 border-purple-300 dark:border-purple-700 shadow-md ring-2 ring-purple-500/20 group-hover:scale-105 transition-transform duration-300">
+                  {!thumbnailLoaded && (
+                    <AcademicSheetCover content={content} size="sm" />
+                  )}
                   <Image
                     src={driveThumbnailSrc || ''}
                     alt={content.title}
                     fill
                     sizes="(max-width: 640px) 48px, 56px"
-                    className="object-cover"
+                    className={`object-cover transition-opacity duration-200 ${
+                      thumbnailLoaded
+                        ? 'opacity-100'
+                        : 'opacity-0 pointer-events-none absolute inset-0'
+                    }`}
+                    onLoad={() => setThumbnailLoaded(true)}
                     onError={() => setThumbnailFailed(true)}
                     unoptimized
                   />
@@ -454,12 +463,20 @@ function ContentCard({
           <div className="flex items-start justify-between gap-3 mb-4">
             {showDriveThumbnail ? (
               <div className="relative h-13 w-13 sm:h-14 sm:w-14 shrink-0 overflow-hidden rounded-2xl border-2 border-purple-300 dark:border-purple-700 shadow-md ring-2 ring-purple-500/20 group-hover:scale-105 transition-transform duration-300">
+                {!thumbnailLoaded && (
+                  <AcademicSheetCover content={content} size="md" />
+                )}
                 <Image
                   src={driveThumbnailSrc || ''}
                   alt={content.title}
                   fill
                   sizes="(max-width: 640px) 52px, 56px"
-                  className="object-cover"
+                  className={`object-cover transition-opacity duration-200 ${
+                    thumbnailLoaded
+                      ? 'opacity-100'
+                      : 'opacity-0 pointer-events-none absolute inset-0'
+                  }`}
+                  onLoad={() => setThumbnailLoaded(true)}
                   onError={() => setThumbnailFailed(true)}
                   unoptimized
                 />

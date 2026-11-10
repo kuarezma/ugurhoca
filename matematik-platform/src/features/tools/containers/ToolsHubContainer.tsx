@@ -133,7 +133,9 @@ export function ToolsHubContainer() {
               <Shield className="h-4 w-4 text-emerald-600 dark:text-emerald-400" />
               <span>Verileriniz Kaydedilmez</span>
             </div>
-            <span>•</span>
+            <span className="hidden sm:inline" aria-hidden="true">
+              •
+            </span>
             <div className="flex items-center gap-1.5">
               <TrendingUp className="h-4 w-4 text-sky-600 dark:text-sky-400" />
               <span>2026/2027 MEB & ÖSYM Katsayıları</span>
