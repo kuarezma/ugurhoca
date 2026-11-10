@@ -6,7 +6,7 @@ const TEST_STUDENT_USER = {
   aud: 'authenticated',
   role: 'authenticated',
   app_metadata: { provider: 'email', providers: ['email'] },
-  user_metadata: { full_name: 'E2E Öğrenci', grade: 8 },
+  user_metadata: { full_name: 'E2E Öğrenci', name: 'E2E Öğrenci', grade: 8 },
   created_at: '2026-11-01T10:00:00.000Z',
 };
 
@@ -31,32 +31,46 @@ async function seedStudentAuthAndQuizRoutes(page: Page) {
       user,
     };
 
+    const cachedSessionEntry = {
+      session,
+      expiresAt: now + 3600_000,
+    };
+
+    const profileCacheEntry = {
+      result: {
+        profile: {
+          avatar_id: 'owl',
+          email: user.email,
+          grade: 8,
+          id: user.id,
+          isAdmin: false,
+          name: 'E2E Öğrenci',
+        },
+        session,
+      },
+      expiresAt: now + 3600_000,
+      userId: user.id,
+    };
+
     const g = globalThis as typeof globalThis & {
       __ugurhoca_auth_store__?: Record<string, unknown>;
     };
 
     g.__ugurhoca_auth_store__ = {
-      authSubscriptionInitialized: true,
-      cachedSession: session,
-      cachedSessionExpiresAt: now + 3600_000,
-      inflightProfileLookup: null,
-      inflightSessionLookup: null,
-      profileCache: {
-        data: {
-          avatar_id: 'owl',
-          email: user.email,
-          full_name: 'E2E Öğrenci',
-          grade: 8,
-          id: user.id,
-          role: 'student',
-          status: 'approved',
-        },
-        expiresAt: now + 3600_000,
-        userId: user.id,
+      get cachedSession() {
+        return cachedSessionEntry;
       },
+      set cachedSession(_v) {},
+      inFlightProfilePromise: null,
+      inFlightSessionPromise: null,
+      get profileCache() {
+        return profileCacheEntry;
+      },
+      set profileCache(_v) {},
     };
 
     window.localStorage.setItem('ugur_welcome_tour_v1_seen', '1');
+    window.localStorage.setItem('ugurhoca:cookie-consent', 'accepted');
   }, TEST_STUDENT_USER);
 
   await page.route('**/auth/v1/user**', async (route) => {
@@ -64,6 +78,20 @@ async function seedStudentAuthAndQuizRoutes(page: Page) {
       status: 200,
       contentType: 'application/json',
       body: JSON.stringify(TEST_STUDENT_USER),
+    });
+  });
+
+  await page.route('**/rest/v1/profiles**', async (route) => {
+    await route.fulfill({
+      status: 200,
+      contentType: 'application/json',
+      body: JSON.stringify({
+        id: TEST_STUDENT_USER.id,
+        email: TEST_STUDENT_USER.email,
+        name: 'E2E Öğrenci',
+        grade: 8,
+        isAdmin: false,
+      }),
     });
   });
 
@@ -77,10 +105,11 @@ async function seedStudentAuthAndQuizRoutes(page: Page) {
           title: 'Üslü İfadeler Tarama Testi',
           description: '8. sınıf üslü ifadeler kazanım değerlendirme testi.',
           grade: 8,
-          duration_minutes: 15,
-          is_published: true,
+          time_limit: 15,
+          difficulty: 'Orta',
+          is_active: true,
           created_at: '2026-11-01T10:00:00.000Z',
-          quiz_questions: [{ id: 'q-1' }, { id: 'q-2' }],
+          updated_at: '2026-11-01T10:00:00.000Z',
         },
       ]),
     });
@@ -94,20 +123,22 @@ async function seedStudentAuthAndQuizRoutes(page: Page) {
         {
           id: 'q-1',
           quiz_id: 'quiz-e2e-1',
-          question_text: '2^3 ifadesinin değeri kaçtır?',
+          question: '2^3 ifadesinin değeri kaçtır?',
           options: ['6', '8', '9', '12'],
-          correct_option: 1,
-          points: 10,
+          correct_index: 1,
+          question_order: 1,
           explanation: '2.2.2 = 8 olur.',
+          created_at: '2026-11-01T10:00:00.000Z',
         },
         {
           id: 'q-2',
           quiz_id: 'quiz-e2e-1',
-          question_text: '5^0 ifadesinin değeri kaçtır?',
+          question: '5^0 ifadesinin değeri kaçtır?',
           options: ['0', '1', '5', 'Tanımsız'],
-          correct_option: 1,
-          points: 10,
+          correct_index: 1,
+          question_order: 2,
           explanation: 'Sıfırdan farklı her sayının 0. kuvveti 1 dir.',
+          created_at: '2026-11-01T10:00:00.000Z',
         },
       ]),
     });
@@ -122,9 +153,9 @@ async function seedStudentAuthAndQuizRoutes(page: Page) {
           {
             id: 'res-e2e-1',
             quiz_id: 'quiz-e2e-1',
-            student_id: TEST_STUDENT_USER.id,
-            score: 20,
-            total_points: 20,
+            user_id: TEST_STUDENT_USER.id,
+            score: 2,
+            total_questions: 2,
             completed_at: new Date().toISOString(),
           },
         ]),
@@ -160,12 +191,12 @@ test.describe('2. Test (Quiz) Çözme Akışı', () => {
     ).toBeVisible();
   });
 
-  test('giriş yapmamış kullanıcı /yanlis-defteri sayfasından /giris sayfasına yönlendirilir', async ({
+  test('giriş yapmamış kullanıcı /ilerleme sayfasından /giris sayfasına yönlendirilir', async ({
     page,
   }) => {
-    await page.goto('/yanlis-defteri');
+    await page.goto('/ilerleme');
 
-    await expect(page).toHaveURL(/\/giris\?redirect=%2Fyanlis-defteri/);
+    await expect(page).toHaveURL(/\/giris\?redirect=%2Filerleme/);
   });
 
   test('öğrenci testi başlatır, soruları işaretler, bitirir ve sonuç ekranını görür', async ({
@@ -193,10 +224,10 @@ test.describe('2. Test (Quiz) Çözme Akışı', () => {
 
     await page.getByRole('button', { name: 'Testi bitir' }).click();
 
-    await expect(
-      page.getByRole('heading', { name: 'Test Tamamlandı!' }),
-    ).toBeVisible();
+    await expect(page.getByText('Test Tamamlandı!')).toBeVisible();
     await expect(page.getByText('100%')).toBeVisible();
-    await expect(page.getByText('Cevap Anahtarı & Çözümler')).toBeVisible();
+    await expect(
+      page.getByRole('heading', { name: /Sınav Analizi/i }),
+    ).toBeVisible();
   });
 });

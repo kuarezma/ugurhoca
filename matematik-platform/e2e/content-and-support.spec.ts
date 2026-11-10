@@ -6,7 +6,7 @@ const TEST_STUDENT_USER = {
   aud: 'authenticated',
   role: 'authenticated',
   app_metadata: { provider: 'email', providers: ['email'] },
-  user_metadata: { full_name: 'E2E Öğrenci', grade: 8 },
+  user_metadata: { full_name: 'E2E Öğrenci', name: 'E2E Öğrenci', grade: 8 },
   created_at: '2026-11-01T10:00:00.000Z',
 };
 
@@ -31,32 +31,46 @@ async function seedStudentAuthForSupport(page: Page) {
       user,
     };
 
+    const cachedSessionEntry = {
+      session,
+      expiresAt: now + 3600_000,
+    };
+
+    const profileCacheEntry = {
+      result: {
+        profile: {
+          avatar_id: 'owl',
+          email: user.email,
+          grade: 8,
+          id: user.id,
+          isAdmin: false,
+          name: 'E2E Öğrenci',
+        },
+        session,
+      },
+      expiresAt: now + 3600_000,
+      userId: user.id,
+    };
+
     const g = globalThis as typeof globalThis & {
       __ugurhoca_auth_store__?: Record<string, unknown>;
     };
 
     g.__ugurhoca_auth_store__ = {
-      authSubscriptionInitialized: true,
-      cachedSession: session,
-      cachedSessionExpiresAt: now + 3600_000,
-      inflightProfileLookup: null,
-      inflightSessionLookup: null,
-      profileCache: {
-        data: {
-          avatar_id: 'owl',
-          email: user.email,
-          full_name: 'E2E Öğrenci',
-          grade: 8,
-          id: user.id,
-          role: 'student',
-          status: 'approved',
-        },
-        expiresAt: now + 3600_000,
-        userId: user.id,
+      get cachedSession() {
+        return cachedSessionEntry;
       },
+      set cachedSession(_v) {},
+      inFlightProfilePromise: null,
+      inFlightSessionPromise: null,
+      get profileCache() {
+        return profileCacheEntry;
+      },
+      set profileCache(_v) {},
     };
 
     window.localStorage.setItem('ugur_welcome_tour_v1_seen', '1');
+    window.localStorage.setItem('ugurhoca:cookie-consent', 'accepted');
   }, TEST_STUDENT_USER);
 
   await page.route('**/auth/v1/user**', async (route) => {
@@ -67,27 +81,45 @@ async function seedStudentAuthForSupport(page: Page) {
     });
   });
 
-  await page.route('**/rest/v1/notifications**', async (route) => {
-    await route.fulfill({
-      status: 200,
-      contentType: 'application/json',
-      body: JSON.stringify([]),
-    });
-  });
-
-  await page.route('**/api/support-message', async (route) => {
+  await page.route('**/rest/v1/profiles**', async (route) => {
     await route.fulfill({
       status: 200,
       contentType: 'application/json',
       body: JSON.stringify({
-        id: 'msg-e2e-1',
-        title: "Uğur Hoca'ya Mesajınız",
-        message: 'Hocam 3. soruyu anlatır mısınız?',
-        is_read: true,
-        type: 'sent-message',
-        user_id: TEST_STUDENT_USER.id,
-        created_at: new Date().toISOString(),
+        id: TEST_STUDENT_USER.id,
+        email: TEST_STUDENT_USER.email,
+        name: 'E2E Öğrenci',
+        grade: 8,
+        isAdmin: false,
       }),
+    });
+  });
+
+  const notificationsList: Array<Record<string, unknown>> = [];
+
+  await page.route('**/rest/v1/notifications**', async (route) => {
+    await route.fulfill({
+      status: 200,
+      contentType: 'application/json',
+      body: JSON.stringify(notificationsList),
+    });
+  });
+
+  await page.route('**/api/support-message', async (route) => {
+    const sentRow = {
+      id: 'msg-e2e-1',
+      title: "Uğur Hoca'ya Mesajınız",
+      message: 'Hocam 3. soruyu anlatır mısınız?',
+      is_read: true,
+      type: 'sent-message',
+      user_id: TEST_STUDENT_USER.id,
+      created_at: new Date().toISOString(),
+    };
+    notificationsList.push(sentRow);
+    await route.fulfill({
+      status: 200,
+      contentType: 'application/json',
+      body: JSON.stringify({ notification: sentRow }),
     });
   });
 }
@@ -119,10 +151,11 @@ test.describe('4. İçerik Arama/Filtreleme, Destek Sohbeti ve Yasal Sayfalar', 
 
     await page.goto('/icerikler');
 
-    const mobileFilterToggle = page.getByRole('button', {
-      name: /Filtre ve Arama Seçenekleri/i,
-    });
-    if (await mobileFilterToggle.isVisible()) {
+    if ((page.viewportSize()?.width ?? 1280) < 768) {
+      const mobileFilterToggle = page.getByRole('button', {
+        name: /Filtre ve Arama Seçenekleri/i,
+      });
+      await expect(mobileFilterToggle).toBeVisible();
       await mobileFilterToggle.click();
     }
 
@@ -186,7 +219,7 @@ test.describe('4. İçerik Arama/Filtreleme, Destek Sohbeti ve Yasal Sayfalar', 
   }) => {
     await page.goto('/');
     await expect(
-      page.getByRole('heading', { name: /Platform Nasıl Çalışır\?/i }),
+      page.getByRole('heading', { name: /Nasıl çalışır/i }),
     ).toBeVisible();
 
     await page.goto('/cerez');

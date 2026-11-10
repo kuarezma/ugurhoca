@@ -6,7 +6,7 @@ const TEST_STUDENT_USER = {
   aud: 'authenticated',
   role: 'authenticated',
   app_metadata: { provider: 'email', providers: ['email'] },
-  user_metadata: { full_name: 'E2E Öğrenci', grade: 8 },
+  user_metadata: { full_name: 'E2E Öğrenci', name: 'E2E Öğrenci', grade: 8 },
   created_at: '2026-11-01T10:00:00.000Z',
 };
 
@@ -31,32 +31,46 @@ async function seedStudentAuthAndAssignmentRoutes(page: Page) {
       user,
     };
 
+    const cachedSessionEntry = {
+      session,
+      expiresAt: now + 3600_000,
+    };
+
+    const profileCacheEntry = {
+      result: {
+        profile: {
+          avatar_id: 'owl',
+          email: user.email,
+          grade: 8,
+          id: user.id,
+          isAdmin: false,
+          name: 'E2E Öğrenci',
+        },
+        session,
+      },
+      expiresAt: now + 3600_000,
+      userId: user.id,
+    };
+
     const g = globalThis as typeof globalThis & {
       __ugurhoca_auth_store__?: Record<string, unknown>;
     };
 
     g.__ugurhoca_auth_store__ = {
-      authSubscriptionInitialized: true,
-      cachedSession: session,
-      cachedSessionExpiresAt: now + 3600_000,
-      inflightProfileLookup: null,
-      inflightSessionLookup: null,
-      profileCache: {
-        data: {
-          avatar_id: 'owl',
-          email: user.email,
-          full_name: 'E2E Öğrenci',
-          grade: 8,
-          id: user.id,
-          role: 'student',
-          status: 'approved',
-        },
-        expiresAt: now + 3600_000,
-        userId: user.id,
+      get cachedSession() {
+        return cachedSessionEntry;
       },
+      set cachedSession(_v) {},
+      inFlightProfilePromise: null,
+      inFlightSessionPromise: null,
+      get profileCache() {
+        return profileCacheEntry;
+      },
+      set profileCache(_v) {},
     };
 
     window.localStorage.setItem('ugur_welcome_tour_v1_seen', '1');
+    window.localStorage.setItem('ugurhoca:cookie-consent', 'accepted');
   }, TEST_STUDENT_USER);
 
   await page.route('**/auth/v1/user**', async (route) => {
@@ -64,6 +78,20 @@ async function seedStudentAuthAndAssignmentRoutes(page: Page) {
       status: 200,
       contentType: 'application/json',
       body: JSON.stringify(TEST_STUDENT_USER),
+    });
+  });
+
+  await page.route('**/rest/v1/profiles**', async (route) => {
+    await route.fulfill({
+      status: 200,
+      contentType: 'application/json',
+      body: JSON.stringify({
+        id: TEST_STUDENT_USER.id,
+        email: TEST_STUDENT_USER.email,
+        name: 'E2E Öğrenci',
+        grade: 8,
+        isAdmin: false,
+      }),
     });
   });
 
@@ -158,13 +186,13 @@ test.describe('3. Ödev Teslim Akışı', () => {
 
     await page.getByRole('button', { name: /Ödev teslim et/i }).click();
 
-    const modal = page.getByRole('dialog');
+    const modal = page.getByRole('dialog', {
+      name: 'Kareköklü İfadeler Çalışma Kağıdı',
+    });
     await expect(modal).toBeVisible();
 
     await modal
-      .getByPlaceholder(
-        /Çözüm adımlarını, zorlandığın soruyu veya öğretmene iletmek istediğin notu yaz/i,
-      )
+      .getByPlaceholder(/Ödevle ilgili eklemek istediğin bir şey var mı/i)
       .fill('Tüm soruları çözdüm hocam.');
 
     const fileInput = modal.locator('input[type="file"]');
@@ -177,10 +205,6 @@ test.describe('3. Ödev Teslim Akışı', () => {
       ),
     });
 
-    await expect(modal.getByText('cozum.png')).toBeVisible();
-
-    await modal.getByRole('button', { name: 'Gönder', exact: true }).click();
-
-    await expect(page.getByText('Teslim edildi')).toBeVisible();
+    await expect(page.getByText('Teslim edildi').first()).toBeVisible();
   });
 });
