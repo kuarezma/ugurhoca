@@ -29,8 +29,8 @@ export function HomeNavbar({ onLogout, user }: HomeNavbarProps) {
 
   return (
     <nav className="fixed left-0 right-0 top-0 z-50 px-3 sm:px-5 pt-[max(0.6rem,env(safe-area-inset-top))] pointer-events-none font-sans">
-      <div className="pointer-events-auto mx-auto max-w-6xl rounded-2xl lg:rounded-full border border-sky-200/70 dark:border-sky-400/20 bg-surface-1/80 backdrop-blur-2xl shadow-[inset_0_1px_0_rgba(255,255,255,0.85),0_12px_32px_-8px_rgba(14,165,233,0.14)] dark:shadow-[inset_0_1px_0_rgba(255,255,255,0.12),0_16px_38px_-10px_rgba(2,6,23,0.65)] px-3.5 sm:px-5 transition-all duration-300">
-        <div className="flex h-14 sm:h-16 w-full items-center justify-between gap-2 sm:gap-4">
+      <div className="pointer-events-auto mx-auto max-w-7xl rounded-2xl lg:rounded-full border border-sky-200/70 dark:border-sky-400/20 bg-surface-1/80 backdrop-blur-2xl shadow-[inset_0_1px_0_rgba(255,255,255,0.85),0_12px_32px_-8px_rgba(14,165,233,0.14)] dark:shadow-[inset_0_1px_0_rgba(255,255,255,0.12),0_16px_38px_-10px_rgba(2,6,23,0.65)] px-3.5 sm:px-4 xl:px-5 transition-all duration-300">
+        <div className="flex h-14 sm:h-16 w-full items-center justify-between gap-2">
           <SafeLink
             href="/"
             aria-current={isHomePage ? 'page' : undefined}
@@ -62,12 +62,12 @@ export function HomeNavbar({ onLogout, user }: HomeNavbarProps) {
           </SafeLink>
 
           {/* Orta Menü Bağlantıları (Masaüstü - Kristal Kapsül Pilleri) */}
-          <div className="hidden lg:flex items-center gap-0.5 xl:gap-1 shrink-0">
+          <div className="hidden lg:flex items-center gap-0.5 shrink-0">
             <SafeLink
               href="/icerikler?type=yaprak-test"
-              className="inline-flex shrink-0 whitespace-nowrap items-center gap-1.5 rounded-full px-2.5 xl:px-3 py-1.5 text-xs xl:text-[13px] font-bold text-secondary transition-colors duration-150 hover:bg-surface-2/80 hover:text-primary"
+              className="inline-flex shrink-0 whitespace-nowrap items-center gap-1 rounded-full px-2 xl:px-2.5 py-1.5 text-xs xl:text-[13px] font-bold text-secondary transition-colors duration-150 hover:bg-surface-2/80 hover:text-primary"
             >
-              <span className="hidden xl:inline" aria-hidden="true">
+              <span className="hidden 2xl:inline" aria-hidden="true">
                 📄
               </span>
               <span>Yaprak Test</span>
@@ -77,13 +77,13 @@ export function HomeNavbar({ onLogout, user }: HomeNavbarProps) {
               aria-current={
                 pathname?.startsWith('/oyunlar') ? 'page' : undefined
               }
-              className={`inline-flex shrink-0 whitespace-nowrap items-center gap-1.5 rounded-full px-2.5 xl:px-3 py-1.5 text-xs xl:text-[13px] font-bold transition-colors duration-150 ${
+              className={`inline-flex shrink-0 whitespace-nowrap items-center gap-1 rounded-full px-2 xl:px-2.5 py-1.5 text-xs xl:text-[13px] font-bold transition-colors duration-150 ${
                 pathname?.startsWith('/oyunlar')
                   ? 'bg-accent-bg text-accent-fg border border-sky-300/40 dark:border-sky-400/20 shadow-xs'
                   : 'text-secondary hover:bg-surface-2/80 hover:text-primary'
               }`}
             >
-              <span className="hidden xl:inline" aria-hidden="true">
+              <span className="hidden 2xl:inline" aria-hidden="true">
                 🎮
               </span>
               <span>Oyunlar</span>
@@ -93,13 +93,13 @@ export function HomeNavbar({ onLogout, user }: HomeNavbarProps) {
               aria-current={
                 pathname?.startsWith('/testler') ? 'page' : undefined
               }
-              className={`inline-flex shrink-0 whitespace-nowrap items-center gap-1.5 rounded-full px-2.5 xl:px-3 py-1.5 text-xs xl:text-[13px] font-bold transition-colors duration-150 ${
+              className={`inline-flex shrink-0 whitespace-nowrap items-center gap-1 rounded-full px-2 xl:px-2.5 py-1.5 text-xs xl:text-[13px] font-bold transition-colors duration-150 ${
                 pathname?.startsWith('/testler')
                   ? 'bg-accent-bg text-accent-fg border border-sky-300/40 dark:border-sky-400/20 shadow-xs'
                   : 'text-secondary hover:bg-surface-2/80 hover:text-primary'
               }`}
             >
-              <span className="hidden xl:inline" aria-hidden="true">
+              <span className="hidden 2xl:inline" aria-hidden="true">
                 📝
               </span>
               <span>Testler</span>
@@ -109,13 +109,13 @@ export function HomeNavbar({ onLogout, user }: HomeNavbarProps) {
               aria-current={
                 pathname?.startsWith('/programlar') ? 'page' : undefined
               }
-              className={`inline-flex shrink-0 whitespace-nowrap items-center gap-1.5 rounded-full px-2.5 xl:px-3 py-1.5 text-xs xl:text-[13px] font-bold transition-colors duration-150 ${
+              className={`inline-flex shrink-0 whitespace-nowrap items-center gap-1 rounded-full px-2 xl:px-2.5 py-1.5 text-xs xl:text-[13px] font-bold transition-colors duration-150 ${
                 pathname?.startsWith('/programlar')
                   ? 'bg-accent-bg text-accent-fg border border-sky-300/40 dark:border-sky-400/20 shadow-xs'
                   : 'text-secondary hover:bg-surface-2/80 hover:text-primary'
               }`}
             >
-              <span className="hidden xl:inline" aria-hidden="true">
+              <span className="hidden 2xl:inline" aria-hidden="true">
                 🧭
               </span>
               <span>Rehberlik</span>
@@ -125,13 +125,13 @@ export function HomeNavbar({ onLogout, user }: HomeNavbarProps) {
               aria-current={
                 pathname?.startsWith('/araclar') ? 'page' : undefined
               }
-              className={`inline-flex shrink-0 whitespace-nowrap items-center gap-1.5 rounded-full px-2.5 xl:px-3 py-1.5 text-xs xl:text-[13px] font-bold transition-colors duration-150 ${
+              className={`inline-flex shrink-0 whitespace-nowrap items-center gap-1 rounded-full px-2 xl:px-2.5 py-1.5 text-xs xl:text-[13px] font-bold transition-colors duration-150 ${
                 pathname?.startsWith('/araclar')
                   ? 'bg-accent-bg text-accent-fg border border-sky-300/40 dark:border-sky-400/20 shadow-xs'
                   : 'text-secondary hover:bg-surface-2/80 hover:text-primary'
               }`}
             >
-              <span className="hidden xl:inline" aria-hidden="true">
+              <span className="hidden 2xl:inline" aria-hidden="true">
                 🧮
               </span>
               <span>Araçlar</span>
@@ -139,13 +139,13 @@ export function HomeNavbar({ onLogout, user }: HomeNavbarProps) {
             <SafeLink
               href="/icerikler"
               aria-current={pathname === '/icerikler' ? 'page' : undefined}
-              className={`inline-flex shrink-0 whitespace-nowrap items-center gap-1.5 rounded-full px-2.5 xl:px-3 py-1.5 text-xs xl:text-[13px] font-bold transition-colors duration-150 ${
+              className={`inline-flex shrink-0 whitespace-nowrap items-center gap-1 rounded-full px-2 xl:px-2.5 py-1.5 text-xs xl:text-[13px] font-bold transition-colors duration-150 ${
                 pathname === '/icerikler'
                   ? 'bg-accent-bg text-accent-fg border border-sky-300/40 dark:border-sky-400/20 shadow-xs'
                   : 'text-secondary hover:bg-surface-2/80 hover:text-primary'
               }`}
             >
-              <span className="hidden xl:inline" aria-hidden="true">
+              <span className="hidden 2xl:inline" aria-hidden="true">
                 📚
               </span>
               <span>Konular</span>
@@ -155,14 +155,14 @@ export function HomeNavbar({ onLogout, user }: HomeNavbarProps) {
               aria-current={
                 pathname?.startsWith('/canli-ders') ? 'page' : undefined
               }
-              className="inline-flex shrink-0 whitespace-nowrap items-center gap-1.5 rounded-full px-2.5 xl:px-3 py-1.5 text-xs xl:text-[13px] font-bold text-tone-danger-fg bg-tone-danger-bg/50 border border-tone-danger-border transition-colors duration-150 hover:bg-tone-danger-bg"
+              className="inline-flex shrink-0 whitespace-nowrap items-center gap-1.5 rounded-full px-2.5 py-1.5 text-xs xl:text-[13px] font-bold text-tone-danger-fg bg-tone-danger-bg/50 border border-tone-danger-border transition-colors duration-150 hover:bg-tone-danger-bg"
             >
               <span className="relative inline-flex rounded-full h-2 w-2 bg-rose-500 shrink-0" />
               <span>Canlı Ders</span>
             </SafeLink>
           </div>
 
-          <div className="hidden shrink-0 items-center gap-2 lg:flex">
+          <div className="hidden shrink-0 items-center gap-1.5 xl:gap-2 lg:flex">
             <button
               type="button"
               onClick={handleOpenCommandPalette}
@@ -203,16 +203,16 @@ export function HomeNavbar({ onLogout, user }: HomeNavbarProps) {
                 </button>
               </>
             ) : (
-              <div className="flex items-center gap-2">
+              <div className="flex items-center gap-1.5">
                 <SafeLink
                   href="/giris"
-                  className="inline-flex shrink-0 whitespace-nowrap min-h-9 items-center justify-center rounded-full border border-subtle bg-surface-1/90 px-3 xl:px-4 text-xs xl:text-sm font-bold text-primary hover:bg-surface-2"
+                  className="inline-flex shrink-0 whitespace-nowrap min-h-9 items-center justify-center rounded-full border border-subtle bg-surface-1/90 px-3 text-xs xl:text-[13px] font-bold text-primary hover:bg-surface-2"
                 >
                   Giriş
                 </SafeLink>
                 <SafeLink
                   href="/kayit"
-                  className="inline-flex shrink-0 whitespace-nowrap min-h-9 items-center justify-center rounded-full border border-transparent bg-gradient-to-r from-sky-700 via-indigo-700 to-emerald-700 dark:from-sky-400 dark:via-cyan-300 dark:to-emerald-400 px-3 xl:px-4 text-xs xl:text-sm font-bold text-[var(--on-brand)] shadow-md shadow-sky-500/20 hover:opacity-95"
+                  className="inline-flex shrink-0 whitespace-nowrap min-h-9 items-center justify-center rounded-full border border-transparent bg-gradient-to-r from-sky-700 via-indigo-700 to-emerald-700 dark:from-sky-400 dark:via-cyan-300 dark:to-emerald-400 px-3 xl:px-3.5 text-xs xl:text-[13px] font-bold text-[var(--on-brand)] shadow-md shadow-sky-500/20 hover:opacity-95"
                 >
                   Ücretsiz Katıl! 🌟
                 </SafeLink>
