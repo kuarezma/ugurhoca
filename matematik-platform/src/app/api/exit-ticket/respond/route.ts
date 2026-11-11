@@ -90,6 +90,10 @@ export async function POST(request: Request) {
     return NextResponse.json({ error: 'Oturum bulunamadı.' }, { status: 404 });
   }
 
+  if (session.status !== 'active' && session.status !== 'in_progress') {
+    return NextResponse.json({ error: 'Oturum aktif değil.' }, { status: 400 });
+  }
+
   const { error: upsertErr } = await supabase
     .from('exit_ticket_responses')
     .upsert(

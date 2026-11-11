@@ -374,4 +374,13 @@ Bu dosya, projenin tamamlanmış ve devam eden görevlerini özetler.
 
 ---
 
-_Son güncelleme: 11 Kasım 2026 — §30 canlı platform denetimi, kritik hata onarımları ve 6 büyük ürün/SEO geliştirmesi tamamlandı (336 src test dosyası / 1892 birim testi, 67/67 migration tam zincir + canlı DB senkron, 88 uygulama rotası, 0 hata / 0 uyarı)._
+### 31. Cursor Agent (Fable 5.2 High) Kapsamlı Kalite Planı ve Çoklu Model Uygulaması (11 Kasım 2026)
+
+- [x] **Fable 5.2 High Denetimi & Çoklu Model Kalite Planı:** Cursor Agent CLI üzerinden `claude-fable-5-2-high` modeli çalıştırılarak web sitesinin derinlemesine eksiklik haritası, 6 fazlı eylem planı ve çoklu model orkestrasyon dağılımı (Gemini 4 Carbon medium [şef/ölçüm], GPT-6.1 Sol medium [çekirdek/güvenlik/API], Gemini 3.8 Flash [test/mekanik], Claude Opus 5.5 [karar/riskli denetim]) çıkarıldı.
+- [x] **T1.1 Çıkış Bileti Güvenlik & Oturum Kontrolü (GPT-6.1 Sol):** `exit-ticket/respond` uç noktasında oturum durumu kontrolü (`session.status !== 'active' && session.status !== 'in_progress'` ise 400 `'Oturum aktif değil.'`) eklendi; service-role yazma güvenliği sıkılaştırıldı ve 33 senaryolu kapsamlı `route.test.ts` yazılarak doğrulandı (38/38 exit-ticket testi yeşil).
+- [x] **T3.2 Mobil Alt Menü Entegrasyonu (`MobileBottomNav`):** Daha önce sayfaya bağlanmamış olan ve 5 ana sekmeyi (`/`, `/testler`, `/odak-pomodoro`, `/oyunlar`, `/profil`) yöneten `MobileBottomNav` bileşeni `src/app/layout.tsx` içine entegre edildi; mobil cihazlarda pürüzsüz navigasyon sağlandı (`MobileBottomNav.test.tsx` 4/4 yeşil).
+- [x] **Faz 0 Taban Ölçümü & Doğrulama:** 339 test dosyası / **1925** birim testi (%100 yeşil), 67/67 Supabase migration zinciri, `next build` 77/77 rota derlemesi, 0 TypeScript hatası ve 0 ESLint hatası/uyarısı ile taban doğrulandı.
+
+---
+
+_Son güncelleme: 11 Kasım 2026 — §31 Cursor Agent (Fable 5.2 High) kapsamlı kalite planı ve model orkestrasyonu tamamlandı (339 test dosyası / 1925 birim testi, 67/67 migration, 77/77 rota build, 0 hata / 0 uyarı)._

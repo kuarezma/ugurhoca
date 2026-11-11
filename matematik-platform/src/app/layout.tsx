@@ -5,6 +5,7 @@ import { Providers } from '@/components/Providers';
 import { SiteBackground } from '@/components/SiteBackground';
 import { PerformanceRuntimeProvider } from '@/components/PerformanceRuntimeProvider';
 import { GlobalFooterGate } from '@/components/GlobalFooterGate';
+import { MobileBottomNav } from '@/components/MobileBottomNav';
 import {
   THEME_STORAGE_KEY,
   THEME_LIGHT_MIGRATION_KEY,
@@ -251,6 +252,7 @@ export default function RootLayout({
             {children}
             <GlobalFooterGate />
           </div>
+          <MobileBottomNav />
         </Providers>
         <SpeedInsights />
         {/* Service Worker kaydı (sayfa ilk boyamasını bloke etmez) */}
