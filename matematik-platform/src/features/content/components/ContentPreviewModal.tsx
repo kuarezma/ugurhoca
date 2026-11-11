@@ -51,9 +51,13 @@ export default function ContentPreviewModal({
   // Geçmiş girdisini ContentsPage yönetiyor (`?id=` parametresi). Modal ikinci bir
   // girdi daha push ederse App Router'ın kendi geçmiş senkronizasyonu `popstate`
   // yayıyor, hook bunu "geri tuşuna basıldı" sanıp modalı kendiliğinden kapatıyor.
-  const modalRef = useAccessibleModal<HTMLDivElement>(true, onClose, {
-    enableHistoryBack: false,
-  });
+  const modalRef = useAccessibleModal<HTMLDivElement>(
+    !isScratchpadOpen,
+    onClose,
+    {
+      enableHistoryBack: false,
+    },
+  );
   const visibleDescription = getWorksheetVisibleDescription(previewDoc);
   const previewVideoId = previewDoc.video_url
     ? getYouTubeId(previewDoc.video_url)
@@ -313,6 +317,14 @@ export default function ContentPreviewModal({
           isOpen={isScratchpadOpen}
           onClose={() => setIsScratchpadOpen(false)}
           title={`${previewDoc.title} — Karalama & İşlem Tahtası`}
+          documentContext={{
+            documentId: previewDoc.id,
+            title: previewDoc.title,
+            fileUrl: previewDoc.file_url,
+            driveId,
+            type: previewDoc.type,
+            answerKeyText: previewDoc.answer_key_text,
+          }}
         />
       )}
     </>

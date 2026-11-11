@@ -5,11 +5,21 @@ export type ScratchpadQuestionContext = {
   questionId?: string;
 };
 
+export type ScratchpadDocumentContext = {
+  documentId?: string;
+  title: string;
+  fileUrl?: string | null;
+  driveId?: string | null;
+  type?: string | null;
+  answerKeyText?: string | null;
+};
+
 export type ScratchpadModalProps = {
   isOpen: boolean;
   onClose: () => void;
   title?: string;
   questionContext?: ScratchpadQuestionContext;
+  documentContext?: ScratchpadDocumentContext;
 };
 
 export type ToolType = 'pen' | 'highlighter' | 'line' | 'eraser';

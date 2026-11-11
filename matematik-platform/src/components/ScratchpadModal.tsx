@@ -17,6 +17,7 @@ import {
   type ToolType,
   type BackgroundPattern,
   type ScratchpadQuestionContext,
+  type ScratchpadDocumentContext,
   type ScratchpadModalProps,
 } from './ScratchpadModal/types';
 import { drawBackground } from './ScratchpadModal/canvasBackgrounds';
@@ -26,9 +27,11 @@ import {
   drawGeometricShapeOnCanvas,
 } from './ScratchpadModal/geometricTools';
 import { ScratchpadQuestionPanel } from './ScratchpadModal/ScratchpadQuestionPanel';
+import { ScratchpadDocumentPanel } from './ScratchpadModal/ScratchpadDocumentPanel';
 import { ScratchpadToolbar } from './ScratchpadModal/ScratchpadToolbar';
 
 export type {
+  ScratchpadDocumentContext,
   ScratchpadQuestionContext,
   ScratchpadModalProps,
   BackgroundPattern,
@@ -42,6 +45,7 @@ export default function ScratchpadModal({
   onClose,
   title = 'Karalama & İşlem Tahtası',
   questionContext,
+  documentContext,
 }: ScratchpadModalProps) {
   const modalRef = useAccessibleModal<HTMLDivElement>(isOpen, onClose, {
     enableHistoryBack: false,
@@ -70,7 +74,48 @@ export default function ScratchpadModal({
   const [showPatternMenu, setShowPatternMenu] = useState(false);
   const [showShapesMenu, setShowShapesMenu] = useState(false);
 
-  const cacheKey = questionContext?.questionId || 'default-scratchpad';
+  const [showDocument, setShowDocument] = useState(true);
+  const [documentExpanded, setDocumentExpanded] = useState(false);
+  const [isFullscreen, setIsFullscreen] = useState(false);
+  const [fullscreenError, setFullscreenError] = useState('');
+
+  const cacheKey = documentContext
+    ? 'doc-scratchpad-' + (documentContext.documentId || documentContext.title)
+    : questionContext?.questionId || 'default-scratchpad';
+
+  const toggleFullscreen = async () => {
+    setFullscreenError('');
+    try {
+      if (document.fullscreenElement) {
+        await document.exitFullscreen();
+      } else if (modalRef.current?.requestFullscreen) {
+        await modalRef.current.requestFullscreen();
+      } else {
+        setFullscreenError(
+          'Bu tarayıcı tam ekranı desteklemiyor. İşlem tahtasını bu pencerede kullanabilirsin.',
+        );
+      }
+    } catch {
+      setFullscreenError(
+        'Tam ekran açılamadı. İşlem tahtasını bu pencerede kullanabilirsin.',
+      );
+    }
+  };
+
+  useEffect(() => {
+    if (!isOpen) return;
+    const modal = modalRef.current;
+    const syncFullscreen = () =>
+      setIsFullscreen(document.fullscreenElement === modal);
+    syncFullscreen();
+    document.addEventListener('fullscreenchange', syncFullscreen);
+    return () => {
+      document.removeEventListener('fullscreenchange', syncFullscreen);
+      if (modal && document.fullscreenElement === modal) {
+        void document.exitFullscreen().catch(() => {});
+      }
+    };
+  }, [isOpen, modalRef]);
 
   useEffect(() => {
     if (isLight && color === '#f8fafc') {
@@ -115,19 +160,19 @@ export default function ScratchpadModal({
     ctx.lineCap = 'round';
     ctx.lineJoin = 'round';
 
-    if (cacheKey && scratchpadCache.has(cacheKey)) {
-      const cached = scratchpadCache.get(cacheKey)!;
-      try {
-        ctx.putImageData(cached, 0, 0);
-        setHistory([cached]);
-        setRedoHistory([]);
-        return;
-      } catch {
-        // Fallback to fresh background if dimension mismatch
+    drawBackground(ctx, rect.width, rect.height, backgroundPattern, isLight);
+    const cached = scratchpadCache.get(cacheKey);
+    if (cached) {
+      // Panel ve tam ekran boyutu değişse de çizimin tamamını koru.
+      const snapshot = document.createElement('canvas');
+      snapshot.width = cached.width;
+      snapshot.height = cached.height;
+      const snapshotContext = snapshot.getContext('2d');
+      if (snapshotContext) {
+        snapshotContext.putImageData(cached, 0, 0);
+        ctx.drawImage(snapshot, 0, 0, rect.width, rect.height);
       }
     }
-
-    drawBackground(ctx, rect.width, rect.height, backgroundPattern, isLight);
     try {
       const initial = ctx.getImageData(0, 0, canvas.width, canvas.height);
       setHistory([initial]);
@@ -140,29 +185,17 @@ export default function ScratchpadModal({
   useEffect(() => {
     if (!isOpen) return;
     const timer = setTimeout(setupCanvas, 60);
+    const observer = new ResizeObserver(setupCanvas);
+    if (canvasRef.current?.parentElement) {
+      observer.observe(canvasRef.current.parentElement);
+    }
     window.addEventListener('resize', setupCanvas);
     return () => {
       clearTimeout(timer);
+      observer.disconnect();
       window.removeEventListener('resize', setupCanvas);
     };
   }, [isOpen, setupCanvas]);
-
-  useEffect(() => {
-    if (!isOpen) return;
-    const canvas = canvasRef.current;
-    if (!canvas) return;
-    const ctx = canvas.getContext('2d');
-    if (!ctx) return;
-    const rect = canvas.getBoundingClientRect();
-
-    if (history.length <= 1) {
-      drawBackground(ctx, rect.width, rect.height, backgroundPattern, isLight);
-      try {
-        const initial = ctx.getImageData(0, 0, canvas.width, canvas.height);
-        setHistory([initial]);
-      } catch {}
-    }
-  }, [backgroundPattern, isLight, isOpen, history.length]);
 
   const saveState = useCallback(() => {
     const canvas = canvasRef.current;
@@ -171,13 +204,8 @@ export default function ScratchpadModal({
     if (!ctx) return;
     try {
       const img = ctx.getImageData(0, 0, canvas.width, canvas.height);
-      setHistory((prev) => {
-        const next = [...prev.slice(-25), img];
-        if (cacheKey) {
-          scratchpadCache.set(cacheKey, img);
-        }
-        return next;
-      });
+      scratchpadCache.set(cacheKey, img);
+      setHistory((prev) => [...prev.slice(-25), img]);
       setRedoHistory([]);
     } catch (e) {
       log.warn('Canvas state kaydedilemedi', { error: e });
@@ -381,7 +409,7 @@ export default function ScratchpadModal({
         aria-modal="true"
         aria-label={title}
         tabIndex={-1}
-        className="relative z-10 flex h-[95vh] w-full max-w-7xl flex-col overflow-hidden rounded-3xl border border-slate-200/80 dark:border-white/10 bg-white dark:bg-slate-900 shadow-2xl transition-all"
+        className={`relative z-10 flex w-full flex-col overflow-hidden border border-border-default bg-surface-1 shadow-2xl ${isFullscreen ? 'h-dvh max-w-none' : 'h-[95dvh] max-w-7xl rounded-3xl'}`}
       >
         <ErrorBoundary
           fallback={({ reset }) => (
@@ -408,6 +436,33 @@ export default function ScratchpadModal({
             </div>
           )}
         >
+          <div className="flex shrink-0 flex-wrap items-center gap-2 border-b border-border-default bg-surface-1 px-3 py-2 text-primary">
+            <button
+              type="button"
+              onClick={() => void toggleFullscreen()}
+              aria-pressed={isFullscreen}
+              className="rounded-lg border border-border-default px-3 py-2 text-xs font-semibold hover:bg-surface-2"
+            >
+              {isFullscreen ? 'Tam ekrandan çık' : 'Tam ekran aç'}
+            </button>
+            {documentContext && (
+              <button
+                type="button"
+                onClick={() => setShowDocument((value) => !value)}
+                aria-pressed={showDocument}
+                className="rounded-lg border border-border-default px-3 py-2 text-xs font-semibold hover:bg-surface-2"
+              >
+                {showDocument
+                  ? 'Dokümanı gizle / Tahtayı göster'
+                  : 'Dokümanı göster'}
+              </button>
+            )}
+            {fullscreenError && (
+              <p role="status" className="text-xs text-secondary">
+                {fullscreenError}
+              </p>
+            )}
+          </div>
           {/* Header & Araç Çubuğu */}
           <ScratchpadToolbar
             title={title}
@@ -443,7 +498,21 @@ export default function ScratchpadModal({
           />
 
           {/* Gövde: Soru Bölmesi + Çizim Alanı */}
-          <div className="relative flex flex-1 overflow-hidden">
+          <div className="relative flex min-h-0 flex-1 overflow-hidden">
+            {documentContext && (
+              <div
+                className={`${showDocument ? 'block' : 'hidden'} w-full shrink-0 border-r border-border-default ${documentExpanded ? 'md:w-2/3' : 'md:w-1/2'}`}
+              >
+                <ScratchpadDocumentPanel
+                  key={cacheKey}
+                  documentContext={documentContext}
+                  expanded={documentExpanded}
+                  onToggleExpanded={() =>
+                    setDocumentExpanded((value) => !value)
+                  }
+                />
+              </div>
+            )}
             <ScratchpadQuestionPanel
               questionContext={questionContext!}
               showQuestionPanel={Boolean(questionContext && showQuestionPanel)}
@@ -454,12 +523,13 @@ export default function ScratchpadModal({
 
             {/* Canvas Çizim Alanı */}
             <div
-              className={`relative flex-1 cursor-crosshair touch-none transition-colors ${
+              className={`relative min-w-0 flex-1 cursor-crosshair touch-none transition-colors ${documentContext && showDocument ? 'hidden md:block' : ''} ${
                 isLight ? 'bg-white' : 'bg-[#090d16]'
               }`}
             >
               <canvas
                 ref={canvasRef}
+                aria-label="İşlem tahtası çizim alanı"
                 onPointerDown={handlePointerDown}
                 onPointerMove={handlePointerMove}
                 onPointerUp={handlePointerUp}

@@ -383,4 +383,15 @@ Bu dosya, projenin tamamlanmış ve devam eden görevlerini özetler.
 
 ---
 
-_Son güncelleme: 11 Kasım 2026 — §31 Cursor Agent (Fable 5.2 High) kapsamlı kalite planı ve model orkestrasyonu tamamlandı (339 test dosyası / 1925 birim testi, 67/67 migration, 77/77 rota build, 0 hata / 0 uyarı)._
+### 32. Tam Ekran PDF İşlem Tahtası ve Bölünmüş Ekran Çözüm Modu (11 Kasım 2026)
+
+- [x] **ScratchpadDocumentPanel & Split-Screen Mimarisi:** Öğrencilerin çalışma kağıdı ve yaprak testleri indirmeden sitede çözebilmesi için sol panelde PDF dokümanı (Drive preview iframe, sandbox PDF embed, allowFullScreen, genişlet/daralt, ayrı sekmede aç, cevap anahtarı çekmecesi) ve sağ panelde tam teşekküllü çizim tahtası sunan bölünmüş ekran (`ScratchpadDocumentPanel`) geliştirildi.
+- [x] **Gerçek Tam Ekran & Doküman Bazlı Çizim Kalıcılığı (`ScratchpadModal`):** `requestFullscreen` API'si ve 100dvh esnekliğiyle tek tıkla akıllı tahta/tablet tam ekran modu eklendi; dokümana özel önbellek anahtarıyla (`doc-scratchpad-${id}`) öğrencinin karalamalarının sayfa yenilense bile korunması sağlandı.
+- [x] **Kütüphane ve Detay Sayfası Entegrasyonu:**
+  - `ContentPreviewModal` içindeki "İşlem Tahtası" butonu doküman bağlamıyla (`documentContext`) açılarak PDF'i kapatmadan yan yana çalışma moduna geçirildi.
+  - `/icerikler/[slug]` detay sayfasına `ContentScratchpadButton` bileşeniyle "Tam Ekran İşlem Tahtasında Çöz" butonu entegre edildi.
+- [x] **Doğrulama & Kalite Kapıları:** 5 test dosyası / **17** birim testi başarıyla geçti (`ScratchpadModal.document.test.tsx`, `ScratchpadDocumentPanel.test.tsx`, `ContentPreviewModal.test.tsx`, `ContentDetailView.test.tsx`), `tsc --noEmit` 0 hata, `eslint .` 0 hata ve `next build` 77/77 rota derlemesiyle doğrulandı.
+
+---
+
+_Son güncelleme: 11 Kasım 2026 — §32 tam ekran PDF işlem tahtası ve bölünmüş ekran çözüm modu tamamlandı (340 test dosyası / 1930+ birim testi, 77/77 rota build, 0 hata / 0 uyarı)._

@@ -1,4 +1,5 @@
 import Link from 'next/link';
+import { ContentScratchpadButton } from './ContentScratchpadButton';
 import {
   ArrowLeft,
   BookOpen,
@@ -213,6 +214,16 @@ export function ContentDetailView({
       <main className="mx-auto max-w-5xl px-4 py-8 sm:px-6">
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
           <div className="lg:col-span-2 space-y-6">
+            <ContentScratchpadButton
+              documentContext={{
+                documentId: doc.id,
+                title: doc.title,
+                fileUrl: doc.file_url,
+                driveId,
+                type: doc.type,
+                answerKeyText: doc.answer_key_text,
+              }}
+            />
             {/* Mobil Hızlı İşlemler Çubuğu */}
             {(doc.file_url || doc.solution_url) && (
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5 lg:hidden">

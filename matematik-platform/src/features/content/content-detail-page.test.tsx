@@ -1,5 +1,5 @@
 import { describe, expect, it, vi, beforeEach } from 'vitest';
-import { render, screen } from '@testing-library/react';
+import { fireEvent, render, screen } from '@testing-library/react';
 import ContentDetailPage, {
   generateMetadata,
 } from '@/app/icerikler/[slug]/page';
@@ -174,6 +174,15 @@ describe('ContentDetailPage', () => {
       name: /Kütüphanede Etkileşimli Aç/i,
     });
     expect(libraryBtn).toHaveAttribute('href', `/icerikler?id=${sampleUuid}`);
+    fireEvent.click(
+      screen.getByRole('button', { name: 'Tam Ekran İşlem Tahtasında Çöz' }),
+    );
+    expect(
+      await screen.findByTitle(`${sampleDoc.title} — PDF önizleme`),
+    ).toHaveAttribute(
+      'src',
+      'https://drive.google.com/file/d/drive-file-id/preview',
+    );
   });
 
   it('triggers notFound when document is admin-only or does not exist', async () => {

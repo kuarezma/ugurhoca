@@ -16,7 +16,8 @@ const mockDoc: ContentDocument = {
   likes: 5,
 };
 
-const renderModal = (ui: React.ReactElement) => render(ui, { wrapper: ToastProvider });
+const renderModal = (ui: React.ReactElement) =>
+  render(ui, { wrapper: ToastProvider });
 
 describe('ContentPreviewModal', () => {
   it('renders title and closes when close button is clicked', () => {
@@ -37,7 +38,9 @@ describe('ContentPreviewModal', () => {
       />,
     );
 
-    expect(screen.getByText('5. Sınıf Doğal Sayılar Testi')).toBeInTheDocument();
+    expect(
+      screen.getByText('5. Sınıf Doğal Sayılar Testi'),
+    ).toBeInTheDocument();
 
     const closeBtn = screen.getByRole('button', { name: 'Kapat' });
     expect(closeBtn).toBeInTheDocument();
@@ -86,11 +89,12 @@ describe('ContentPreviewModal', () => {
     expect(onClose).not.toHaveBeenCalled();
   });
 
-  it('renders İşlem Tahtası (Scratchpad) button', () => {
+  it('opens the document workspace and keeps the preview open on Escape', async () => {
+    const onClose = vi.fn();
     renderModal(
       <ContentPreviewModal
         isCompleted={false}
-        onClose={vi.fn()}
+        onClose={onClose}
         onDownload={vi.fn()}
         onToggleAnswerKey={vi.fn()}
         onToggleCompleted={vi.fn()}
@@ -99,8 +103,18 @@ describe('ContentPreviewModal', () => {
       />,
     );
 
-    const scratchpadBtn = screen.getByRole('button', { name: /İşlem Tahtası/i });
+    const scratchpadBtn = screen.getByRole('button', {
+      name: /İşlem Tahtası/i,
+    });
     expect(scratchpadBtn).toBeInTheDocument();
     fireEvent.click(scratchpadBtn);
+    expect(
+      await screen.findByTitle(`${mockDoc.title} — PDF önizleme`),
+    ).toHaveAttribute('src', mockDoc.file_url);
+    fireEvent.keyDown(document, { key: 'Escape' });
+    expect(onClose).not.toHaveBeenCalled();
+    expect(
+      screen.queryByTitle(`${mockDoc.title} — PDF önizleme`),
+    ).not.toBeInTheDocument();
   });
 });
