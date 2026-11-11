@@ -55,14 +55,14 @@ export function QuizCatalog({
   handleOpenWorksheetPreview,
 }: QuizCatalogProps) {
   return (
-    <div className="pt-[calc(4.5rem+env(safe-area-inset-top))] sm:pt-24 px-4 sm:px-6">
+    <div className="pt-[calc(5.25rem+env(safe-area-inset-top))] sm:pt-24 px-4 sm:px-6">
       <div className="container mx-auto">
         {error && (
           <div className="mb-6 rounded-2xl border border-tone-danger-border bg-tone-danger-bg px-4 py-3 text-sm text-tone-danger-fg dark:text-tone-danger-fg">
             {error}
           </div>
         )}
-        <div className="mb-8 flex flex-col sm:flex-row sm:items-center justify-between gap-4 animate-fade-up">
+        <div className="mb-8 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
           <div>
             <div className="mb-3 inline-flex items-center gap-2 rounded-full border border-tone-info-border bg-tone-info-bg dark:bg-tone-info-bg px-3.5 py-1 text-xs font-bold text-tone-info-fg dark:text-tone-info-fg backdrop-blur-md shadow-xs">
               <Sparkles className="h-3.5 w-3.5 text-tone-info-fg dark:text-tone-info-fg" />
@@ -113,7 +113,7 @@ export function QuizCatalog({
 
         {/* Yarım Kalan Sınav Taslağı Kurtarma Banner'ı */}
         {activeDraft && (
-          <div className="mb-8 rounded-3xl border border-tone-warn-border p-5 sm:p-6 backdrop-blur-xl shadow-2xl animate-fade-in bg-accent-bg">
+          <div className="mb-8 rounded-3xl border border-tone-warn-border p-5 sm:p-6 backdrop-blur-xl shadow-2xl bg-accent-bg">
             <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
               <div className="flex items-center gap-3.5">
                 <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-tone-warn-bg text-tone-warn-fg dark:text-tone-warn-fg border border-tone-warn-border shadow-md">

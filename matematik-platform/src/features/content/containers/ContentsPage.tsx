@@ -2,11 +2,11 @@
 
 import type { ContentDocument } from '@/types';
 
-import { useState, useEffect, Suspense, useRef } from 'react';
+import { useState, useEffect, useCallback, Suspense, useRef } from 'react';
 import { usePathname, useRouter } from 'next/navigation';
 
 import { useToast } from '@/components/Toast';
-import { Skeleton } from '@/components/ui/Skeleton';
+import RouteLoadingShell from '@/components/RouteLoadingShell';
 import { CONTENT_TYPE_MAPPING } from '@/features/content/constants';
 import { type ContentViewMode } from '@/features/content/components/ContentFilterBar';
 import { useContentCompletion } from '@/features/content/hooks/useContentCompletion';
@@ -52,11 +52,22 @@ function ContentsPageInner({
   const router = useRouter();
   const pathname = usePathname();
   const [searchParams, setSearchParams] = useState(() => new URLSearchParams());
+  const handleUrlFiltersChange = useCallback(
+    (action: React.SetStateAction<URLSearchParams>) => {
+      setSearchParams((prev) => {
+        const nextParams =
+          typeof action === 'function' ? action(prev) : action;
+        return prev.toString() === nextParams.toString() ? prev : nextParams;
+      });
+    },
+    [],
+  );
   const { showToast } = useToast();
-  const requestedTypeFromUrl =
-    searchParams.get('type') || searchParams.get('category') || 'all';
-  const typeFromUrl =
-    CONTENT_TYPE_MAPPING[requestedTypeFromUrl] || requestedTypeFromUrl;
+  const rawTypeFromUrl =
+    searchParams.get('type') || searchParams.get('category');
+  const typeFromUrl = rawTypeFromUrl
+    ? CONTENT_TYPE_MAPPING[rawTypeFromUrl] || rawTypeFromUrl
+    : initialType;
   const worksheetGradeFromUrl = searchParams.get('grade');
   const worksheetOutcomeFromUrl = searchParams.get('outcome');
   const searchFromUrl = searchParams.get('q') || '';
@@ -124,7 +135,6 @@ function ContentsPageInner({
     initialDocuments.length < initialTotalCount,
   );
   const [totalCount, setTotalCount] = useState(initialTotalCount);
-  const [authResolved, setAuthResolved] = useState(false);
   const [deleteCandidate, setDeleteCandidate] =
     useState<ContentDocument | null>(null);
   const [deleting, setDeleting] = useState(false);
@@ -165,7 +175,6 @@ function ContentsPageInner({
     typeFromUrl,
     selectedType,
     setSelectedType,
-    authResolved,
     isWorksheetBrowser,
     quickFilter,
     debouncedSearch,
@@ -177,7 +186,6 @@ function ContentsPageInner({
     page,
     loadMoreRef,
     setUser,
-    setAuthResolved,
   });
 
   const {
@@ -198,7 +206,6 @@ function ContentsPageInner({
     selectedWorksheetGrade,
     setSelectedType,
     appliedWorksheetLinkRef,
-    authResolved,
     worksheetGradeFromUrl,
     worksheetOutcomeFromUrl,
   });
@@ -330,7 +337,7 @@ function ContentsPageInner({
 
   return (
     <ContentsView
-      setSearchParams={setSearchParams}
+      setSearchParams={handleUrlFiltersChange}
       profileHref={profileHref}
       user={user}
       selectedType={selectedType}
@@ -423,34 +430,7 @@ function ContentsPageInner({
 
 export default function ContentsPage(props: ContentsPageProps) {
   return (
-    <Suspense
-      fallback={
-        <div className="min-h-screen bg-surface-0 px-4 py-24">
-          <div className="mx-auto max-w-6xl space-y-6">
-            <Skeleton className="h-10 w-64" />
-            <Skeleton className="h-24 w-full" />
-            <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-7">
-              {[...Array(6)].map((_, i) => (
-                <div
-                  key={i}
-                  className="bg-surface-1 rounded-3xl border border-border-default dark:border-border-default p-4 sm:p-6 space-y-4"
-                >
-                  <div className="flex items-start gap-3">
-                    <Skeleton className="h-14 w-14 rounded-xl" />
-                    <div className="flex-1 space-y-2">
-                      <Skeleton className="h-4 w-3/4" />
-                      <Skeleton className="h-3 w-1/2" />
-                    </div>
-                  </div>
-                  <Skeleton className="h-6 w-full" />
-                  <Skeleton className="h-4 w-2/3" />
-                </div>
-              ))}
-            </div>
-          </div>
-        </div>
-      }
-    >
+    <Suspense fallback={<RouteLoadingShell />}>
       <ContentsPageInner {...props} />
     </Suspense>
   );

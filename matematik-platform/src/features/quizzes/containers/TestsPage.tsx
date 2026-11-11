@@ -37,6 +37,7 @@ import { useQuizKeyboard } from './TestsPage/useQuizKeyboard';
 import { useQuizResult } from './TestsPage/useQuizResult';
 import { ActiveQuizView } from './TestsPage/ActiveQuizView';
 import { TestsCatalogView } from './TestsPage/TestsCatalogView';
+import RouteLoadingShell from '@/components/RouteLoadingShell';
 
 export default function TestsPage({
   initialQuizzes = [],
@@ -403,7 +404,7 @@ export default function TestsPage({
     return `${mins}:${secs < 10 ? '0' : ''}${secs}`;
   };
 
-  if (!user) return null;
+  if (!user) return <RouteLoadingShell />;
 
   if (selectedQuiz && quizStarted && !showResult) {
     const question = quizQuestions[currentQuestion];

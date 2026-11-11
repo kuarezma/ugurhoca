@@ -85,16 +85,6 @@ export function ToolsHubContainer() {
 
   return (
     <main className="page-surface min-h-screen gradient-bg px-4 pb-[max(4rem,calc(env(safe-area-inset-bottom)+2rem))] pt-[calc(4.5rem+env(safe-area-inset-top))] sm:px-6 sm:pt-20 relative">
-      {/* Ambient Glow Mesh */}
-      <div
-        className="pointer-events-none fixed inset-0 -z-10 overflow-hidden"
-        aria-hidden="true"
-      >
-        <div className="absolute -top-32 -left-32 h-96 w-96 rounded-full bg-cyan-500/10 dark:bg-cyan-500/5 blur-3xl" />
-        <div className="absolute top-48 -right-32 h-96 w-96 rounded-full bg-indigo-500/10 dark:bg-indigo-500/5 blur-3xl" />
-        <div className="absolute bottom-10 left-1/3 h-96 w-96 rounded-full bg-amber-500/10 dark:bg-amber-500/5 blur-3xl" />
-      </div>
-
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}

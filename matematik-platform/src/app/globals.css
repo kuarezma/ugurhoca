@@ -94,8 +94,8 @@
   --brand-orange-rgb: 255 150 0;
   --brand-indigo-rgb: 56 189 248;
   --brand-gradient-middle: var(--brand-pink);
-  --primary-shade-fg: #041326;
-  --brand-primary-ink: #7DD3FC;
+  --primary-shade-fg: #020617;
+  --brand-primary-ink: rgb(var(--brand-primary-ink-rgb));
   --brand-primary: rgb(var(--brand-primary-rgb));
   --brand-primary-soft: rgb(var(--brand-primary-soft-rgb));
   --brand-primary-deep: rgb(var(--brand-primary-deep-rgb));
@@ -219,17 +219,17 @@ html[data-theme='light'] {
 
   --surface-0-rgb: 242 247 254;
   --surface-1-rgb: 255 255 255;
-  --surface-2-rgb: 235 243 253;
-  --surface-3-rgb: 224 235 250;
+  --surface-2-rgb: 236 244 254;
+  --surface-3-rgb: 230 239 252;
   --text-primary: #091326;
   --text-secondary: #283854;
   --text-tertiary: #465878;
   --border-subtle: rgba(148, 168, 204, 0.38);
   --border-default: #64748B;
   --border-strong: #475569;
-  --accent-fg: #0369A1;
+  --accent-fg: #075985;
   --accent-bg: rgba(14, 165, 233, 0.11);
-  --tone-success-fg: #0369A1;
+  --tone-success-fg: #075985;
   --tone-success-bg: #E0F2FE;
   --tone-success-border: #0284C7;
   --tone-warn-fg: #92400E;
@@ -238,14 +238,14 @@ html[data-theme='light'] {
   --tone-danger-fg: #B91C1C;
   --tone-danger-bg: #F9E8E6;
   --tone-danger-border: #B91C1C;
-  --tone-info-fg: #0369A1;
+  --tone-info-fg: #075985;
   --tone-info-bg: #E0F2FE;
   --tone-info-border: #0284C7;
 
-  --brand-primary-rgb: 3 105 161;
-  --green-ink-rgb: 3 105 161;
-  --brand-primary-soft-rgb: 56 189 248;
-  --brand-primary-deep-rgb: 7 89 133;
+  --brand-primary-rgb: 56 189 248;
+  --green-ink-rgb: 7 89 133;
+  --brand-primary-soft-rgb: 125 211 252;
+  --brand-primary-deep-rgb: 3 105 161;
   --brand-secondary-rgb: 79 70 229;
   --brand-secondary-soft-rgb: 99 102 241;
   --brand-accent-rgb: 255 200 0;
@@ -1129,7 +1129,7 @@ html[data-theme='light'] ::-webkit-scrollbar-thumb:hover {
 }
 
 .gradient-bg {
-  background: rgb(var(--surface-0-rgb) / 0.72);
+  background: transparent;
 }
 
 .theme-toggle:hover {
@@ -1290,7 +1290,7 @@ html[data-theme='light'] .bento-interactive:hover {
 .light-atmosphere {
   position: relative;
   overflow-x: clip;
-  background: var(--surface-0);
+  background: transparent;
   color: var(--text-primary);
 }
 

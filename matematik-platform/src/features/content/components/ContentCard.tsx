@@ -107,7 +107,7 @@ const AcademicSheetCover = ({
 
 function ContentCard({
   content,
-  index,
+  index: _index,
   isCompleted,
   isFavorite,
   isLiked,
@@ -219,7 +219,7 @@ function ContentCard({
         viewMode === 'grid' ? 'mb-2' : ''
       }`}
     >
-      <div className="flex items-center gap-3.5 text-xs font-bold text-slate-700 dark:text-slate-200">
+      <div className="flex flex-wrap items-center gap-3 sm:gap-3.5 text-xs font-bold text-slate-700 dark:text-slate-200">
         <button
           onClick={() => onPreview(content)}
           title="Görüntülenme sayısı"
@@ -275,7 +275,7 @@ function ContentCard({
         )}
       </div>
 
-      <div className="flex items-center gap-1.5">
+      <div className="flex flex-wrap items-center gap-1.5">
         <button
           onClick={() => onToggleFavorite(content.id)}
           title="Favori"
@@ -338,12 +338,7 @@ function ContentCard({
 
   if (viewMode === 'list') {
     return (
-      <motion.div
-        initial={{ opacity: 0, x: -12 }}
-        animate={{ opacity: 1, x: 0 }}
-        transition={{ duration: 0.2, delay: Math.min(index * 0.025, 0.2) }}
-        className="group relative overflow-hidden rounded-3xl border border-sky-200/80 dark:border-sky-400/20 bg-surface-1/85 backdrop-blur-2xl p-5 sm:p-6 shadow-[inset_0_1px_0_rgba(255,255,255,0.9),0_12px_28px_-10px_rgba(14,165,233,0.12)] dark:shadow-[inset_0_1px_0_rgba(255,255,255,0.08),0_16px_36px_-12px_rgba(2,6,23,0.5)] hover:border-sky-400/80 hover:shadow-xl transition-[transform,box-shadow,border-color] duration-200 ease-out defer-card-list"
-      >
+      <div className="group relative overflow-hidden rounded-3xl border border-sky-200/80 dark:border-sky-400/20 bg-surface-1/85 backdrop-blur-2xl p-5 sm:p-6 shadow-[inset_0_1px_0_rgba(255,255,255,0.9),0_12px_28px_-10px_rgba(14,165,233,0.12)] dark:shadow-[inset_0_1px_0_rgba(255,255,255,0.08),0_16px_36px_-12px_rgba(2,6,23,0.5)] hover:border-sky-400/80 hover:shadow-xl transition-[transform,box-shadow,border-color] duration-200 ease-out defer-card-list">
         <div className="absolute top-0 inset-x-0 h-1.5 bg-gradient-to-r from-sky-400 via-indigo-400 to-emerald-400 transition-all duration-200" />
         <div className="space-y-4">
           <div className="flex items-start justify-between gap-3 sm:gap-4">
@@ -443,17 +438,12 @@ function ContentCard({
           {statsBar}
           {actionButtons}
         </div>
-      </motion.div>
+      </div>
     );
   }
 
   return (
-    <motion.div
-      initial={{ opacity: 0, y: 12 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.2, delay: Math.min(index * 0.025, 0.2) }}
-      className="group relative flex flex-col justify-between overflow-hidden rounded-3xl border border-sky-200/80 dark:border-sky-400/20 bg-surface-1/85 backdrop-blur-2xl shadow-[inset_0_1px_0_rgba(255,255,255,0.9),0_14px_32px_-10px_rgba(14,165,233,0.14)] dark:shadow-[inset_0_1px_0_rgba(255,255,255,0.08),0_18px_40px_-12px_rgba(2,6,23,0.5)] hover:border-sky-400/80 hover:-translate-y-1 transition-[transform,box-shadow,border-color] duration-200 ease-out defer-card"
-    >
+    <div className="group relative flex flex-col justify-between overflow-hidden rounded-3xl border border-sky-200/80 dark:border-sky-400/20 bg-surface-1/85 backdrop-blur-2xl shadow-[inset_0_1px_0_rgba(255,255,255,0.9),0_14px_32px_-10px_rgba(14,165,233,0.14)] dark:shadow-[inset_0_1px_0_rgba(255,255,255,0.08),0_18px_40px_-12px_rgba(2,6,23,0.5)] hover:border-sky-400/80 hover:-translate-y-1 transition-[transform,box-shadow,border-color] duration-200 ease-out defer-card">
       <div className="absolute top-0 inset-x-0 h-1.5 bg-gradient-to-r from-sky-400 via-indigo-400 to-emerald-400 transition-all duration-200" />
 
       <div className="pointer-events-none absolute -top-20 -right-20 h-44 w-44 rounded-full bg-gradient-to-br from-sky-400/15 via-indigo-400/10 to-transparent blur-3xl group-hover:scale-125 transition-transform duration-500" />
@@ -557,7 +547,7 @@ function ContentCard({
           {actionButtons}
         </div>
       </div>
-    </motion.div>
+    </div>
   );
 }
 

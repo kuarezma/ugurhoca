@@ -2,7 +2,6 @@
 
 import { useState } from 'react';
 import Link from 'next/link';
-import { motion } from 'framer-motion';
 import {
   ArrowLeft,
   BookOpen,
@@ -266,13 +265,6 @@ export default function ProgramsHubPage() {
 
   return (
     <main className="page-surface programlar-page min-h-screen gradient-bg px-4 pb-[max(3rem,calc(env(safe-area-inset-bottom)+1.5rem))] pt-[calc(4.5rem+env(safe-area-inset-top))] sm:px-6 sm:pt-20 relative">
-      {/* Ambient Glow Mesh */}
-      <div className="pointer-events-none fixed inset-0 -z-10 overflow-hidden" aria-hidden="true">
-        <div className="absolute -top-32 -left-32 h-96 w-96 rounded-full bg-indigo-500/10 dark:bg-indigo-500/5 blur-3xl" />
-        <div className="absolute top-48 -right-32 h-96 w-96 rounded-full bg-purple-500/10 dark:bg-purple-500/5 blur-3xl" />
-        <div className="absolute bottom-10 left-1/3 h-96 w-96 rounded-full bg-cyan-500/10 dark:bg-cyan-500/5 blur-3xl" />
-      </div>
-
       <div className="mx-auto max-w-6xl">
         <div className="mb-6 flex flex-wrap items-center justify-between gap-3">
           <Link
@@ -293,9 +285,7 @@ export default function ProgramsHubPage() {
           </button>
         </div>
 
-        <motion.section
-          initial={{ opacity: 0, y: 16 }}
-          animate={{ opacity: 1, y: 0 }}
+        <section
           className="rounded-3xl border border-sky-200/75 dark:border-sky-400/20 bg-surface-1/75 p-6 sm:p-8 shadow-[0_20px_54px_-18px_rgba(14,116,144,0.16),inset_0_1px_0_rgba(255,255,255,0.88)] dark:shadow-[0_24px_60px_-18px_rgba(2,6,23,0.72),inset_0_1px_0_rgba(255,255,255,0.08)] backdrop-blur-2xl relative overflow-hidden"
         >
           <div
@@ -324,14 +314,10 @@ export default function ProgramsHubPage() {
           </div>
 
           <div className="mt-8 grid gap-5 lg:grid-cols-2">
-            {tools.map((tool, index) => (
-              <motion.article
+            {tools.map((tool) => (
+              <article
                 key={tool.id}
-                initial={{ opacity: 0, y: 16 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: 0.1 + index * 0.08 }}
-                whileHover={{ y: -4 }}
-                className="tilt-on-hover group relative overflow-hidden rounded-3xl border border-sky-200/75 dark:border-sky-400/20 bg-surface-1/78 p-5 sm:p-7 shadow-[0_14px_34px_-16px_rgba(14,116,144,0.14),inset_0_1px_0_rgba(255,255,255,0.88)] dark:shadow-[0_18px_42px_-16px_rgba(2,6,23,0.68),inset_0_1px_0_rgba(255,255,255,0.08)] hover:border-sky-400/50 dark:hover:border-sky-400/35 backdrop-blur-2xl transition-all duration-300"
+                className="tilt-on-hover group relative overflow-hidden rounded-3xl border border-sky-200/75 dark:border-sky-400/20 bg-surface-1/78 p-5 sm:p-7 shadow-[0_14px_34px_-16px_rgba(14,116,144,0.14),inset_0_1px_0_rgba(255,255,255,0.88)] dark:shadow-[0_18px_42px_-16px_rgba(2,6,23,0.68),inset_0_1px_0_rgba(255,255,255,0.08)] hover:border-sky-400/50 dark:hover:border-sky-400/35 backdrop-blur-2xl transition-all duration-300 hover:-translate-y-1"
               >
                 <div
                   className={`absolute inset-x-0 top-0 h-[3px] bg-gradient-to-r ${tool.gradient}`}
@@ -392,10 +378,10 @@ export default function ProgramsHubPage() {
                     </Link>
                   )}
                 </div>
-              </motion.article>
+              </article>
             ))}
           </div>
-        </motion.section>
+        </section>
       </div>
 
       <FormulaFlashcardsModal

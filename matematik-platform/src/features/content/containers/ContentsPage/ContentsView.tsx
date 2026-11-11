@@ -1,5 +1,4 @@
 import { Suspense } from 'react';
-import { motion } from 'framer-motion';
 import { Filter, Layers3 } from 'lucide-react';
 import ContentCard from '@/features/content/components/ContentCard';
 import { Skeleton } from '@/components/ui/Skeleton';
@@ -24,22 +23,12 @@ import type { ContentsViewProps } from './view-types';
 export function ContentsView({ loadMoreRef, ...props }: ContentsViewProps) {
   return (
     <main className="page-surface icerikler-page min-h-screen gradient-bg pb-[max(6rem,calc(env(safe-area-inset-bottom)+5.5rem))] relative">
-      {/* Ambient Glow Mesh */}
-      <div
-        className="pointer-events-none fixed inset-0 -z-10 overflow-hidden"
-        aria-hidden="true"
-      >
-        <div className="absolute -top-32 -left-32 h-96 w-96 rounded-full bg-tone-info-bg dark:bg-tone-info-bg blur-3xl" />
-        <div className="absolute top-48 -right-32 h-96 w-96 rounded-full bg-tone-success-bg dark:bg-tone-success-bg blur-3xl" />
-        <div className="absolute bottom-10 left-1/3 h-96 w-96 rounded-full bg-tone-info-bg dark:bg-tone-info-bg blur-3xl" />
-      </div>
-
       <Suspense fallback={null}>
         <ContentUrlFilters onChange={props.setSearchParams} />
       </Suspense>
       <ContentNavigation profileHref={props.profileHref} user={props.user} />
 
-      <div className="pt-[calc(4.5rem+env(safe-area-inset-top))] sm:pt-24 px-4 sm:px-6 xl:px-8">
+      <div className="pt-[calc(5.25rem+env(safe-area-inset-top))] sm:pt-24 px-4 sm:px-6 xl:px-8">
         <div className="max-w-[1760px] mx-auto">
           <ContentHeading
             selectedType={props.selectedType}
@@ -89,12 +78,7 @@ export function ContentsView({ loadMoreRef, ...props }: ContentsViewProps) {
             />
           )}
 
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ delay: 0.2 }}
-            className="flex items-center gap-2 mb-6"
-          >
+          <div className="flex items-center gap-2 mb-6">
             <Filter className="w-5 h-5 text-secondary" />
             {props.loading ||
             props.worksheetLoading ||
@@ -103,22 +87,20 @@ export function ContentsView({ loadMoreRef, ...props }: ContentsViewProps) {
             ) : (
               <span className="text-secondary">{props.resultLabel}</span>
             )}
-          </motion.div>
+          </div>
 
           {props.isWorksheetBrowser ? (
             !props.selectedWorksheetGrade ? (
               <div className="grid grid-cols-2 sm:grid-cols-3 xl:grid-cols-5 gap-4 sm:gap-5">
-                {props.filteredWorksheetGrades.map((grade, index) => (
-                  <motion.button
+                {props.filteredWorksheetGrades.map((grade) => (
+                  <button
                     key={String(grade)}
-                    initial={{ opacity: 0, y: 20 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ delay: index * 0.04 }}
+                    type="button"
                     onClick={() => {
                       props.updateWorksheetBrowserUrl(grade);
                       void props.loadWorksheetGradeDocuments(grade);
                     }}
-                    className={`rounded-3xl border p-5 text-center transition-all hover:-translate-y-1 sm:p-6 ${WORKSHEET_GRADE_CARD_STYLES[grade].border} ${WORKSHEET_GRADE_CARD_STYLES[grade].surface}`}
+                    className={`rounded-3xl border p-5 text-center transition-transform duration-200 hover:-translate-y-1 sm:p-6 backdrop-blur-xl ${WORKSHEET_GRADE_CARD_STYLES[grade].border} ${WORKSHEET_GRADE_CARD_STYLES[grade].surface}`}
                   >
                     <div
                       className={`mx-auto mb-5 flex h-14 w-14 items-center justify-center rounded-2xl bg-gradient-to-br ${WORKSHEET_GRADE_CARD_STYLES[grade].folder}`}
@@ -128,7 +110,7 @@ export function ContentsView({ loadMoreRef, ...props }: ContentsViewProps) {
                     <h3 className="text-lg font-bold text-primary">
                       {grade === 'Mezun' ? grade : `${grade}. Sınıf`}
                     </h3>
-                  </motion.button>
+                  </button>
                 ))}
               </div>
             ) : props.worksheetLoading ? (

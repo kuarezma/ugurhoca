@@ -34,7 +34,6 @@ type UseContentFeedProps = {
   typeFromUrl: string;
   selectedType: string;
   setSelectedType: Dispatch<SetStateAction<string>>;
-  authResolved: boolean;
   isWorksheetBrowser: boolean;
   quickFilter: ContentQuickFilter;
   debouncedSearch: string;
@@ -46,7 +45,6 @@ type UseContentFeedProps = {
   page: number;
   loadMoreRef: RefObject<HTMLDivElement | null>;
   setUser: Dispatch<SetStateAction<AppUser | null>>;
-  setAuthResolved: Dispatch<SetStateAction<boolean>>;
 };
 
 export function useContentFeed({
@@ -66,7 +64,6 @@ export function useContentFeed({
   typeFromUrl,
   selectedType,
   setSelectedType,
-  authResolved,
   isWorksheetBrowser,
   quickFilter,
   debouncedSearch,
@@ -78,7 +75,6 @@ export function useContentFeed({
   page,
   loadMoreRef,
   setUser,
-  setAuthResolved,
 }: UseContentFeedProps) {
   const loadDocuments = useCallback(
     async (
@@ -175,10 +171,6 @@ export function useContentFeed({
   }, [selectedType, setSelectedType, typeFromUrl]);
 
   useEffect(() => {
-    if (!authResolved) {
-      return;
-    }
-
     if (isWorksheetBrowser) {
       setLoading(false);
       return;
@@ -216,7 +208,6 @@ export function useContentFeed({
     setPage(1);
     void loadDocuments(1, false, selectedGrade, selectedType, queryOptions);
   }, [
-    authResolved,
     debouncedSearch,
     initialDocuments,
     initialGrade,
@@ -238,10 +229,6 @@ export function useContentFeed({
   ]);
 
   useEffect(() => {
-    if (!authResolved) {
-      return;
-    }
-
     if (isWorksheetBrowser) {
       return;
     }
@@ -271,7 +258,6 @@ export function useContentFeed({
 
     return () => observer.disconnect();
   }, [
-    authResolved,
     debouncedSearch,
     hasMore,
     loadDocuments,
@@ -294,13 +280,15 @@ export function useContentFeed({
         if (disposed) return;
 
         if (!resolvedUser) {
-          setUser(null);
+          setUser((prev) => (prev === null ? prev : null));
           return;
         }
 
         setUser(resolvedUser);
-      } finally {
-        if (!disposed) setAuthResolved(true);
+      } catch {
+        if (!disposed) {
+          setUser((prev) => (prev === null ? prev : null));
+        }
       }
     };
 
@@ -308,6 +296,6 @@ export function useContentFeed({
     return () => {
       disposed = true;
     };
-  }, [setAuthResolved, setUser]);
+  }, [setUser]);
   return { loadDocuments };
 }

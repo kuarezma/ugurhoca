@@ -3,7 +3,6 @@
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
-import { motion } from 'framer-motion';
 import { ArrowLeft, Eye, EyeOff, ShieldCheck, Sparkles } from 'lucide-react';
 import { supabase } from '@/lib/supabase/client';
 import {
@@ -183,12 +182,7 @@ export default function LoginPage() {
           </div>
         </aside>
 
-        <motion.div
-          initial={{ opacity: 0, y: 12 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.35 }}
-          className="relative z-10 w-full max-w-md flex-1 self-center"
-        >
+        <div className="relative z-10 w-full max-w-md flex-1 self-center">
           <Link
             href="/"
             className="mb-6 inline-flex items-center gap-2 text-sm font-semibold text-secondary hover:text-primary"
@@ -213,7 +207,7 @@ export default function LoginPage() {
             {showTrialBanner && (
               <div
                 role="note"
-                className="mb-5 p-3.5 rounded-2xl bg-surface-2 border border-border-default text-xs flex flex-col sm:flex-row sm:items-center justify-between gap-2 shadow-xs animate-fade-in"
+                className="mb-5 p-3.5 rounded-2xl bg-surface-2 border border-border-default text-xs flex flex-col sm:flex-row sm:items-center justify-between gap-2 shadow-xs"
               >
                 <div className="flex items-center gap-2 text-primary font-medium">
                   <Sparkles className="w-4 h-4 text-accent-fg shrink-0" />
@@ -341,7 +335,7 @@ export default function LoginPage() {
               hareketlerini göremez.
             </p>
           </div>
-        </motion.div>
+        </div>
       </div>
     </main>
   );

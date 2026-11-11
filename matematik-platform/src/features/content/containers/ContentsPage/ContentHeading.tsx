@@ -22,7 +22,7 @@ export function ContentHeading({
   handleQuickAddOpen,
 }: ContentHeadingProps) {
   return (
-    <div className="mb-8 flex flex-col md:flex-row justify-between items-start md:items-center gap-4 animate-fade-in">
+    <div className="mb-8 flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
       <div>
         <div className="mb-3 inline-flex items-center gap-2 rounded-full border border-tone-info-border bg-tone-info-bg dark:bg-tone-info-bg px-3.5 py-1 text-xs font-bold text-tone-info-fg dark:text-tone-info-fg backdrop-blur-md shadow-xs">
           <Sparkles className="h-3.5 w-3.5 text-tone-info-fg dark:text-tone-info-fg" />

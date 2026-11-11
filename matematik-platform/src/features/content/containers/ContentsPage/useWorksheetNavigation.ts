@@ -25,7 +25,6 @@ type UseWorksheetNavigationProps = {
   selectedWorksheetGrade: WorksheetGradeSelection | null;
   setSelectedType: Dispatch<SetStateAction<string>>;
   appliedWorksheetLinkRef: RefObject<string | null>;
-  authResolved: boolean;
   worksheetGradeFromUrl: string | null;
   worksheetOutcomeFromUrl: string | null;
 };
@@ -42,7 +41,6 @@ export function useWorksheetNavigation({
   selectedWorksheetGrade,
   setSelectedType,
   appliedWorksheetLinkRef,
-  authResolved,
   worksheetGradeFromUrl,
   worksheetOutcomeFromUrl,
 }: UseWorksheetNavigationProps) {
@@ -163,7 +161,7 @@ export function useWorksheetNavigation({
   );
 
   useEffect(() => {
-    if (!authResolved || !isWorksheetBrowser) {
+    if (!isWorksheetBrowser) {
       return;
     }
 
@@ -183,7 +181,6 @@ export function useWorksheetNavigation({
     });
   }, [
     appliedWorksheetLinkRef,
-    authResolved,
     isWorksheetBrowser,
     loadWorksheetGradeDocuments,
     setSelectedWorksheetOutcome,
