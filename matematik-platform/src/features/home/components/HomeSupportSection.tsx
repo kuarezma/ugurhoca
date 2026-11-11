@@ -20,9 +20,7 @@ type HomeSupportSectionProps = {
   user: AppUser | null;
 };
 
-export function HomeSupportSection({
-  user
-}: HomeSupportSectionProps) {
+export function HomeSupportSection({ user }: HomeSupportSectionProps) {
   const { showToast } = useToast();
   const [supportMessage, setSupportMessage] = useState('');
   const [supportAttachments, setSupportAttachments] = useState<
@@ -63,7 +61,10 @@ export function HomeSupportSection({
     }
 
     if (!user.id) {
-      showToast('warning', 'Oturum bilgisi bulunamadı. Lütfen tekrar giriş yap.');
+      showToast(
+        'warning',
+        'Oturum bilgisi bulunamadı. Lütfen tekrar giriş yap.',
+      );
       return;
     }
 
@@ -107,9 +108,7 @@ export function HomeSupportSection({
   return (
     <section className="defer-section px-4 py-8 sm:py-12">
       <div className="max-w-6xl mx-auto">
-        <div
-          className="relative overflow-hidden rounded-3xl border border-sky-200/75 dark:border-sky-400/20 bg-surface-1/80 backdrop-blur-2xl shadow-[inset_0_1px_0_rgba(255,255,255,0.9),0_18px_45px_-15px_rgba(14,165,233,0.12)] dark:shadow-[inset_0_1px_0_rgba(255,255,255,0.1),0_20px_50px_-15px_rgba(2,6,23,0.65)] font-sans"
-        >
+        <div className="relative overflow-hidden rounded-3xl border border-sky-200/75 dark:border-sky-400/20 bg-surface-1/80 backdrop-blur-2xl shadow-[inset_0_1px_0_rgba(255,255,255,0.9),0_18px_45px_-15px_rgba(14,165,233,0.12)] dark:shadow-[inset_0_1px_0_rgba(255,255,255,0.1),0_20px_50px_-15px_rgba(2,6,23,0.65)] font-sans">
           {/* Üst Prizmatik Işık Kırılım Çizgisi */}
           <div className="absolute inset-x-0 top-0 h-[2px] bg-gradient-to-r from-sky-400 via-indigo-400 to-emerald-400" />
 

@@ -167,7 +167,7 @@ function ContentCard({
         whileHover={{ scale: 1.02 }}
         whileTap={{ scale: 0.98 }}
         onClick={() => onPreview(content)}
-        className={`col-span-1 flex w-full items-center justify-center gap-2 rounded-2xl border border-sky-300/80 dark:border-sky-700/80 bg-sky-50/80 dark:bg-sky-950/50 hover:bg-sky-100/90 dark:hover:bg-sky-900/60 px-4 py-2.5 sm:py-3 text-xs sm:text-sm font-bold text-sky-950 dark:text-sky-200 transition-all duration-200 backdrop-blur-md shadow-xs hover:border-sky-500 hover:-translate-y-0.5 sm:flex-1 ${
+        className={`col-span-1 flex w-full items-center justify-center gap-2 rounded-2xl border border-sky-600 dark:border-sky-400 bg-sky-50/80 dark:bg-sky-950/50 hover:bg-sky-100/90 dark:hover:bg-sky-900/60 px-4 py-2.5 sm:py-3 text-xs sm:text-sm font-bold text-sky-950 dark:text-sky-200 transition-all duration-200 backdrop-blur-md shadow-xs hover:border-sky-500 hover:-translate-y-0.5 sm:flex-1 ${
           !content.file_url ? 'col-span-2' : ''
         } ${viewMode === 'grid' ? 'sm:min-w-[130px]' : 'sm:min-w-[160px]'}`}
       >
@@ -426,9 +426,7 @@ function ContentCard({
               <Users className="w-4 h-4 text-sky-600 dark:text-sky-400 shrink-0" />
               <span className="truncate">{getContentAuthorLabel(content)}</span>
             </div>
-            <span className="text-tertiary font-black">
-              •
-            </span>
+            <span className="text-tertiary font-black">•</span>
             <div className="flex items-center gap-1.5 shrink-0">
               <Calendar className="w-4 h-4 text-sky-600 dark:text-sky-400 shrink-0" />
               <span>{formatContentDate(content.created_at)}</span>
@@ -532,9 +530,7 @@ function ContentCard({
               <Users className="w-4 h-4 text-sky-600 dark:text-sky-400 shrink-0" />
               <span className="truncate">{getContentAuthorLabel(content)}</span>
             </div>
-            <span className="text-tertiary font-black">
-              •
-            </span>
+            <span className="text-tertiary font-black">•</span>
             <div className="flex items-center gap-1.5 shrink-0">
               <Calendar className="w-4 h-4 text-sky-600 dark:text-sky-400 shrink-0" />
               <span>{formatContentDate(content.created_at)}</span>

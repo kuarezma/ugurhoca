@@ -55,8 +55,7 @@ function ContentsPageInner({
   const handleUrlFiltersChange = useCallback(
     (action: React.SetStateAction<URLSearchParams>) => {
       setSearchParams((prev) => {
-        const nextParams =
-          typeof action === 'function' ? action(prev) : action;
+        const nextParams = typeof action === 'function' ? action(prev) : action;
         return prev.toString() === nextParams.toString() ? prev : nextParams;
       });
     },

@@ -84,20 +84,14 @@ function HomeDailyQuoteInner() {
           </div>
 
           <div className="flex-1">
-            <div
-              className="mb-2.5 inline-flex items-center gap-2 rounded-full border border-sky-300/40 dark:border-sky-400/20 px-3.5 py-1 text-xs font-black uppercase tracking-[0.2em] bg-accent-bg text-accent-fg backdrop-blur-md shadow-xs"
-            >
+            <div className="mb-2.5 inline-flex items-center gap-2 rounded-full border border-sky-300/40 dark:border-sky-400/20 px-3.5 py-1 text-xs font-black uppercase tracking-[0.2em] bg-accent-bg text-accent-fg backdrop-blur-md shadow-xs">
               <Sparkles className="h-3.5 w-3.5" aria-hidden="true" />
               <span id="daily-quote-heading">Günün Sözü</span>
             </div>
-            <p
-              className="font-display text-lg font-bold leading-snug sm:text-2xl text-primary"
-            >
+            <p className="font-display text-lg font-bold leading-snug sm:text-2xl text-primary">
               “{quote.text}”
             </p>
-            <p
-              className="mt-3 text-sm font-semibold text-secondary"
-            >
+            <p className="mt-3 text-sm font-semibold text-secondary">
               — {quote.author}
             </p>
           </div>

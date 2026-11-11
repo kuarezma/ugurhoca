@@ -51,7 +51,12 @@ const gradeStyles = {
     number:
       'bg-gradient-to-br from-sky-700 to-blue-700 text-[var(--on-brand)] dark:from-sky-400 dark:to-cyan-300 dark:text-slate-950 shadow-md shadow-sky-500/25',
     svgWatermark: (
-      <svg className="w-16 h-16 text-sky-500/10 dark:text-sky-400/10" viewBox="0 0 48 48" fill="none" stroke="currentColor">
+      <svg
+        className="w-16 h-16 text-sky-500/10 dark:text-sky-400/10"
+        viewBox="0 0 48 48"
+        fill="none"
+        stroke="currentColor"
+      >
         <circle cx="24" cy="24" r="18" strokeWidth="2" strokeDasharray="3 3" />
         <circle cx="24" cy="24" r="8" strokeWidth="2" />
         <line x1="24" y1="6" x2="24" y2="42" strokeWidth="1.5" />
@@ -64,7 +69,12 @@ const gradeStyles = {
     number:
       'bg-gradient-to-br from-amber-700 to-orange-700 text-[var(--on-brand)] dark:from-amber-300 dark:to-orange-400 dark:text-slate-950 shadow-md shadow-amber-500/25',
     svgWatermark: (
-      <svg className="w-16 h-16 text-amber-500/10 dark:text-amber-400/10" viewBox="0 0 48 48" fill="none" stroke="currentColor">
+      <svg
+        className="w-16 h-16 text-amber-500/10 dark:text-amber-400/10"
+        viewBox="0 0 48 48"
+        fill="none"
+        stroke="currentColor"
+      >
         <path d="M24 6 A18 18 0 0 1 42 24 L24 24 Z" strokeWidth="2" />
         <circle cx="24" cy="24" r="18" strokeWidth="2" strokeDasharray="4 2" />
       </svg>
@@ -76,7 +86,12 @@ const gradeStyles = {
     number:
       'bg-gradient-to-br from-violet-700 to-purple-700 text-[var(--on-brand)] dark:from-violet-400 dark:to-purple-400 dark:text-slate-950 shadow-md shadow-violet-500/25',
     svgWatermark: (
-      <svg className="w-16 h-16 text-violet-500/10 dark:text-violet-400/10" viewBox="0 0 48 48" fill="none" stroke="currentColor">
+      <svg
+        className="w-16 h-16 text-violet-500/10 dark:text-violet-400/10"
+        viewBox="0 0 48 48"
+        fill="none"
+        stroke="currentColor"
+      >
         <line x1="6" y1="24" x2="42" y2="24" strokeWidth="2" />
         <line x1="24" y1="6" x2="24" y2="42" strokeWidth="2" />
         <path d="M12 36 L36 12" strokeWidth="2" strokeDasharray="3 3" />
@@ -90,9 +105,23 @@ const gradeStyles = {
     number:
       'bg-gradient-to-br from-emerald-700 to-teal-800 text-[var(--on-brand)] dark:from-emerald-400 dark:to-teal-400 dark:text-slate-950 shadow-md shadow-emerald-500/30',
     svgWatermark: (
-      <svg className="w-16 h-16 text-emerald-500/15 dark:text-emerald-400/15" viewBox="0 0 48 48" fill="none" stroke="currentColor">
-        <path d="M8 28 L14 28 L18 38 L24 10 L40 10" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" />
-        <polygon points="26,16 38,36 26,36" strokeWidth="1.5" strokeDasharray="2 2" />
+      <svg
+        className="w-16 h-16 text-emerald-500/15 dark:text-emerald-400/15"
+        viewBox="0 0 48 48"
+        fill="none"
+        stroke="currentColor"
+      >
+        <path
+          d="M8 28 L14 28 L18 38 L24 10 L40 10"
+          strokeWidth="2.5"
+          strokeLinecap="round"
+          strokeLinejoin="round"
+        />
+        <polygon
+          points="26,16 38,36 26,36"
+          strokeWidth="1.5"
+          strokeDasharray="2 2"
+        />
       </svg>
     ),
   },
@@ -290,16 +319,28 @@ export function HomeHeroSection({
             {/* Mini Kristal İstatistik Kapsülleri */}
             <div className="grid grid-cols-3 gap-2.5 pt-1">
               <div className="rounded-2xl border border-sky-200/70 dark:border-sky-400/20 bg-surface-2/60 backdrop-blur-md px-3 py-2 text-center shadow-xs">
-                <div className="text-sm sm:text-base font-black text-primary">120+</div>
-                <div className="text-[11px] font-semibold text-secondary truncate">PDF Föy</div>
+                <div className="text-sm sm:text-base font-black text-primary">
+                  120+
+                </div>
+                <div className="text-[11px] font-semibold text-secondary truncate">
+                  PDF Föy
+                </div>
               </div>
               <div className="rounded-2xl border border-emerald-200/70 dark:border-emerald-400/20 bg-surface-2/60 backdrop-blur-md px-3 py-2 text-center shadow-xs">
-                <div className="text-sm sm:text-base font-black text-primary">20+</div>
-                <div className="text-[11px] font-semibold text-secondary truncate">Zihin Oyunu</div>
+                <div className="text-sm sm:text-base font-black text-primary">
+                  20+
+                </div>
+                <div className="text-[11px] font-semibold text-secondary truncate">
+                  Zihin Oyunu
+                </div>
               </div>
               <div className="rounded-2xl border border-indigo-200/70 dark:border-indigo-400/20 bg-surface-2/60 backdrop-blur-md px-3 py-2 text-center shadow-xs">
-                <div className="text-sm sm:text-base font-black text-primary">12</div>
-                <div className="text-[11px] font-semibold text-secondary truncate">Akademik Stüdyo</div>
+                <div className="text-sm sm:text-base font-black text-primary">
+                  12
+                </div>
+                <div className="text-[11px] font-semibold text-secondary truncate">
+                  Akademik Stüdyo
+                </div>
               </div>
             </div>
 
@@ -479,7 +520,7 @@ export function HomeHeroSection({
                 type="button"
                 onClick={onOpen}
                 disabled={!onOpen}
-                className="rounded-2xl border border-subtle bg-surface-1/80 backdrop-blur-xl shadow-[inset_0_1px_0_rgba(255,255,255,0.85)] dark:shadow-[inset_0_1px_0_rgba(255,255,255,0.08)] font-sans transition-all duration-200 hover:border-sky-400/60 dark:hover:border-sky-400/40 hover:bg-surface-2/90 hover:-translate-y-0.5 flex min-h-20 items-center gap-3.5 p-4 text-left disabled:cursor-not-allowed disabled:opacity-50"
+                className="rounded-2xl border border-default bg-surface-1/80 backdrop-blur-xl shadow-[inset_0_1px_0_rgba(255,255,255,0.85)] dark:shadow-[inset_0_1px_0_rgba(255,255,255,0.08)] font-sans transition-all duration-200 hover:border-sky-500 dark:hover:border-sky-400 hover:bg-surface-2/90 hover:-translate-y-0.5 flex min-h-20 items-center gap-3.5 p-4 text-left disabled:cursor-not-allowed disabled:opacity-50"
               >
                 <span
                   className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-xl ${toolIconStyles[index % toolIconStyles.length]}`}

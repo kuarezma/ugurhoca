@@ -50,9 +50,9 @@ const GeometryMathLabModal = dynamic(
 );
 const CurriculumCoverageMatrixModal = dynamic(
   () =>
-    import(
-      '@/features/programs/components/CurriculumCoverageMatrixModal'
-    ).then((m) => ({ default: m.CurriculumCoverageMatrixModal })),
+    import('@/features/programs/components/CurriculumCoverageMatrixModal').then(
+      (m) => ({ default: m.CurriculumCoverageMatrixModal }),
+    ),
   { ssr: false },
 );
 const MathGlossaryModal = dynamic(
@@ -68,15 +68,24 @@ const MathProjectWorkshopModal = dynamic(
   { ssr: false },
 );
 const VisualMathProofsModal = dynamic(
-  () => import('@/features/proofs/components/VisualMathProofsModal').then(m => ({ default: m.VisualMathProofsModal })),
+  () =>
+    import('@/features/proofs/components/VisualMathProofsModal').then((m) => ({
+      default: m.VisualMathProofsModal,
+    })),
   { ssr: false },
 );
 const StudentQuestionAuthoringModal = dynamic(
-  () => import('@/features/authoring/components/StudentQuestionAuthoringModal').then(m => ({ default: m.StudentQuestionAuthoringModal })),
+  () =>
+    import('@/features/authoring/components/StudentQuestionAuthoringModal').then(
+      (m) => ({ default: m.StudentQuestionAuthoringModal }),
+    ),
   { ssr: false },
 );
 const FeynmanVoiceExplanationModal = dynamic(
-  () => import('@/features/feynman/components/FeynmanVoiceExplanationModal').then(m => ({ default: m.FeynmanVoiceExplanationModal })),
+  () =>
+    import('@/features/feynman/components/FeynmanVoiceExplanationModal').then(
+      (m) => ({ default: m.FeynmanVoiceExplanationModal }),
+    ),
   { ssr: false },
 );
 
@@ -138,7 +147,8 @@ export default function ProgramsHubPage() {
     {
       id: 'geometry-lab',
       title: 'Etkileşimli Matematik & Geometri Laboratuvarı',
-      subtitle: 'Pisagor, birim çember, trigonometri, parabol ve eğim canlı görselleştiricisi',
+      subtitle:
+        'Pisagor, birim çember, trigonometri, parabol ve eğim canlı görselleştiricisi',
       onClick: () => setIsGeometryLabOpen(true),
       icon: Compass,
       gradient: 'from-brand-accent to-brand-accent',
@@ -166,7 +176,8 @@ export default function ProgramsHubPage() {
     {
       id: 'checklist',
       title: 'MEB Matematik Konu Takip Çizelgesi',
-      subtitle: '5-12. sınıf müfredat kazanım takip listesi ve A4 duvara asılabilir çıktı',
+      subtitle:
+        '5-12. sınıf müfredat kazanım takip listesi ve A4 duvara asılabilir çıktı',
       onClick: () => setIsChecklistOpen(true),
       icon: ListChecks,
       gradient: 'from-brand-primary to-brand-primary',
@@ -180,7 +191,8 @@ export default function ProgramsHubPage() {
     {
       id: 'coverage-matrix',
       title: 'Kazanım Kapsam & İçerik Haritası',
-      subtitle: 'Anlatım, örnek, test ve çalışma kâğıdı eksiklerini tek tabloda tespit et',
+      subtitle:
+        'Anlatım, örnek, test ve çalışma kâğıdı eksiklerini tek tabloda tespit et',
       onClick: () => setIsCoverageMatrixOpen(true),
       icon: Layers,
       gradient: 'from-brand-primary to-brand-primary',
@@ -194,7 +206,8 @@ export default function ProgramsHubPage() {
     {
       id: 'math-glossary',
       title: 'Matematik Terimler & Kişisel Sözlük',
-      subtitle: 'Kritik kavramlar, sık yapılan tuzaklar ve kendi açıklamalarını ekleme',
+      subtitle:
+        'Kritik kavramlar, sık yapılan tuzaklar ve kendi açıklamalarını ekleme',
       onClick: () => setIsGlossaryOpen(true),
       icon: BookOpen,
       gradient: 'from-brand-secondary to-brand-secondary',
@@ -208,7 +221,8 @@ export default function ProgramsHubPage() {
     {
       id: 'project-workshop',
       title: 'Matematik Proje Atölyesi & Araştırma Görevleri',
-      subtitle: 'Gerçek hayat senaryoları, aşamalı teslim adımları ve 100 puanlık değerlendirme rubriği',
+      subtitle:
+        'Gerçek hayat senaryoları, aşamalı teslim adımları ve 100 puanlık değerlendirme rubriği',
       onClick: () => setIsProjectWorkshopOpen(true),
       icon: Compass,
       gradient: 'from-brand-accent to-brand-accent',
@@ -222,7 +236,8 @@ export default function ProgramsHubPage() {
     {
       id: 'math-proofs',
       title: '«Neden Doğru?» Matematiksel İspat Koleksiyonu',
-      subtitle: 'Pisagor, iki kare farkı, üçgen açıları ve Gauss toplamının görsel mantıksal ispatları',
+      subtitle:
+        'Pisagor, iki kare farkı, üçgen açıları ve Gauss toplamının görsel mantıksal ispatları',
       onClick: () => setIsProofsOpen(true),
       icon: Compass,
       gradient: 'from-brand-secondary to-brand-secondary',
@@ -236,7 +251,8 @@ export default function ProgramsHubPage() {
     {
       id: 'authoring-workshop',
       title: 'Öğrenci Soru Yazarlık Atölyesi',
-      subtitle: 'Bloom yaratma basamağı: Kendi sorunu yaz, çeldiricilerini kurgula ve havuza katıl',
+      subtitle:
+        'Bloom yaratma basamağı: Kendi sorunu yaz, çeldiricilerini kurgula ve havuza katıl',
       onClick: () => setIsAuthoringOpen(true),
       icon: PenTool,
       gradient: 'from-brand-secondary to-brand-secondary',
@@ -250,7 +266,8 @@ export default function ProgramsHubPage() {
     {
       id: 'feynman-voice',
       title: '60 Saniyede Feynman Anlatımı',
-      subtitle: '«Bir konuyu basitçe anlatabiliyorsan anlamışsındır» sesli anlatım vitrini',
+      subtitle:
+        '«Bir konuyu basitçe anlatabiliyorsan anlamışsındır» sesli anlatım vitrini',
       onClick: () => setIsFeynmanOpen(true),
       icon: Mic,
       gradient: 'from-brand-danger to-brand-danger',
@@ -285,9 +302,7 @@ export default function ProgramsHubPage() {
           </button>
         </div>
 
-        <section
-          className="rounded-3xl border border-sky-200/75 dark:border-sky-400/20 bg-surface-1/75 p-6 sm:p-8 shadow-[0_20px_54px_-18px_rgba(14,116,144,0.16),inset_0_1px_0_rgba(255,255,255,0.88)] dark:shadow-[0_24px_60px_-18px_rgba(2,6,23,0.72),inset_0_1px_0_rgba(255,255,255,0.08)] backdrop-blur-2xl relative overflow-hidden"
-        >
+        <section className="rounded-3xl border border-sky-200/75 dark:border-sky-400/20 bg-surface-1/75 p-6 sm:p-8 shadow-[0_20px_54px_-18px_rgba(14,116,144,0.16),inset_0_1px_0_rgba(255,255,255,0.88)] dark:shadow-[0_24px_60px_-18px_rgba(2,6,23,0.72),inset_0_1px_0_rgba(255,255,255,0.08)] backdrop-blur-2xl relative overflow-hidden">
           <div
             aria-hidden="true"
             className="pointer-events-none absolute inset-x-0 top-0 h-[2.5px] bg-gradient-to-r from-sky-500 via-indigo-500 to-emerald-500"
@@ -339,9 +354,7 @@ export default function ProgramsHubPage() {
                   <h2 className="text-lg font-bold sm:text-xl text-primary group-hover:text-accent-fg transition-colors">
                     {tool.title}
                   </h2>
-                  <p className="mt-2 text-sm text-secondary">
-                    {tool.subtitle}
-                  </p>
+                  <p className="mt-2 text-sm text-secondary">{tool.subtitle}</p>
 
                   <ul className="mt-4 space-y-2">
                     {tool.bullets.map((bullet) => (

@@ -113,26 +113,34 @@ const GRADE_STYLES: Record<
   }
 > = {
   5: {
-    badge: 'bg-sky-100 text-sky-950 border-sky-300 dark:bg-sky-950/80 dark:text-sky-200 dark:border-sky-700',
-    pillActive: 'bg-sky-100 text-sky-950 border-sky-400 dark:bg-sky-950/80 dark:text-sky-200 dark:border-sky-600',
+    badge:
+      'bg-sky-100 text-sky-950 border-sky-300 dark:bg-sky-950/80 dark:text-sky-200 dark:border-sky-700',
+    pillActive:
+      'bg-sky-100 text-sky-950 border-sky-600 dark:bg-sky-950/80 dark:text-sky-200 dark:border-sky-400',
     pillDot: 'bg-sky-600 dark:bg-sky-400',
     label: '5. Sınıf',
   },
   6: {
-    badge: 'bg-amber-100 text-amber-950 border-amber-300 dark:bg-amber-950/80 dark:text-amber-200 dark:border-amber-700',
-    pillActive: 'bg-amber-100 text-amber-950 border-amber-400 dark:bg-amber-950/80 dark:text-amber-200 dark:border-amber-600',
+    badge:
+      'bg-amber-100 text-amber-950 border-amber-300 dark:bg-amber-950/80 dark:text-amber-200 dark:border-amber-700',
+    pillActive:
+      'bg-amber-100 text-amber-950 border-amber-700 dark:bg-amber-950/80 dark:text-amber-200 dark:border-amber-400',
     pillDot: 'bg-amber-600 dark:bg-amber-400',
     label: '6. Sınıf',
   },
   7: {
-    badge: 'bg-violet-100 text-violet-950 border-violet-300 dark:bg-violet-950/80 dark:text-violet-200 dark:border-violet-700',
-    pillActive: 'bg-violet-100 text-violet-950 border-violet-400 dark:bg-violet-950/80 dark:text-violet-200 dark:border-violet-600',
+    badge:
+      'bg-violet-100 text-violet-950 border-violet-300 dark:bg-violet-950/80 dark:text-violet-200 dark:border-violet-700',
+    pillActive:
+      'bg-violet-100 text-violet-950 border-violet-600 dark:bg-violet-950/80 dark:text-violet-200 dark:border-violet-400',
     pillDot: 'bg-violet-600 dark:bg-violet-400',
     label: '7. Sınıf',
   },
   8: {
-    badge: 'bg-emerald-100 text-emerald-950 border-emerald-300 dark:bg-emerald-950/80 dark:text-emerald-200 dark:border-emerald-700',
-    pillActive: 'bg-emerald-100 text-emerald-950 border-emerald-400 dark:bg-emerald-950/80 dark:text-emerald-200 dark:border-emerald-600',
+    badge:
+      'bg-emerald-100 text-emerald-950 border-emerald-300 dark:bg-emerald-950/80 dark:text-emerald-200 dark:border-emerald-700',
+    pillActive:
+      'bg-emerald-100 text-emerald-950 border-emerald-700 dark:bg-emerald-950/80 dark:text-emerald-200 dark:border-emerald-400',
     pillDot: 'bg-emerald-600 dark:bg-emerald-400',
     label: '8. Sınıf (LGS)',
   },
@@ -142,37 +150,43 @@ const CARD_ACCENTS = [
   {
     card: 'border-sky-200/80 bg-surface-1/80 dark:border-sky-400/20 shadow-[inset_0_1px_0_rgba(255,255,255,0.9),0_12px_28px_-10px_rgba(14,165,233,0.15)] dark:shadow-[inset_0_1px_0_rgba(255,255,255,0.08),0_16px_36px_-12px_rgba(2,6,23,0.5)] hover:border-sky-400/80 hover:-translate-y-1 transition-all duration-300',
     topBar: 'bg-gradient-to-r from-sky-400 via-cyan-400 to-blue-500',
-    outcome: 'border-sky-200/80 bg-sky-50/80 text-sky-950 dark:border-sky-800/70 dark:bg-sky-950/65 dark:text-sky-200 backdrop-blur-md',
+    outcome:
+      'border-sky-200/80 bg-sky-50/80 text-sky-950 dark:border-sky-800/70 dark:bg-sky-950/65 dark:text-sky-200 backdrop-blur-md',
     divider: 'border-sky-200/70 dark:border-sky-800/50',
   },
   {
     card: 'border-emerald-200/80 bg-surface-1/80 dark:border-emerald-400/20 shadow-[inset_0_1px_0_rgba(255,255,255,0.9),0_12px_28px_-10px_rgba(16,185,129,0.15)] dark:shadow-[inset_0_1px_0_rgba(255,255,255,0.08),0_16px_36px_-12px_rgba(2,6,23,0.5)] hover:border-emerald-400/80 hover:-translate-y-1 transition-all duration-300',
     topBar: 'bg-gradient-to-r from-emerald-400 via-teal-400 to-cyan-500',
-    outcome: 'border-emerald-200/80 bg-emerald-50/80 text-emerald-950 dark:border-emerald-800/70 dark:bg-emerald-950/65 dark:text-emerald-200 backdrop-blur-md',
+    outcome:
+      'border-emerald-200/80 bg-emerald-50/80 text-emerald-950 dark:border-emerald-800/70 dark:bg-emerald-950/65 dark:text-emerald-200 backdrop-blur-md',
     divider: 'border-emerald-200/70 dark:border-emerald-800/50',
   },
   {
     card: 'border-violet-200/80 bg-surface-1/80 dark:border-violet-400/20 shadow-[inset_0_1px_0_rgba(255,255,255,0.9),0_12px_28px_-10px_rgba(139,92,246,0.15)] dark:shadow-[inset_0_1px_0_rgba(255,255,255,0.08),0_16px_36px_-12px_rgba(2,6,23,0.5)] hover:border-violet-400/80 hover:-translate-y-1 transition-all duration-300',
     topBar: 'bg-gradient-to-r from-violet-400 via-purple-400 to-indigo-500',
-    outcome: 'border-violet-200/80 bg-violet-50/80 text-violet-950 dark:border-violet-800/70 dark:bg-violet-950/65 dark:text-violet-200 backdrop-blur-md',
+    outcome:
+      'border-violet-200/80 bg-violet-50/80 text-violet-950 dark:border-violet-800/70 dark:bg-violet-950/65 dark:text-violet-200 backdrop-blur-md',
     divider: 'border-violet-200/70 dark:border-violet-800/50',
   },
   {
     card: 'border-amber-200/80 bg-surface-1/80 dark:border-amber-400/20 shadow-[inset_0_1px_0_rgba(255,255,255,0.9),0_12px_28px_-10px_rgba(245,158,11,0.15)] dark:shadow-[inset_0_1px_0_rgba(255,255,255,0.08),0_16px_36px_-12px_rgba(2,6,23,0.5)] hover:border-amber-400/80 hover:-translate-y-1 transition-all duration-300',
     topBar: 'bg-gradient-to-r from-amber-400 via-orange-400 to-yellow-500',
-    outcome: 'border-amber-200/80 bg-amber-50/80 text-amber-950 dark:border-amber-800/70 dark:bg-amber-950/65 dark:text-amber-200 backdrop-blur-md',
+    outcome:
+      'border-amber-200/80 bg-amber-50/80 text-amber-950 dark:border-amber-800/70 dark:bg-amber-950/65 dark:text-amber-200 backdrop-blur-md',
     divider: 'border-amber-200/70 dark:border-amber-800/50',
   },
   {
     card: 'border-rose-200/80 bg-surface-1/80 dark:border-rose-400/20 shadow-[inset_0_1px_0_rgba(255,255,255,0.9),0_12px_28px_-10px_rgba(244,63,94,0.15)] dark:shadow-[inset_0_1px_0_rgba(255,255,255,0.08),0_16px_36px_-12px_rgba(2,6,23,0.5)] hover:border-rose-400/80 hover:-translate-y-1 transition-all duration-300',
     topBar: 'bg-gradient-to-r from-rose-400 via-pink-400 to-purple-500',
-    outcome: 'border-rose-200/80 bg-rose-50/80 text-rose-950 dark:border-rose-800/70 dark:bg-rose-950/65 dark:text-rose-200 backdrop-blur-md',
+    outcome:
+      'border-rose-200/80 bg-rose-50/80 text-rose-950 dark:border-rose-800/70 dark:bg-rose-950/65 dark:text-rose-200 backdrop-blur-md',
     divider: 'border-rose-200/70 dark:border-rose-800/50',
   },
   {
     card: 'border-indigo-200/80 bg-surface-1/80 dark:border-indigo-400/20 shadow-[inset_0_1px_0_rgba(255,255,255,0.9),0_12px_28px_-10px_rgba(99,102,241,0.15)] dark:shadow-[inset_0_1px_0_rgba(255,255,255,0.08),0_16px_36px_-12px_rgba(2,6,23,0.5)] hover:border-indigo-400/80 hover:-translate-y-1 transition-all duration-300',
     topBar: 'bg-gradient-to-r from-indigo-400 via-sky-400 to-cyan-500',
-    outcome: 'border-indigo-200/80 bg-indigo-50/80 text-indigo-950 dark:border-indigo-800/70 dark:bg-indigo-950/65 dark:text-indigo-200 backdrop-blur-md',
+    outcome:
+      'border-indigo-200/80 bg-indigo-50/80 text-indigo-950 dark:border-indigo-800/70 dark:bg-indigo-950/65 dark:text-indigo-200 backdrop-blur-md',
     divider: 'border-indigo-200/70 dark:border-indigo-800/50',
   },
 ] as const;
@@ -317,7 +331,8 @@ export function HomeRecentDocumentsSection({
             <span>Son Eklenen Yaprak Testler ve Çalışma Kağıtları</span>
           </h2>
           <p className="text-xs sm:text-sm text-secondary font-medium">
-            Öğrenci föylerini hemen indir veya kırmızı kalem el yazısı öğretmen çözümleriyle adım adım incele.
+            Öğrenci föylerini hemen indir veya kırmızı kalem el yazısı öğretmen
+            çözümleriyle adım adım incele.
           </p>
         </div>
 
@@ -337,7 +352,7 @@ export function HomeRecentDocumentsSection({
             }}
             className={`inline-flex items-center gap-1.5 rounded-full px-3.5 py-1.5 text-xs font-bold border transition-all ${
               selectedGrade === 'all'
-                ? 'bg-accent-bg text-accent-fg border-sky-300/50 dark:border-sky-400/30 shadow-xs'
+                ? 'bg-accent-bg text-accent-fg border-sky-600 dark:border-sky-400 shadow-xs'
                 : 'bg-surface-1/90 text-secondary border-default hover:border-strong'
             }`}
           >
@@ -365,9 +380,7 @@ export function HomeRecentDocumentsSection({
                     : 'bg-surface-1/90 text-secondary border-default hover:border-strong'
                 }`}
               >
-                <span
-                  className={`h-2 w-2 rounded-full ${style.pillDot}`}
-                />
+                <span className={`h-2 w-2 rounded-full ${style.pillDot}`} />
                 <span>{style.label}</span>
                 {isUserGrade && (
                   <span className="ml-0.5 rounded-full bg-surface-3 px-1.5 py-0.2 text-xs font-black">
@@ -520,9 +533,7 @@ export function HomeRecentDocumentsSection({
                         <Calendar className="h-3.5 w-3.5 shrink-0 text-sky-700 dark:text-sky-400" />
                         <span>{formatContentDate(doc.created_at)}</span>
                       </span>
-                      <span className="text-primary font-bold">
-                        Uğur Hoca
-                      </span>
+                      <span className="text-primary font-bold">Uğur Hoca</span>
                     </div>
 
                     <div className="grid grid-cols-1 sm:grid-cols-3 gap-2.5">
@@ -546,17 +557,18 @@ export function HomeRecentDocumentsSection({
                         </a>
                       )}
 
-                      {doc.solution_url && doc.solution_url !== doc.file_url && (
-                        <a
-                          href={doc.solution_url}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className="inline-flex items-center justify-center gap-1.5 rounded-2xl bg-gradient-to-r from-emerald-700 to-teal-800 text-[var(--on-brand)] dark:from-emerald-400 dark:to-teal-400 dark:text-slate-950 hover:opacity-95 border border-transparent px-3.5 py-2.5 text-xs font-bold shadow-md shadow-emerald-600/20 transition-all"
-                        >
-                          <FileCheck2 className="h-4 w-4 shrink-0" />
-                          <span>Çözüm PDF</span>
-                        </a>
-                      )}
+                      {doc.solution_url &&
+                        doc.solution_url !== doc.file_url && (
+                          <a
+                            href={doc.solution_url}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="inline-flex items-center justify-center gap-1.5 rounded-2xl bg-gradient-to-r from-emerald-700 to-teal-800 text-[var(--on-brand)] dark:from-emerald-400 dark:to-teal-400 dark:text-slate-950 hover:opacity-95 border border-transparent px-3.5 py-2.5 text-xs font-bold shadow-md shadow-emerald-600/20 transition-all"
+                          >
+                            <FileCheck2 className="h-4 w-4 shrink-0" />
+                            <span>Çözüm PDF</span>
+                          </a>
+                        )}
                     </div>
                   </div>
                 </div>
@@ -569,7 +581,8 @@ export function HomeRecentDocumentsSection({
       {/* Alt Tümünü Gör Bağlantısı */}
       <div className="mt-6 pt-5 border-t border-subtle flex flex-col sm:flex-row items-center justify-between gap-3">
         <p className="text-xs sm:text-sm font-semibold text-secondary">
-          Tüm sınıflara ait yaprak testler, çalışma kağıtları ve el yazısı çözümlü öğretmen föyleri kütüphanede.
+          Tüm sınıflara ait yaprak testler, çalışma kağıtları ve el yazısı
+          çözümlü öğretmen föyleri kütüphanede.
         </p>
         <SafeLink
           href={allLibraryHref}

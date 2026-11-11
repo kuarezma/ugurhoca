@@ -55,7 +55,9 @@ export function HomeHowItWorksSection() {
               >
                 {index + 1}
               </span>
-              <h3 className="font-display text-base font-bold text-primary">{step.title}</h3>
+              <h3 className="font-display text-base font-bold text-primary">
+                {step.title}
+              </h3>
               <p className="mt-2 text-xs sm:text-sm leading-relaxed text-secondary font-medium">
                 {step.description}
               </p>

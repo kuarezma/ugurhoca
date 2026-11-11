@@ -27,7 +27,7 @@ export function HomeExamCountdownSection({
             onClick={() => setIsMobileOpen((prev) => !prev)}
             aria-expanded={isMobileOpen}
             aria-controls="mobile-countdown-content"
-            className="relative w-full flex items-center justify-between overflow-hidden rounded-2xl border border-sky-200/75 dark:border-sky-400/20 bg-surface-1/75 px-4 py-3 backdrop-blur-2xl shadow-[0_10px_28px_-14px_rgba(14,116,144,0.16),inset_0_1px_0_rgba(255,255,255,0.85)] dark:shadow-[0_14px_32px_-14px_rgba(2,6,23,0.6),inset_0_1px_0_rgba(255,255,255,0.08)] text-left transition-all active:scale-[0.99]"
+            className="relative w-full flex items-center justify-between overflow-hidden rounded-2xl border border-default bg-surface-1/75 px-4 py-3 backdrop-blur-2xl shadow-[0_10px_28px_-14px_rgba(14,116,144,0.16),inset_0_1px_0_rgba(255,255,255,0.85)] dark:shadow-[0_14px_32px_-14px_rgba(2,6,23,0.6),inset_0_1px_0_rgba(255,255,255,0.08)] text-left transition-all active:scale-[0.99]"
           >
             <span
               aria-hidden="true"
@@ -42,7 +42,9 @@ export function HomeExamCountdownSection({
                   ⏱️ Sınav Sayaçları (LGS & YKS)
                 </div>
                 <div className="text-xs text-secondary font-semibold truncate">
-                  {isMobileOpen ? 'Sayaçları gizlemek için dokunun' : 'Kalan süre ve hedef netleri gör'}
+                  {isMobileOpen
+                    ? 'Sayaçları gizlemek için dokunun'
+                    : 'Kalan süre ve hedef netleri gör'}
                 </div>
               </div>
             </div>
@@ -54,7 +56,10 @@ export function HomeExamCountdownSection({
           </button>
 
           {isMobileOpen && (
-            <div id="mobile-countdown-content" className="mt-2.5 space-y-2 animate-fade-in">
+            <div
+              id="mobile-countdown-content"
+              className="mt-2.5 space-y-2 animate-fade-in"
+            >
               {exams.map((exam) => (
                 <ExamCountdown
                   key={exam.id}

@@ -365,36 +365,28 @@ export function SiteBackground() {
         {/* Küre 1: Sol Üst / Kristal Gök Mavisi & Cyan Kırılımı */}
         <div
           className={`aurora-orb aurora-orb-1 -top-24 -left-24 h-[36rem] w-[36rem] sm:h-[52rem] sm:w-[52rem] ${
-            isLight
-              ? 'bg-sky-400/25'
-              : 'bg-cyan-400/[0.22]'
+            isLight ? 'bg-sky-400/25' : 'bg-cyan-400/[0.22]'
           }`}
         />
 
         {/* Küre 2: Sağ Üst / Zümrüt & Turkuaz Kristal Prizma */}
         <div
           className={`aurora-orb aurora-orb-2 -top-20 -right-20 h-[34rem] w-[34rem] sm:h-[48rem] sm:w-[48rem] ${
-            isLight
-              ? 'bg-emerald-400/[0.20]'
-              : 'bg-teal-400/[0.18]'
+            isLight ? 'bg-emerald-400/[0.20]' : 'bg-teal-400/[0.18]'
           }`}
         />
 
         {/* Küre 3: Orta-Alt / İris & İndigo Derinlik Işığı */}
         <div
           className={`aurora-orb aurora-orb-3 top-1/2 left-1/3 -translate-x-1/2 h-[32rem] w-[32rem] sm:h-[46rem] sm:w-[46rem] ${
-            isLight
-              ? 'bg-indigo-400/20'
-              : 'bg-violet-400/[0.18]'
+            isLight ? 'bg-indigo-400/20' : 'bg-violet-400/[0.18]'
           }`}
         />
 
         {/* Küre 4: Sağ Alt / Prizmatik Safir & Spektral Fuşya */}
         <div
           className={`aurora-orb aurora-orb-4 -bottom-24 -right-16 h-[30rem] w-[30rem] sm:h-[42rem] sm:w-[42rem] ${
-            isLight
-              ? 'bg-fuchsia-400/15'
-              : 'bg-sky-400/[0.16]'
+            isLight ? 'bg-fuchsia-400/15' : 'bg-sky-400/[0.16]'
           }`}
         />
 
@@ -410,16 +402,16 @@ export function SiteBackground() {
                   ? 'radial-gradient(circle, rgba(37, 99, 235, 0.22) 0%, rgba(6, 182, 212, 0.12) 45%, transparent 70%)'
                   : 'radial-gradient(circle, rgba(59, 130, 246, 0.25) 0%, rgba(6, 182, 212, 0.12) 45%, transparent 70%)'
                 : palette === 'emerald'
-                ? isLight
-                  ? 'radial-gradient(circle, rgba(16, 185, 129, 0.22) 0%, rgba(20, 184, 166, 0.12) 45%, transparent 70%)'
-                  : 'radial-gradient(circle, rgba(16, 185, 129, 0.25) 0%, rgba(52, 211, 153, 0.12) 45%, transparent 70%)'
-                : palette === 'sunset'
-                ? isLight
-                  ? 'radial-gradient(circle, rgba(245, 158, 11, 0.22) 0%, rgba(244, 63, 94, 0.12) 45%, transparent 70%)'
-                  : 'radial-gradient(circle, rgba(245, 158, 11, 0.25) 0%, rgba(244, 63, 94, 0.12) 45%, transparent 70%)'
-                : isLight
-                ? 'radial-gradient(circle, rgba(99, 102, 241, 0.22) 0%, rgba(236, 72, 153, 0.12) 45%, transparent 70%)'
-                : 'radial-gradient(circle, rgba(139, 92, 246, 0.25) 0%, rgba(6, 182, 212, 0.12) 45%, transparent 70%)',
+                  ? isLight
+                    ? 'radial-gradient(circle, rgba(16, 185, 129, 0.22) 0%, rgba(20, 184, 166, 0.12) 45%, transparent 70%)'
+                    : 'radial-gradient(circle, rgba(16, 185, 129, 0.25) 0%, rgba(52, 211, 153, 0.12) 45%, transparent 70%)'
+                  : palette === 'sunset'
+                    ? isLight
+                      ? 'radial-gradient(circle, rgba(245, 158, 11, 0.22) 0%, rgba(244, 63, 94, 0.12) 45%, transparent 70%)'
+                      : 'radial-gradient(circle, rgba(245, 158, 11, 0.25) 0%, rgba(244, 63, 94, 0.12) 45%, transparent 70%)'
+                    : isLight
+                      ? 'radial-gradient(circle, rgba(99, 102, 241, 0.22) 0%, rgba(236, 72, 153, 0.12) 45%, transparent 70%)'
+                      : 'radial-gradient(circle, rgba(139, 92, 246, 0.25) 0%, rgba(6, 182, 212, 0.12) 45%, transparent 70%)',
           }}
         />
       </div>

@@ -1,10 +1,13 @@
-"use client";
+'use client';
 
-import Link from "next/link";
-import { useEffect, useMemo, useState } from "react";
-import { BookOpen, Clock, Clock3, Target } from "lucide-react";
-import type { FeaturedExam } from "@/lib/examDates";
-import { getSavedExamTrials, type ExamHistoryType } from "@/lib/examHistoryStorage";
+import Link from 'next/link';
+import { useEffect, useMemo, useState } from 'react';
+import { BookOpen, Clock, Clock3, Target } from 'lucide-react';
+import type { FeaturedExam } from '@/lib/examDates';
+import {
+  getSavedExamTrials,
+  type ExamHistoryType,
+} from '@/lib/examHistoryStorage';
 
 type ExamCountdownProps = {
   exam: FeaturedExam;
@@ -34,7 +37,7 @@ function getTimeLeft(targetDate: string): TimeLeft {
 }
 
 function formatUnit(value: number) {
-  return value.toString().padStart(2, "0");
+  return value.toString().padStart(2, '0');
 }
 
 export function ExamCountdown({
@@ -48,13 +51,18 @@ export function ExamCountdown({
 
   const examType: ExamHistoryType = exam.id.includes('lgs') ? 'lgs' : 'yks';
   const maxNet = exam.id.includes('lgs') ? 20 : 40;
-  const targetOptions = exam.id.includes('lgs') ? [12, 15, 17, 18, 20] : [20, 25, 30, 35, 40];
-  const trialsTargetOptions = examType === 'lgs' ? [10, 15, 20, 25, 30] : [15, 20, 25, 35, 50];
+  const targetOptions = exam.id.includes('lgs')
+    ? [12, 15, 17, 18, 20]
+    : [20, 25, 30, 35, 40];
+  const trialsTargetOptions =
+    examType === 'lgs' ? [10, 15, 20, 25, 30] : [15, 20, 25, 35, 50];
 
   const [completedTrialsCount, setCompletedTrialsCount] = useState<number>(0);
   const [targetTrials, setTargetTrials] = useState<number>(() => {
     if (typeof window !== 'undefined') {
-      const saved = localStorage.getItem(`ugurhoca_exam_trials_target_${examType}`);
+      const saved = localStorage.getItem(
+        `ugurhoca_exam_trials_target_${examType}`,
+      );
       if (saved) {
         const val = parseInt(saved, 10);
         if (!isNaN(val) && val > 0) return val;
@@ -104,17 +112,29 @@ export function ExamCountdown({
     setTargetTrials(val);
     setIsEditingTrialsTarget(false);
     if (typeof window !== 'undefined') {
-      localStorage.setItem(`ugurhoca_exam_trials_target_${examType}`, String(val));
+      localStorage.setItem(
+        `ugurhoca_exam_trials_target_${examType}`,
+        String(val),
+      );
     }
   };
 
   const isTargetGradeExam = useMemo(() => {
     if (!userGrade) return false;
-    const numGrade = typeof userGrade === 'string' ? parseInt(userGrade, 10) : userGrade;
-    if (exam.id.includes('lgs') && !isNaN(numGrade) && numGrade >= 5 && numGrade <= 8) return true;
+    const numGrade =
+      typeof userGrade === 'string' ? parseInt(userGrade, 10) : userGrade;
+    if (
+      exam.id.includes('lgs') &&
+      !isNaN(numGrade) &&
+      numGrade >= 5 &&
+      numGrade <= 8
+    )
+      return true;
     if (
       exam.id.includes('yks') &&
-      (userGrade === 'Mezun' || userGrade === 'mezun' || (!isNaN(numGrade) && numGrade >= 9))
+      (userGrade === 'Mezun' ||
+        userGrade === 'mezun' ||
+        (!isNaN(numGrade) && numGrade >= 9))
     ) {
       return true;
     }
@@ -132,18 +152,18 @@ export function ExamCountdown({
 
   const status = useMemo(() => {
     if (!timeLeft) {
-      return "Hazırlık zamanı";
+      return 'Hazırlık zamanı';
     }
 
     if (timeLeft.total <= 0) {
-      return "Sınav gerçekleşti";
+      return 'Sınav gerçekleşti';
     }
 
     if (timeLeft.days === 0) {
-      return "Bugün!";
+      return 'Bugün!';
     }
 
-    return "Hazırlık zamanı";
+    return 'Hazırlık zamanı';
   }, [timeLeft]);
 
   const remainingWeeks = useMemo(() => {
@@ -151,26 +171,33 @@ export function ExamCountdown({
     return Math.max(1, Math.ceil(timeLeft.days / 7));
   }, [timeLeft]);
 
-  const remainingTrialsNeeded = Math.max(0, targetTrials - completedTrialsCount);
-  const weeklyPace = remainingWeeks > 0 ? (remainingTrialsNeeded / remainingWeeks).toFixed(1) : "0";
-  const trialsProgressPct = Math.min(100, Math.round((completedTrialsCount / targetTrials) * 100));
+  const remainingTrialsNeeded = Math.max(
+    0,
+    targetTrials - completedTrialsCount,
+  );
+  const weeklyPace =
+    remainingWeeks > 0
+      ? (remainingTrialsNeeded / remainingWeeks).toFixed(1)
+      : '0';
+  const trialsProgressPct = Math.min(
+    100,
+    Math.round((completedTrialsCount / targetTrials) * 100),
+  );
 
   const countdownItems = timeLeft
     ? [
-        { label: "Gün", value: formatUnit(timeLeft.days) },
-        { label: "Saat", value: formatUnit(timeLeft.hours) },
-        { label: "Dakika", value: formatUnit(timeLeft.minutes) },
+        { label: 'Gün', value: formatUnit(timeLeft.days) },
+        { label: 'Saat', value: formatUnit(timeLeft.hours) },
+        { label: 'Dakika', value: formatUnit(timeLeft.minutes) },
       ]
     : [
-        { label: "Gün", value: "--" },
-        { label: "Saat", value: "--" },
-        { label: "Dakika", value: "--" },
+        { label: 'Gün', value: '--' },
+        { label: 'Saat', value: '--' },
+        { label: 'Dakika', value: '--' },
       ];
 
   return (
-    <div
-      className="exam-countdown relative overflow-hidden rounded-3xl border border-sky-200/75 dark:border-sky-400/20 bg-surface-1/75 backdrop-blur-2xl shadow-[inset_0_1px_0_rgba(255,255,255,0.88),0_14px_34px_-10px_rgba(14,165,233,0.12)] dark:shadow-[inset_0_1px_0_rgba(255,255,255,0.12),0_18px_42px_-12px_rgba(2,6,23,0.6)] p-4 sm:p-5 font-sans transition-all"
-    >
+    <div className="exam-countdown relative overflow-hidden rounded-3xl border border-sky-200/75 dark:border-sky-400/20 bg-surface-1/75 backdrop-blur-2xl shadow-[inset_0_1px_0_rgba(255,255,255,0.88),0_14px_34px_-10px_rgba(14,165,233,0.12)] dark:shadow-[inset_0_1px_0_rgba(255,255,255,0.12),0_18px_42px_-12px_rgba(2,6,23,0.6)] p-4 sm:p-5 font-sans transition-all">
       <div
         aria-hidden="true"
         className="pointer-events-none absolute inset-x-0 top-0 h-[2px] bg-gradient-to-r from-sky-400 via-indigo-400 to-emerald-400 opacity-85"
@@ -179,21 +206,15 @@ export function ExamCountdown({
       <div className="relative flex items-start justify-between gap-3">
         <div className="min-w-0">
           <div className="mb-1.5 flex flex-wrap items-center gap-2">
-            <span
-              className="inline-flex items-center gap-1 rounded-full px-2.5 py-0.5 text-xs font-bold uppercase tracking-wider bg-surface-2 text-secondary border border-subtle"
-            >
+            <span className="inline-flex items-center gap-1 rounded-full px-2.5 py-0.5 text-xs font-bold uppercase tracking-wider bg-surface-2 text-secondary border border-subtle">
               <Clock3 className="w-3 h-3" />
               {exam.provider}
             </span>
-            <span
-              className="inline-flex items-center rounded-full bg-accent-bg text-accent-fg px-2.5 py-0.5 text-xs font-bold"
-            >
+            <span className="inline-flex items-center rounded-full bg-accent-bg text-accent-fg px-2.5 py-0.5 text-xs font-bold">
               {status}
             </span>
             {remainingWeeks > 0 && (
-              <span
-                className="inline-flex items-center gap-1 rounded-full px-2.5 py-0.5 text-xs font-bold bg-amber-50 text-amber-800 border border-amber-200 dark:bg-amber-950/70 dark:text-amber-200 dark:border-amber-700/60"
-              >
+              <span className="inline-flex items-center gap-1 rounded-full px-2.5 py-0.5 text-xs font-bold bg-amber-50 text-amber-800 border border-amber-200 dark:bg-amber-950/70 dark:text-amber-200 dark:border-amber-700/60">
                 ⏳ {remainingWeeks} Hafta Kaldı
               </span>
             )}
@@ -203,16 +224,12 @@ export function ExamCountdown({
               </span>
             )}
           </div>
-          <h2
-            className="truncate font-display text-base sm:text-lg font-bold text-primary"
-          >
+          <h2 className="truncate font-display text-base sm:text-lg font-bold text-primary">
             {exam.title}
           </h2>
         </div>
 
-        <div
-          className="flex h-10 w-10 shrink-0 items-center justify-center rounded-2xl bg-accent-bg text-accent-fg"
-        >
+        <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-2xl bg-accent-bg text-accent-fg">
           <Clock className="h-5 w-5" />
         </div>
       </div>
@@ -224,14 +241,10 @@ export function ExamCountdown({
             key={item.label}
             className="rounded-2xl border border-sky-200/70 dark:border-sky-400/20 bg-surface-2/75 backdrop-blur-md shadow-[inset_0_1px_0_rgba(255,255,255,0.75)] dark:shadow-[inset_0_1px_0_rgba(255,255,255,0.08)] p-2.5 sm:p-3 text-center transition-transform hover:-translate-y-0.5"
           >
-            <div
-              className="font-display font-bold tabular-nums text-primary text-xl sm:text-3xl leading-none"
-            >
+            <div className="font-display font-bold tabular-nums text-primary text-xl sm:text-3xl leading-none">
               {item.value}
             </div>
-            <div
-              className="mt-1.5 text-xs font-bold uppercase tracking-wider text-secondary"
-            >
+            <div className="mt-1.5 text-xs font-bold uppercase tracking-wider text-secondary">
               {item.label}
             </div>
           </div>
@@ -239,14 +252,10 @@ export function ExamCountdown({
       </div>
 
       {/* Alt Bilgi & Takvim Kutusu */}
-      <div
-        className="relative mt-3.5 rounded-2xl border border-subtle bg-surface-2 text-primary p-3"
-      >
+      <div className="relative mt-3.5 rounded-2xl border border-subtle bg-surface-2 text-primary p-3">
         <div className="flex flex-wrap sm:flex-nowrap items-center justify-between gap-2">
           <div className="min-w-0 flex-1">
-            <div
-              className="text-xs font-bold uppercase tracking-wider text-indigo-700 dark:text-indigo-400"
-            >
+            <div className="text-xs font-bold uppercase tracking-wider text-indigo-700 dark:text-indigo-400">
               Sınav Tarihi
             </div>
             <div className="mt-0.5 truncate text-xs sm:text-sm font-semibold">
@@ -258,7 +267,9 @@ export function ExamCountdown({
             onOpenCalculator ? (
               <button
                 type="button"
-                onClick={() => onOpenCalculator(exam.id.includes('lgs') ? 'lgs' : 'yks')}
+                onClick={() =>
+                  onOpenCalculator(exam.id.includes('lgs') ? 'lgs' : 'yks')
+                }
                 className="w-full sm:w-auto justify-center shrink-0 inline-flex min-h-[38px] items-center gap-1.5 rounded-xl px-3 py-1.5 text-xs font-bold transition-all bg-[var(--accent-brand)] text-[var(--on-brand)] hover:opacity-90"
               >
                 Net & Puan Hesapla →
@@ -281,7 +292,9 @@ export function ExamCountdown({
                 key={item.label}
                 className="rounded-lg px-2 py-0.5 text-xs font-semibold bg-surface-1 text-secondary shadow-xs border border-subtle"
               >
-                <span className="font-bold text-indigo-700 dark:text-indigo-300">{item.label}:</span> {' '}
+                <span className="font-bold text-indigo-700 dark:text-indigo-300">
+                  {item.label}:
+                </span>{' '}
                 {item.dateLabel}
               </div>
             ))}
@@ -305,7 +318,11 @@ export function ExamCountdown({
               onClick={() => setIsEditingTarget((p) => !p)}
               className="shrink-0 text-xs font-semibold text-indigo-600 dark:text-indigo-400 hover:underline"
             >
-              {isEditingTarget ? 'Kapat' : targetNet ? 'Düzenle' : 'Hedef Belirle'}
+              {isEditingTarget
+                ? 'Kapat'
+                : targetNet
+                  ? 'Düzenle'
+                  : 'Hedef Belirle'}
             </button>
           </div>
 
@@ -347,7 +364,11 @@ export function ExamCountdown({
               onClick={() => setIsEditingTrialsTarget((p) => !p)}
               className="shrink-0 text-xs font-semibold text-indigo-600 dark:text-indigo-400 hover:underline"
             >
-              {isEditingTrialsTarget ? 'Kapat' : completedTrialsCount > 0 ? 'Hedef Değiştir' : 'Deneme Hedefi Seç'}
+              {isEditingTrialsTarget
+                ? 'Kapat'
+                : completedTrialsCount > 0
+                  ? 'Hedef Değiştir'
+                  : 'Deneme Hedefi Seç'}
             </button>
           </div>
 
@@ -373,7 +394,9 @@ export function ExamCountdown({
 
           {isEditingTrialsTarget && (
             <div className="mt-2 flex flex-wrap items-center gap-1.5 rounded-xl border border-subtle bg-surface-1 p-2">
-              <span className="text-xs text-secondary mr-1">Deneme Sayısı:</span>
+              <span className="text-xs text-secondary mr-1">
+                Deneme Sayısı:
+              </span>
               {trialsTargetOptions.map((opt) => (
                 <button
                   key={opt}

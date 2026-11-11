@@ -53,7 +53,10 @@ type CardPartProps = HTMLAttributes<HTMLDivElement> & { children?: ReactNode };
 
 export function CardHeader({ className, children, ...rest }: CardPartProps) {
   return (
-    <div className={cn('flex items-start justify-between gap-3 mb-4', className)} {...rest}>
+    <div
+      className={cn('flex items-start justify-between gap-3 mb-4', className)}
+      {...rest}
+    >
       {children}
     </div>
   );
@@ -61,7 +64,10 @@ export function CardHeader({ className, children, ...rest }: CardPartProps) {
 
 export function CardTitle({ className, children, ...rest }: CardPartProps) {
   return (
-    <h3 className={cn('font-display text-xl font-bold text-primary', className)} {...rest}>
+    <h3
+      className={cn('font-display text-xl font-bold text-primary', className)}
+      {...rest}
+    >
       {children}
     </h3>
   );
