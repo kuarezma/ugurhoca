@@ -1,6 +1,6 @@
 import type { AppUser, ContentDocument } from '@/types';
 import type { Dispatch, SetStateAction, RefObject } from 'react';
-import { useEffect, useCallback } from 'react';
+import { useEffect, useCallback, useRef } from 'react';
 
 import { CONTENT_PAGE_SIZE } from '@/features/content/constants';
 
@@ -158,17 +158,26 @@ export function useContentFeed({
     initialType,
   ]);
 
+  const prevGradeFromUrlRef = useRef(worksheetGradeFromUrl);
+  const prevTypeFromUrlRef = useRef(typeFromUrl);
+
   useEffect(() => {
+    if (worksheetGradeFromUrl === prevGradeFromUrlRef.current) {
+      return;
+    }
+    prevGradeFromUrlRef.current = worksheetGradeFromUrl;
     if (worksheetGradeFromUrl) {
       setSelectedGrade(normalizeContentGrade(worksheetGradeFromUrl));
     }
   }, [setSelectedGrade, worksheetGradeFromUrl]);
 
   useEffect(() => {
-    if (typeFromUrl !== selectedType) {
-      setSelectedType(typeFromUrl);
+    if (typeFromUrl === prevTypeFromUrlRef.current) {
+      return;
     }
-  }, [selectedType, setSelectedType, typeFromUrl]);
+    prevTypeFromUrlRef.current = typeFromUrl;
+    setSelectedType(typeFromUrl);
+  }, [setSelectedType, typeFromUrl]);
 
   useEffect(() => {
     if (isWorksheetBrowser) {

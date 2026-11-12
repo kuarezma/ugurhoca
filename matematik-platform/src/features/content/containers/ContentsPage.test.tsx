@@ -272,4 +272,62 @@ describe('ContentsPage static feed and client filters', () => {
     ).toBeInTheDocument();
     expect(screen.queryByRole('alert')).not.toBeInTheDocument();
   });
+
+  it('tür sekmesi değiştiğinde gecikmeli useSearchParams eski türe geri döndürmez', async () => {
+    vi.mocked(resolveContentUser).mockResolvedValue({
+      id: 'admin',
+      grade: 8,
+      isAdmin: true,
+    } as never);
+    render(
+      <ContentsPage
+        initialDocuments={[
+          {
+            id: 'doc-1',
+            title: 'Genel kitap',
+            type: 'kitaplar',
+            grade: [7],
+          },
+        ]}
+        initialTotalCount={1}
+      />,
+    );
+
+    const worksheetTab = await screen.findByRole('button', {
+      name: /Yaprak Testler/i,
+    });
+    fireEvent.click(worksheetTab);
+
+    expect(
+      await screen.findByRole('heading', { name: '5. Sınıf' }),
+    ).toBeInTheDocument();
+    expect(screen.queryByText('Genel kitap')).not.toBeInTheDocument();
+    expect(window.location.search).toContain('type=yaprak-test');
+  });
+
+  it('önizleme modalı açılıp kapandığında ?id= parametresini temizler', async () => {
+    render(
+      <ContentsPage
+        initialDocuments={[
+          {
+            id: 'doc-preview-1',
+            title: 'Önizleme Testi',
+            type: 'kitaplar',
+            grade: [7],
+            file_url: 'https://example.com/test.pdf',
+          },
+        ]}
+        initialTotalCount={1}
+      />,
+    );
+
+    fireEvent.click(await screen.findByRole('button', { name: /Önizle/i }));
+    expect(window.location.search).toContain('id=doc-preview-1');
+
+    const closeBtn = await screen.findByRole('button', { name: 'Kapat' });
+    fireEvent.click(closeBtn);
+    await waitFor(() =>
+      expect(window.location.search).not.toContain('id=doc-preview-1'),
+    );
+  });
 });

@@ -1,5 +1,5 @@
 import Image from 'next/image';
-import Link from 'next/link';
+import { SafeLink as Link } from '@/components/SafeLink';
 import { createElement, memo, useState } from 'react';
 import { motion } from 'framer-motion';
 import {
@@ -338,7 +338,7 @@ function ContentCard({
 
   if (viewMode === 'list') {
     return (
-      <div className="group relative overflow-hidden rounded-3xl border border-sky-200/80 dark:border-sky-400/20 bg-surface-1/85 backdrop-blur-2xl p-5 sm:p-6 shadow-[inset_0_1px_0_rgba(255,255,255,0.9),0_12px_28px_-10px_rgba(14,165,233,0.12)] dark:shadow-[inset_0_1px_0_rgba(255,255,255,0.08),0_16px_36px_-12px_rgba(2,6,23,0.5)] hover:border-sky-400/80 hover:shadow-xl transition-[transform,box-shadow,border-color] duration-200 ease-out defer-card-list">
+      <div className="group relative overflow-hidden rounded-3xl border border-sky-200/80 dark:border-sky-400/20 bg-surface-1/95 p-5 sm:p-6 shadow-[inset_0_1px_0_rgba(255,255,255,0.9),0_12px_28px_-10px_rgba(14,165,233,0.12)] dark:shadow-[inset_0_1px_0_rgba(255,255,255,0.08),0_16px_36px_-12px_rgba(2,6,23,0.5)] hover:border-sky-400/80 hover:shadow-xl transition-[transform,box-shadow,border-color] duration-200 ease-out">
         <div className="absolute top-0 inset-x-0 h-1.5 bg-gradient-to-r from-sky-400 via-indigo-400 to-emerald-400 transition-all duration-200" />
         <div className="space-y-4">
           <div className="flex items-start justify-between gap-3 sm:gap-4">
@@ -441,7 +441,7 @@ function ContentCard({
   }
 
   return (
-    <div className="group relative flex flex-col justify-between overflow-hidden rounded-3xl border border-sky-200/80 dark:border-sky-400/20 bg-surface-1/85 backdrop-blur-2xl shadow-[inset_0_1px_0_rgba(255,255,255,0.9),0_14px_32px_-10px_rgba(14,165,233,0.14)] dark:shadow-[inset_0_1px_0_rgba(255,255,255,0.08),0_18px_40px_-12px_rgba(2,6,23,0.5)] hover:border-sky-400/80 hover:-translate-y-1 transition-[transform,box-shadow,border-color] duration-200 ease-out defer-card">
+    <div className="group relative flex flex-col justify-between overflow-hidden rounded-3xl border border-sky-200/80 dark:border-sky-400/20 bg-surface-1/95 shadow-[inset_0_1px_0_rgba(255,255,255,0.9),0_14px_32px_-10px_rgba(14,165,233,0.14)] dark:shadow-[inset_0_1px_0_rgba(255,255,255,0.08),0_18px_40px_-12px_rgba(2,6,23,0.5)] hover:border-sky-400/80 hover:-translate-y-1 transition-[transform,box-shadow,border-color] duration-200 ease-out">
       <div className="absolute top-0 inset-x-0 h-1.5 bg-gradient-to-r from-sky-400 via-indigo-400 to-emerald-400 transition-all duration-200" />
 
       <div className="pointer-events-none absolute -top-20 -right-20 h-44 w-44 rounded-full bg-gradient-to-br from-sky-400/15 via-indigo-400/10 to-transparent blur-3xl group-hover:scale-125 transition-transform duration-500" />

@@ -1,7 +1,6 @@
 import type { AppUser, ContentDocument } from '@/types';
 import type { Dispatch, SetStateAction, RefObject } from 'react';
 import { useEffect, useCallback } from 'react';
-import { useRouter } from 'next/navigation';
 
 import { trackStudentActivityEvent } from '@/features/analytics/trackActivity';
 
@@ -24,8 +23,6 @@ type UseContentPreviewProps = {
   previewHistoryRef: RefObject<string | null>;
   previewUrlSyncedRef: RefObject<boolean>;
   searchParams: URLSearchParams;
-  pathname: string;
-  router: ReturnType<typeof useRouter>;
   documents: ContentDocument[];
   worksheetDocuments: ContentDocument[];
 };
@@ -41,8 +38,6 @@ export function useContentPreview({
   previewHistoryRef,
   previewUrlSyncedRef,
   searchParams,
-  pathname,
-  router,
   documents,
   worksheetDocuments,
 }: UseContentPreviewProps) {
@@ -147,22 +142,11 @@ export function useContentPreview({
     } catch {
       // ignore
     }
-
-    const params = new URLSearchParams(searchParams.toString());
-    if (params.has('id') || params.has('doc')) {
-      params.delete('id');
-      params.delete('doc');
-      const nextQuery = params.toString();
-      const nextUrl = nextQuery ? `${pathname}?${nextQuery}` : pathname;
-      router.replace(nextUrl, { scroll: false });
-    }
   }, [
     handledRequestedDocIdRef,
-    pathname,
     previewDocRef,
     previewHistoryRef,
     previewUrlSyncedRef,
-    router,
     searchParams,
     setPreviewDoc,
     setShowAnswerKey,

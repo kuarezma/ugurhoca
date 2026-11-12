@@ -3,7 +3,6 @@
 import type { ContentDocument } from '@/types';
 
 import { useState, useEffect, useCallback, Suspense, useRef } from 'react';
-import { usePathname, useRouter } from 'next/navigation';
 
 import { useToast } from '@/components/Toast';
 import RouteLoadingShell from '@/components/RouteLoadingShell';
@@ -49,8 +48,6 @@ function ContentsPageInner({
   initialTotalCount = 0,
   initialType = 'all',
 }: ContentsPageProps) {
-  const router = useRouter();
-  const pathname = usePathname();
   const [searchParams, setSearchParams] = useState(() => new URLSearchParams());
   const handleUrlFiltersChange = useCallback(
     (action: React.SetStateAction<URLSearchParams>) => {
@@ -230,8 +227,6 @@ function ContentsPageInner({
     previewHistoryRef,
     previewUrlSyncedRef,
     searchParams,
-    pathname,
-    router,
     documents,
     worksheetDocuments,
   });

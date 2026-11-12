@@ -1088,15 +1088,10 @@ input[type='number']::-webkit-inner-spin-button {
      HomeFooter tema geçiş gecikmesi yaratıyordu. */
 }
 
-.defer-card {
-  content-visibility: auto;
-  contain-intrinsic-size: 1px 380px;
-}
-
-.defer-card-list {
-  content-visibility: auto;
-  contain-intrinsic-size: 1px 160px;
-}
+/* .defer-card ve .defer-card-list content-visibility: auto kuralları kaldırıldı:
+   Safari WebKit'te backdrop-blur ve admin butonlarının dinamik yükseklik
+   değişimiyle birleşince kartlarda parlama ve boş/iskelet görünümüne
+   düşme titremesine yol açıyordu. */
 
 :where(a[href], button, [role='button'], summary, label) {
   touch-action: manipulation;
