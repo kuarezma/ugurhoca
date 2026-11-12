@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useMemo, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
   ChevronLeft,
@@ -95,30 +95,25 @@ export const LGS_TACTICS: LgsTactic[] = [
 ];
 
 export function LgsTacticsCorner({ isLight = false }: { isLight?: boolean }) {
-  // Select daily tactic deterministically based on day of year
-  const defaultIndex = useMemo(() => {
+  const [currentIndex, setCurrentIndex] = useState(0);
+  const [appliedTactics, setAppliedTactics] = useState<Set<number>>(new Set());
+  const lgsExam = featuredExams.find((e) => e.id.includes('lgs'));
+  const [daysLeft, setDaysLeft] = useState<number | null>(null);
+
+  useEffect(() => {
     const now = new Date();
     const start = new Date(now.getFullYear(), 0, 0);
     const diff = now.getTime() - start.getTime();
     const oneDay = 1000 * 60 * 60 * 24;
     const dayOfYear = Math.floor(diff / oneDay);
-    return dayOfYear % LGS_TACTICS.length;
-  }, []);
+    setCurrentIndex(dayOfYear % LGS_TACTICS.length);
 
-  const [currentIndex, setCurrentIndex] = useState(defaultIndex);
-  const [appliedTactics, setAppliedTactics] = useState<Set<number>>(new Set());
+    if (lgsExam) {
+      const target = new Date(lgsExam.targetDate).getTime();
+      const remaining = Math.max(0, Math.floor((target - Date.now()) / oneDay));
+      setDaysLeft(remaining);
+    }
 
-  // Days left to LGS
-  const lgsExam = featuredExams.find((e) => e.id.includes('lgs'));
-  const daysLeft = useMemo(() => {
-    if (!lgsExam) return null;
-    const target = new Date(lgsExam.targetDate).getTime();
-    const now = Date.now();
-    const diff = target - now;
-    return Math.max(0, Math.floor(diff / (1000 * 60 * 60 * 24)));
-  }, [lgsExam]);
-
-  useEffect(() => {
     try {
       const stored = localStorage.getItem('ugurhoca_applied_tactics');
       if (stored) {
@@ -127,7 +122,7 @@ export function LgsTacticsCorner({ isLight = false }: { isLight?: boolean }) {
     } catch {
       // ignore
     }
-  }, []);
+  }, [lgsExam]);
 
   const toggleApplied = (id: number) => {
     setAppliedTactics((prev) => {

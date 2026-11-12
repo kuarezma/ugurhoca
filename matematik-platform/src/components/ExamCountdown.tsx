@@ -58,18 +58,9 @@ export function ExamCountdown({
     examType === 'lgs' ? [10, 15, 20, 25, 30] : [15, 20, 25, 35, 50];
 
   const [completedTrialsCount, setCompletedTrialsCount] = useState<number>(0);
-  const [targetTrials, setTargetTrials] = useState<number>(() => {
-    if (typeof window !== 'undefined') {
-      const saved = localStorage.getItem(
-        `ugurhoca_exam_trials_target_${examType}`,
-      );
-      if (saved) {
-        const val = parseInt(saved, 10);
-        if (!isNaN(val) && val > 0) return val;
-      }
-    }
-    return examType === 'lgs' ? 15 : 25;
-  });
+  const [targetTrials, setTargetTrials] = useState<number>(() =>
+    examType === 'lgs' ? 15 : 25,
+  );
   const [isEditingTrialsTarget, setIsEditingTrialsTarget] = useState(false);
 
   useEffect(() => {
@@ -88,6 +79,22 @@ export function ExamCountdown({
     const syncTrials = () => {
       const trials = getSavedExamTrials(examType);
       setCompletedTrialsCount(trials.length);
+
+      try {
+        const savedTarget = localStorage.getItem(
+          `ugurhoca_exam_trials_target_${examType}`,
+        );
+        if (savedTarget) {
+          const val = parseInt(savedTarget, 10);
+          if (!isNaN(val) && val > 0) {
+            setTargetTrials(val);
+            return;
+          }
+        }
+      } catch {
+        // ignore storage errors
+      }
+      setTargetTrials(examType === 'lgs' ? 15 : 25);
     };
 
     syncTrials();

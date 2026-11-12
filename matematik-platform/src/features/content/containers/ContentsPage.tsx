@@ -30,6 +30,8 @@ import {
   WorksheetGradeSelection,
   ContentsPageProps,
   EMPTY_CONTENT_DOCUMENTS,
+  buildContentFeedFilterKey,
+  parseWorksheetGradeParam,
 } from './ContentsPage/helpers';
 import { useContentDocumentState } from './ContentsPage/useContentDocumentState';
 import { useContentFeed } from './ContentsPage/useContentFeed';
@@ -120,13 +122,31 @@ function ContentsPageInner({
   const [worksheetOutcomeCatalog, setWorksheetOutcomeCatalog] = useState<
     Record<number, WorksheetCatalogItem[]>
   >(WORKSHEET_OUTCOME_CATALOG);
+  const initialWorksheetGrade = isWorksheetType(initialType)
+    ? parseWorksheetGradeParam(
+        initialGrade === 'all' ? null : String(initialGrade),
+      )
+    : null;
   const [worksheetCatalogLoading, setWorksheetCatalogLoading] = useState(false);
-  const [worksheetLoading, setWorksheetLoading] = useState(false);
+  const [worksheetLoading, setWorksheetLoading] = useState(
+    Boolean(initialWorksheetGrade),
+  );
   const [selectedWorksheetGrade, setSelectedWorksheetGrade] =
-    useState<WorksheetGradeSelection | null>(null);
+    useState<WorksheetGradeSelection | null>(initialWorksheetGrade);
   const [selectedWorksheetOutcome, setSelectedWorksheetOutcome] = useState<
     string | null
   >(null);
+  const [loadedFeedKey, setLoadedFeedKey] = useState<string>(() =>
+    initialLoadSucceeded && !isWorksheetType(initialType)
+      ? buildContentFeedFilterKey({
+          grade: initialGrade,
+          type: initialType,
+          quickFilter: 'all',
+          searchTerm: '',
+          sortBy: 'newest',
+        })
+      : '',
+  );
   const [hasMore, setHasMore] = useState(
     initialDocuments.length < initialTotalCount,
   );
@@ -161,6 +181,7 @@ function ContentsPageInner({
     setDocuments,
     setHasMore,
     setTotalCount,
+    setLoadedFeedKey,
     initialLoadSucceeded,
     initialGrade,
     initialType,
@@ -329,9 +350,22 @@ function ContentsPageInner({
     user,
   });
 
+  const currentFeedKey = buildContentFeedFilterKey({
+    grade: selectedGrade,
+    type: selectedType,
+    quickFilter,
+    searchTerm: debouncedSearch,
+    sortBy,
+  });
+  const isFeedSwitching =
+    !isWorksheetBrowser &&
+    !contentLoadError &&
+    currentFeedKey !== loadedFeedKey;
+
   return (
     <ContentsView
       setSearchParams={handleUrlFiltersChange}
+      isFeedSwitching={isFeedSwitching}
       profileHref={profileHref}
       user={user}
       selectedType={selectedType}

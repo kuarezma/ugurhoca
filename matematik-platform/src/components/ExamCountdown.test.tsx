@@ -1,5 +1,7 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { render, screen, fireEvent, act } from '@testing-library/react';
+import { renderToString } from 'react-dom/server';
+import { hydrateRoot } from 'react-dom/client';
 import { ExamCountdown } from './ExamCountdown';
 import type { FeaturedExam } from '@/lib/examDates';
 import { saveExamTrial } from '@/lib/examHistoryStorage';
@@ -117,5 +119,39 @@ describe('ExamCountdown', () => {
     fireEvent.click(calcBtn);
 
     expect(onOpenCalculator).toHaveBeenCalledWith('lgs');
+  });
+
+  it('hydrates without mismatch even when targetTrials exists in localStorage', () => {
+    localStorage.setItem('ugurhoca_exam_trials_target_lgs', '20');
+
+    const ssrHtml = renderToString(<ExamCountdown exam={mockExam} userGrade={8} />);
+
+    const container = document.createElement('div');
+    container.innerHTML = ssrHtml;
+    expect(container.textContent).toContain('0 / 15 Deneme');
+    document.body.appendChild(container);
+
+    const consoleErrorSpy = vi
+      .spyOn(console, 'error')
+      .mockImplementation(() => {});
+
+    let root: ReturnType<typeof hydrateRoot> | null = null;
+    try {
+      act(() => {
+        root = hydrateRoot(
+          container,
+          <ExamCountdown exam={mockExam} userGrade={8} />,
+        );
+      });
+
+      expect(consoleErrorSpy).not.toHaveBeenCalled();
+      expect(container.textContent).toContain('0 / 20 Deneme');
+    } finally {
+      act(() => {
+        root?.unmount();
+      });
+      container.remove();
+      consoleErrorSpy.mockRestore();
+    }
   });
 });

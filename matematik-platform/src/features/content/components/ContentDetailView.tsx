@@ -180,14 +180,13 @@ export function ContentDetailView({
             <div className="flex items-center gap-1.5">
               <Calendar className="h-4 w-4 text-accent" />
               <span>
-                {formatIstanbulDate(
-                  doc.created_at || new Date().toISOString(),
-                  {
-                    day: 'numeric',
-                    month: 'long',
-                    year: 'numeric',
-                  },
-                )}
+                {doc.created_at
+                  ? formatIstanbulDate(doc.created_at, {
+                      day: 'numeric',
+                      month: 'long',
+                      year: 'numeric',
+                    })
+                  : '-'}
               </span>
             </div>
             <span className="hidden sm:inline" aria-hidden="true">

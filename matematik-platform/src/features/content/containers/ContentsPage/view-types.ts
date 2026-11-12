@@ -13,6 +13,7 @@ import type {
 import { WorksheetGradeSelection } from './helpers';
 export type ContentsViewProps = {
   setSearchParams: Dispatch<SetStateAction<URLSearchParams>>;
+  isFeedSwitching?: boolean;
   profileHref: '/admin' | '/profil' | '/';
   user: AppUser | null;
   selectedType: string;

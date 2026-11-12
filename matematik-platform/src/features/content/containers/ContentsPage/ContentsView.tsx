@@ -81,6 +81,7 @@ export function ContentsView({ loadMoreRef, ...props }: ContentsViewProps) {
           <div className="flex items-center gap-2 mb-6">
             <Filter className="w-5 h-5 text-secondary" />
             {props.loading ||
+            props.isFeedSwitching ||
             props.worksheetLoading ||
             props.worksheetCatalogLoading ? (
               <span className="text-secondary">Yükleniyor...</span>
@@ -157,7 +158,8 @@ export function ContentsView({ loadMoreRef, ...props }: ContentsViewProps) {
                 worksheetGradeLabel={props.worksheetGradeLabel}
               />
             )
-          ) : props.loading && props.documents.length === 0 ? (
+          ) : props.isFeedSwitching ||
+            (props.loading && props.documents.length === 0) ? (
             <div
               className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-7"
               aria-busy="true"

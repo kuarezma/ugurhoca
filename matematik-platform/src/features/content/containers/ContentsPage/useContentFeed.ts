@@ -16,6 +16,7 @@ import type {
   ContentSortOrder,
 } from '@/features/content/types';
 import { normalizeContentGrade } from '@/features/content/utils';
+import { buildContentFeedFilterKey } from './helpers';
 
 type UseContentFeedProps = {
   loadRequestIdRef: RefObject<number>;
@@ -24,6 +25,7 @@ type UseContentFeedProps = {
   setDocuments: Dispatch<SetStateAction<ContentDocument[]>>;
   setHasMore: Dispatch<SetStateAction<boolean>>;
   setTotalCount: Dispatch<SetStateAction<number>>;
+  setLoadedFeedKey: Dispatch<SetStateAction<string>>;
   initialLoadSucceeded: boolean;
   initialGrade: ContentGradeFilter;
   initialType: string;
@@ -54,6 +56,7 @@ export function useContentFeed({
   setDocuments,
   setHasMore,
   setTotalCount,
+  setLoadedFeedKey,
   initialLoadSucceeded,
   initialGrade,
   initialType,
@@ -124,6 +127,21 @@ export function useContentFeed({
         }
 
         setTotalCount(count);
+        if (!append) {
+          setLoadedFeedKey(
+            buildContentFeedFilterKey({
+              grade: gradeFilter,
+              type: typeFilter,
+              quickFilter: options?.onlySolution
+                ? 'with_solution'
+                : options?.onlyVideo
+                  ? 'with_video'
+                  : 'all',
+              searchTerm: options?.searchTerm ?? '',
+              sortBy: options?.sortBy ?? 'newest',
+            }),
+          );
+        }
       } catch {
         if (requestId === loadRequestIdRef.current)
           setContentLoadError('İçerikler yüklenemedi. Yeniden deneyin.');
@@ -138,6 +156,7 @@ export function useContentFeed({
       setContentLoadError,
       setDocuments,
       setHasMore,
+      setLoadedFeedKey,
       setLoading,
       setTotalCount,
     ],
@@ -210,6 +229,15 @@ export function useContentFeed({
       setDocuments(initialDocuments);
       setTotalCount(initialTotalCount);
       setHasMore(initialDocuments.length < initialTotalCount);
+      setLoadedFeedKey(
+        buildContentFeedFilterKey({
+          grade: initialGrade,
+          type: initialType,
+          quickFilter: 'all',
+          searchTerm: '',
+          sortBy: 'newest',
+        }),
+      );
       setLoading(false);
       return;
     }
@@ -230,6 +258,7 @@ export function useContentFeed({
     sortBy,
     isWorksheetBrowser,
     setPage,
+    setLoadedFeedKey,
     setLoading,
     loadRequestIdRef,
     setDocuments,

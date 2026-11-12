@@ -3,7 +3,11 @@ import { useSearchParams } from 'next/navigation';
 
 import { createLogger } from '@/lib/logger';
 
-import type { ContentGradeFilter } from '@/features/content/types';
+import type {
+  ContentGradeFilter,
+  ContentQuickFilter,
+  ContentSortOrder,
+} from '@/features/content/types';
 
 import { WORKSHEET_GRADE_OPTIONS } from '@/features/content/worksheet-display';
 
@@ -141,6 +145,26 @@ export type ContentsPageProps = {
 };
 
 export const EMPTY_CONTENT_DOCUMENTS: ContentDocument[] = [];
+
+export const buildContentFeedFilterKey = ({
+  grade,
+  type,
+  quickFilter,
+  searchTerm,
+  sortBy,
+}: {
+  grade: ContentGradeFilter;
+  type: string;
+  quickFilter: ContentQuickFilter;
+  searchTerm: string;
+  sortBy: ContentSortOrder;
+}) => {
+  const serverQuickFilter =
+    quickFilter === 'with_solution' || quickFilter === 'with_video'
+      ? quickFilter
+      : 'all';
+  return `${String(grade)}:${type}:${serverQuickFilter}:${searchTerm.trim()}:${sortBy}`;
+};
 
 export function ContentUrlFilters({
   onChange,
