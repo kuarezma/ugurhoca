@@ -9,23 +9,27 @@ const isProd = process.env.NODE_ENV === 'production';
 // CSP ZORLAMADA (Content-Security-Policy): ihlaller /api/csp-report'a raporlanır.
 // 'unsafe-eval' kaldırıldı, frame-src daraltıldı. Gevşetme gerekiyorsa önce
 // report-uri loglarını incele, sonra bu listeyi genişlet.
-const cspEnforced = [
-  "base-uri 'self'",
-  "default-src 'self'",
-  "font-src 'self' data:",
-  "form-action 'self'",
-  "frame-ancestors 'none'",
-  "frame-src 'self' https://www.youtube.com https://drive.google.com",
-  "img-src 'self' data: blob: https:",
-  "media-src 'self' data: blob: https:",
-  "object-src 'none'",
-  `script-src 'self' 'unsafe-inline'${isProd ? '' : " 'unsafe-eval'"} https://va.vercel-scripts.com`,
-  "style-src 'self' 'unsafe-inline'",
-  "worker-src 'self' blob:",
-  "connect-src 'self' https://*.supabase.co wss://*.supabase.co https://*.livekit.cloud wss://*.livekit.cloud https://vitals.vercel-insights.com https://*.ingest.sentry.io https://*.ingest.us.sentry.io https://*.ingest.de.sentry.io",
-  'report-uri /api/csp-report',
-  'report-to csp-endpoint',
-].join('; ');
+const buildCsp = (frameAncestors) =>
+  [
+    "base-uri 'self'",
+    "default-src 'self'",
+    "font-src 'self' data:",
+    "form-action 'self'",
+    `frame-ancestors ${frameAncestors}`,
+    "frame-src 'self' https://www.youtube.com https://drive.google.com",
+    "img-src 'self' data: blob: https:",
+    "media-src 'self' data: blob: https:",
+    "object-src 'none'",
+    `script-src 'self' 'unsafe-inline'${isProd ? '' : " 'unsafe-eval'"} https://va.vercel-scripts.com`,
+    "style-src 'self' 'unsafe-inline'",
+    "worker-src 'self' blob:",
+    "connect-src 'self' https://*.supabase.co wss://*.supabase.co https://*.livekit.cloud wss://*.livekit.cloud https://vitals.vercel-insights.com https://*.ingest.sentry.io https://*.ingest.us.sentry.io https://*.ingest.de.sentry.io",
+    'report-uri /api/csp-report',
+    'report-to csp-endpoint',
+  ].join('; ');
+
+const cspEnforced = buildCsp("'none'");
+const pdfCsp = buildCsp("'self'");
 
 const globalSecurityHeaders = [
   { key: 'Content-Security-Policy', value: cspEnforced },
@@ -97,6 +101,14 @@ const nextConfig = {
       {
         source: '/(.*)',
         headers: globalSecurityHeaders,
+      },
+      {
+        // Yerel PDF föyleri platform içi <iframe> önizlemelerinde yüklenebilsin.
+        source: '/:path*.pdf',
+        headers: [
+          { key: 'Content-Security-Policy', value: pdfCsp },
+          { key: 'X-Frame-Options', value: 'SAMEORIGIN' },
+        ],
       },
       {
         source: '/sw.js',

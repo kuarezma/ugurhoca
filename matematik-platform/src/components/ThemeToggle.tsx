@@ -1,7 +1,7 @@
 'use client';
 
-import { usePathname } from 'next/navigation';
 import { Moon, Sun } from 'lucide-react';
+import { useClientPathname } from '@/hooks/useClientPathname';
 import { useTheme } from '@/components/ThemeProvider';
 
 type ThemeToggleProps = {
@@ -44,8 +44,8 @@ export function ThemeToggle({
 }
 
 export function FloatingThemeToggle() {
-  const pathname = usePathname();
-  if (pathname === '/') return null;
+  const pathname = useClientPathname();
+  if (!pathname || pathname === '/') return null;
 
   return (
     <div className="hidden md:block fixed bottom-5 left-5 z-[90]">

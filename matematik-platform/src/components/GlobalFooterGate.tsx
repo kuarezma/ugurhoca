@@ -1,10 +1,10 @@
 'use client';
 
-import { usePathname } from 'next/navigation';
+import { useClientPathname } from '@/hooks/useClientPathname';
 import { HomeFooter } from '@/features/home/components/HomeFooter';
 
 export function GlobalFooterGate() {
-  const pathname = usePathname();
+  const pathname = useClientPathname();
 
   if (!pathname) {
     return null;

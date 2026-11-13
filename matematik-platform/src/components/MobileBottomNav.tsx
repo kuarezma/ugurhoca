@@ -1,9 +1,10 @@
 'use client';
 
-import { useEffect, useState, useSyncExternalStore } from 'react';
+import { useEffect, useState } from 'react';
 import { SafeLink } from '@/components/SafeLink';
 import { usePathname } from 'next/navigation';
 import { Home, FileCheck, Timer, Gamepad2, User } from 'lucide-react';
+import { useHydrated } from '@/hooks/useClientPathname';
 
 const NAV_ITEMS = [
   { href: '/', label: 'Ana Sayfa', icon: Home },
@@ -13,17 +14,9 @@ const NAV_ITEMS = [
   { href: '/profil', label: 'Profil', icon: User },
 ];
 
-const subscribeToHydration = () => () => {};
-const readHydrated = () => true;
-const readServerHydrated = () => false;
-
 export function MobileBottomNav() {
   const routerPathname = usePathname();
-  const hydrated = useSyncExternalStore(
-    subscribeToHydration,
-    readHydrated,
-    readServerHydrated,
-  );
+  const hydrated = useHydrated();
   // ISR kaynak yolu tarayıcı URL'sinden farklı olabilir; ilk HTML sabit kalır.
   const pathname = hydrated ? routerPathname : null;
 

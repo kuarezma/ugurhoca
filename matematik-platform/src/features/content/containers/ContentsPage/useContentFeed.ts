@@ -181,22 +181,22 @@ export function useContentFeed({
   const prevTypeFromUrlRef = useRef(typeFromUrl);
 
   useEffect(() => {
+    const typeChanged = typeFromUrl !== prevTypeFromUrlRef.current;
+    prevTypeFromUrlRef.current = typeFromUrl;
+    if (typeChanged) {
+      setSelectedType(typeFromUrl);
+    }
+
     if (worksheetGradeFromUrl === prevGradeFromUrlRef.current) {
       return;
     }
     prevGradeFromUrlRef.current = worksheetGradeFromUrl;
     if (worksheetGradeFromUrl) {
       setSelectedGrade(normalizeContentGrade(worksheetGradeFromUrl));
+    } else if (!typeChanged) {
+      setSelectedGrade('all');
     }
-  }, [setSelectedGrade, worksheetGradeFromUrl]);
-
-  useEffect(() => {
-    if (typeFromUrl === prevTypeFromUrlRef.current) {
-      return;
-    }
-    prevTypeFromUrlRef.current = typeFromUrl;
-    setSelectedType(typeFromUrl);
-  }, [setSelectedType, typeFromUrl]);
+  }, [setSelectedGrade, setSelectedType, typeFromUrl, worksheetGradeFromUrl]);
 
   useEffect(() => {
     if (isWorksheetBrowser) {

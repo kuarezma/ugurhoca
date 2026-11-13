@@ -1,9 +1,9 @@
 'use client';
 
 import Image from 'next/image';
-import { usePathname } from 'next/navigation';
 import { LogOut, Menu, Search, X } from 'lucide-react';
 import { useState } from 'react';
+import { useClientPathname } from '@/hooks/useClientPathname';
 import { SafeLink } from '@/components/SafeLink';
 import { ThemeToggle } from '@/components/ThemeToggle';
 import { HomeNavbarNotificationBell } from '@/features/home/components/HomeNavbarNotificationBell';
@@ -16,7 +16,7 @@ type HomeNavbarProps = {
 
 export function HomeNavbar({ onLogout, user }: HomeNavbarProps) {
   const [isOpen, setIsOpen] = useState(false);
-  const pathname = usePathname();
+  const pathname = useClientPathname();
   const isHomePage = pathname === '/';
   const profileHref = user?.isAdmin ? '/admin' : '/profil';
   const showBell = Boolean(user?.id);

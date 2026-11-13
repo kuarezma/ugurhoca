@@ -16,6 +16,7 @@ import { getContentTypeLabel } from '@/features/content/constants';
 import { formatContentDate } from '@/features/content/utils';
 import { HOME_DOCUMENTS_UPDATED_EVENT } from '@/features/home/home-documents-events';
 import { fetchHomeDocuments, isNewContent } from '@/features/home/queries';
+import { useHydrated } from '@/hooks/useClientPathname';
 import type { AppUser, ContentDocument, GradeValue } from '@/types';
 
 export const HomeUserContext = createContext<AppUser | null>(null);
@@ -200,6 +201,7 @@ export function HomeRecentDocumentsSection({
   documents: initialDocuments,
   userGrade,
 }: HomeRecentDocumentsSectionProps) {
+  const hydrated = useHydrated();
   const contextUser = useHomeUser();
   const [documents, setDocuments] =
     useState<ContentDocument[]>(initialDocuments);
@@ -446,7 +448,7 @@ export function HomeRecentDocumentsSection({
             const isFresh =
               Boolean(doc.isNew) ||
               Boolean(doc.is_new) ||
-              isNewContent(doc.created_at);
+              (hydrated && isNewContent(doc.created_at));
 
             return (
               <article

@@ -71,7 +71,10 @@ export default function ContentFilterBar({
             <div className="relative flex-1 group">
               <Search className="pointer-events-none absolute left-4 top-1/2 h-5 w-5 -translate-y-1/2 text-secondary transition-colors group-focus-within:text-purple-500" />
               <input
+                id="content-search-input"
+                name="q"
                 type="text"
+                aria-label={searchPlaceholder}
                 placeholder={searchPlaceholder}
                 value={searchTerm}
                 onChange={(e) => onSearchChange(e.target.value)}
@@ -93,6 +96,8 @@ export default function ContentFilterBar({
               <div className="relative flex flex-1 min-w-[170px] sm:flex-initial items-center">
                 <ArrowUpDown className="pointer-events-none absolute left-3.5 h-4 w-4 text-secondary" />
                 <select
+                  id="content-sort-select"
+                  name="sort"
                   value={sortBy}
                   onChange={(e) => onSortChange(e.target.value as ContentSortOrder)}
                   aria-label="Sıralama ölçütü"

@@ -330,4 +330,14 @@ describe('ContentsPage static feed and client filters', () => {
       expect(window.location.search).not.toContain('id=doc-preview-1'),
     );
   });
+
+  it('normal görünümde sınıf seçildiğinde URL parametresini senkron tutar', async () => {
+    render(<ContentsPage />);
+
+    fireEvent.click(await screen.findByRole('button', { name: '6. Sınıf' }));
+    expect(window.location.search).toContain('grade=6');
+
+    fireEvent.click(screen.getByRole('button', { name: 'Tüm Sınıflar' }));
+    expect(window.location.search).not.toContain('grade=');
+  });
 });

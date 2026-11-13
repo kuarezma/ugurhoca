@@ -5,6 +5,7 @@ import { Bell } from 'lucide-react';
 import type { Announcement } from '@/types';
 import { isNewContent, proxiedImageSrc } from '@/features/home/queries';
 import { formatIstanbulDate } from '@/lib/date-format';
+import { useHydrated } from '@/hooks/useClientPathname';
 
 type HomeAnnouncementsSectionProps = {
   announcements: Announcement[];
@@ -15,6 +16,8 @@ export function HomeAnnouncementsSection({
   announcements,
   onSelectAnnouncement,
 }: HomeAnnouncementsSectionProps) {
+  const hydrated = useHydrated();
+
   if (announcements.length === 0) {
     return null;
   }
@@ -49,7 +52,7 @@ export function HomeAnnouncementsSection({
                 className="animate-fade-up relative text-left rounded-2xl overflow-hidden transition-all min-w-[82vw] sm:min-w-[46vw] md:min-w-0 md:w-full border border-default dark:border-slate-400 bg-surface-1 hover:bg-surface-2 hover:-translate-y-0.5"
                 style={{ animationDelay: `${index * 0.05}s` }}
               >
-                {isNewContent(item.created_at) && (
+                {hydrated && isNewContent(item.created_at) && (
                   <span className="absolute top-3 right-3 z-10 px-2 py-1 rounded-full bg-purple-700 text-white dark:text-white text-[10px] font-bold shadow-lg">
                     Yeni
                   </span>

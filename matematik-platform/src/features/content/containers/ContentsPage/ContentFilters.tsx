@@ -157,6 +157,13 @@ export function ContentFilters({
               else if (g === 'Mezun') setSelectedGrade('Mezun');
               else setSelectedGrade(Number(g));
             });
+            const url = new URL(window.location.href);
+            if (g === 'all') {
+              url.searchParams.delete('grade');
+            } else {
+              url.searchParams.set('grade', g);
+            }
+            window.history.pushState({}, '', url.toString());
           }}
           onSelectType={(t) => handleTypeChange(t)}
         />

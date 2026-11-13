@@ -3,6 +3,7 @@
 import { memo, useMemo } from 'react';
 import { motion } from 'framer-motion';
 import { Quote, Sparkles } from 'lucide-react';
+import { useHydrated } from '@/hooks/useClientPathname';
 
 type MathQuote = {
   text: string;
@@ -52,14 +53,21 @@ const QUOTES: MathQuote[] = [
   },
 ];
 
+function getDailyQuote(now: Date = new Date()): MathQuote {
+  const start = Date.UTC(now.getUTCFullYear(), 0, 0);
+  const diff = now.getTime() - start;
+  const dayOfYear = Math.floor(diff / (1000 * 60 * 60 * 24));
+  return QUOTES[dayOfYear % QUOTES.length];
+}
+
 function HomeDailyQuoteInner() {
-  const quote = useMemo(() => {
-    const now = new Date();
-    const start = Date.UTC(now.getUTCFullYear(), 0, 0);
-    const diff = now.getTime() - start;
-    const dayOfYear = Math.floor(diff / (1000 * 60 * 60 * 24));
-    return QUOTES[dayOfYear % QUOTES.length];
-  }, []);
+  const hydrated = useHydrated();
+  // ISR sınırı UTC gece yarısını (TSİ 03:00) keserse hidrasyon uyuşmazlığı
+  // oluşmasın diye ilk HTML sabit bir sözle eşleşir.
+  const quote = useMemo(
+    () => (hydrated ? getDailyQuote() : QUOTES[0]),
+    [hydrated],
+  );
 
   return (
     <motion.section
