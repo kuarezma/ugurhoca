@@ -50,32 +50,77 @@ async function fetchAllProgramRows<T>(
   }
 }
 
+const LGS_PAGE_BATCH_SIZE = 4;
+
+async function fetchLgsPage(
+  offset: number,
+): Promise<{ rows: LgsSchoolTarget[]; count: number | null }> {
+  const supabase = createServiceRoleClient();
+  const { data, error, count } = await supabase
+    .from('lgs_school_targets')
+    .select('*', { count: 'exact' })
+    .order('year', { ascending: false })
+    .order('base_score', { ascending: false })
+    .order('id', { ascending: true })
+    .range(offset, offset + PROGRAM_QUERY_PAGE_SIZE - 1);
+
+  if (error || count === null)
+    throw new Error('LGS school page could not be loaded');
+  return { rows: (data ?? []) as LgsSchoolTarget[], count };
+}
+
+// Each page is well below the data cache's item size limit. Errors must not be cached.
+const getCachedLgsPage = unstable_cache(fetchLgsPage, ['lgs-school-page-v2'], {
+  revalidate: 3600,
+  tags: ['lgs-school-targets'],
+});
+
 async function fetchLgsSchoolPageDataInternal(
   preferredYear = 2026,
 ): Promise<LgsSchoolPageData> {
-  const supabase = createServiceRoleClient();
-
-  const yearListQuery = await fetchAllProgramRows<{ year: number }>(
-    (from, to) =>
-      supabase.from('lgs_school_targets').select('year').range(from, to),
-  );
-
-  if (yearListQuery.error) {
+  const loadPage =
+    process.env.NODE_ENV === 'test' ? fetchLgsPage : getCachedLgsPage;
+  let allRows: LgsSchoolTarget[];
+  try {
+    const first = await loadPage(0);
+    const offsets = Array.from(
+      {
+        length: Math.max(
+          0,
+          Math.ceil((first.count ?? 0) / PROGRAM_QUERY_PAGE_SIZE) - 1,
+        ),
+      },
+      (_, index) => (index + 1) * PROGRAM_QUERY_PAGE_SIZE,
+    );
+    allRows = [...first.rows];
+    for (let i = 0; i < offsets.length; i += LGS_PAGE_BATCH_SIZE) {
+      const pages = await Promise.all(
+        offsets.slice(i, i + LGS_PAGE_BATCH_SIZE).map(loadPage),
+      );
+      for (const page of pages) {
+        if (page.count !== first.count)
+          throw new Error('LGS catalog changed during loading');
+        allRows.push(...page.rows);
+      }
+    }
+    if (
+      allRows.length !== first.count ||
+      new Set(allRows.map((row) => row.id)).size !== allRows.length
+    ) {
+      throw new Error('LGS catalog pages are inconsistent');
+    }
+  } catch {
     return {
       dataYear: preferredYear,
-      error:
-        'LGS okul verileri okunamadı. Lütfen veritabanı tablosunu kontrol et.',
+      error: 'LGS okul verileri okunamadı. Lütfen daha sonra tekrar dene.',
       historyYears: [],
       schools: [],
     };
   }
 
   const counts = new Map<number, number>();
-
-  for (const row of yearListQuery.data ?? []) {
+  for (const row of allRows)
     counts.set(row.year, (counts.get(row.year) ?? 0) + 1);
-  }
-
   const availableYears = [...counts.keys()].sort((a, b) => b - a);
 
   if (!availableYears.length) {
@@ -100,29 +145,10 @@ async function fetchLgsSchoolPageDataInternal(
     .filter((year) => year <= selectedYear)
     .slice(0, 5);
 
-  const rowsQuery = await fetchAllProgramRows<LgsSchoolTarget>((from, to) =>
-    supabase
-      .from('lgs_school_targets')
-      .select('*')
-      .in('year', historyYears)
-      .order('year', { ascending: false })
-      .order('base_score', { ascending: false })
-      .range(from, to),
-  );
-
-  if (rowsQuery.error) {
-    return {
-      dataYear: selectedYear,
-      error:
-        'LGS okul verileri okunamadı. Lütfen veritabanı tablosunu kontrol et.',
-      historyYears: [...historyYears].sort((a, b) => a - b),
-      schools: [],
-    };
-  }
-
   const grouped = new Map<string, LgsSchoolTarget[]>();
 
-  for (const row of rowsQuery.data) {
+  for (const row of allRows) {
+    if (!historyYears.includes(row.year)) continue;
     const key = `${row.school_name}::${row.province}::${row.district}`;
     const current = grouped.get(key) || [];
     current.push(row);
@@ -181,19 +207,10 @@ async function fetchLgsSchoolPageDataInternal(
   };
 }
 
-const getCachedLgsData = unstable_cache(
-  async (year: number) => fetchLgsSchoolPageDataInternal(year),
-  ['lgs-school-page-data'],
-  { revalidate: 3600, tags: ['lgs-school-targets'] },
-);
-
 export async function loadLgsSchoolPageData(
   preferredYear = 2026,
 ): Promise<LgsSchoolPageData> {
-  if (process.env.NODE_ENV === 'test') {
-    return fetchLgsSchoolPageDataInternal(preferredYear);
-  }
-  return getCachedLgsData(preferredYear);
+  return fetchLgsSchoolPageDataInternal(preferredYear);
 }
 
 async function fetchYksProgramPageDataInternal(

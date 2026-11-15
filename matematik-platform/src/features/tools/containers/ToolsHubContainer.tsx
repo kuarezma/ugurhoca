@@ -20,7 +20,7 @@ export const PUBLIC_TOOLS = [
     id: 'lgs',
     title: '2026/2027 MEB LGS Puan & Yüzdelik Dilim Robotu',
     description:
-      '3 yanlış 1 doğru kuralına göre güncel standart sapma ve katsayılarla anlık LGS puanı ve tahmini yüzdelik dilimini hesapla.',
+      'Netlerine ve ders ağırlıklarına göre tahmini LGS puanını ve yüzdelik dilimini hesapla.',
     href: '/araclar/lgs-puan-hesaplama',
     icon: School,
     gradient: 'from-cyan-500 to-blue-600',
@@ -44,7 +44,7 @@ export const PUBLIC_TOOLS = [
     id: 'ebob-ekok',
     title: 'Adım Adım EBOB - EKOK & Asal Çarpan Hesaplayıcı',
     description:
-      'İki veya üç sayının bölen listesi algoritmasını adım adım gör. Ortak bölenler, en küçük ortak kat ve aralarında asallık analizi.',
+      'İki doğal sayının bölen listesi algoritmasını adım adım gör. Ortak bölenler, en küçük ortak kat ve aralarında asallık analizi.',
     href: '/araclar/ebob-ekok-hesaplayici',
     icon: Layers,
     gradient: 'from-emerald-500 to-teal-600',
@@ -128,7 +128,7 @@ export function ToolsHubContainer() {
             </span>
             <div className="flex items-center gap-1.5">
               <TrendingUp className="h-4 w-4 text-sky-600 dark:text-sky-400" />
-              <span>2026/2027 MEB & ÖSYM Katsayıları</span>
+              <span>Tahmini puan ve sıralamalar</span>
             </div>
           </div>
         </div>
@@ -194,8 +194,8 @@ export function ToolsHubContainer() {
             Matematik netlerini artırmak için eksiklerini keşfet
           </h3>
           <p className="mt-2 text-xs sm:text-sm text-secondary max-w-xl mx-auto">
-            Uğur Hoca Matematik Platformu'nda binlerce ücretsiz yaprak test,
-            aralıklı tekrar formül kartları ve canlı dersler seni bekliyor.
+            Uğur Hoca Matematik Platformu'nda ücretsiz yaprak testler, aralıklı
+            tekrar formül kartları ve canlı dersler seni bekliyor.
           </p>
           <div className="mt-6 flex flex-wrap items-center justify-center gap-3">
             <Link

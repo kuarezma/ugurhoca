@@ -104,11 +104,13 @@ const defaultInputs: readonly CurriculumCardInput[] = [
 export type HomeWeeklyCurriculumSectionProps = {
   items?: readonly CurriculumCardInput[];
   weekLabel?: string | null;
+  period?: 'current' | 'upcoming' | 'past';
 };
 
 export function HomeWeeklyCurriculumSection({
   items,
   weekLabel,
+  period = 'current',
 }: HomeWeeklyCurriculumSectionProps = {}) {
   const cards: CurriculumCard[] = (
     items && items.length === 4 ? items : defaultInputs
@@ -135,11 +137,15 @@ export function HomeWeeklyCurriculumSection({
               id="weekly-curriculum-heading"
               className="font-display text-2xl font-black tracking-tight text-primary sm:text-3xl"
             >
-              Bu Hafta Sınıfta Ne İşliyoruz?
+              {period === 'upcoming'
+                ? 'Sıradaki Ders Haftası'
+                : period === 'past'
+                  ? 'Son Ders Haftası'
+                  : 'Bu Hafta Sınıfta Ne İşliyoruz?'}
             </h2>
             <p className="max-w-2xl text-sm leading-relaxed text-secondary sm:text-base">
-              MEB Türkiye Yüzyılı Maarif Modeli ve güncel LGS planına göre bu
-              haftanın üniteleri, kazanım özetleri ve föyleri:
+              MEB Türkiye Yüzyılı Maarif Modeli ve güncel LGS planına göre
+              seçilen ders haftasının üniteleri, kazanım özetleri ve föyleri:
             </p>
           </div>
 

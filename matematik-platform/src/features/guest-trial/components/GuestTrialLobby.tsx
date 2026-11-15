@@ -98,7 +98,7 @@ export function GuestTrialLobby() {
             Tüm Testlere, Canlı Derslere ve Oyunlara Katıl
           </h2>
           <p className="text-xs sm:text-sm text-secondary leading-relaxed">
-            Yüzlerce yaprak test, tam deneme sınavları, takma adlı oyun liderlik
+            Yaprak testler, tam deneme sınavları, takma adlı oyun liderlik
             tablosu ve kişisel çalışma takibi için hemen bir hesap oluştur.
             Hiçbir gizli ücret yok, tamamen ücretsiz öğrenci dostu deneyim.
           </p>

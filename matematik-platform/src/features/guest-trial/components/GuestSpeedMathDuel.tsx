@@ -1,6 +1,12 @@
 'use client';
 
-import { useState, useEffect, useRef, useCallback } from 'react';
+import {
+  useState,
+  useEffect,
+  useRef,
+  useCallback,
+  useSyncExternalStore,
+} from 'react';
 import Link from 'next/link';
 import {
   Play,
@@ -64,7 +70,14 @@ function generateProblem(): MathProblem {
   return { question, answer, options };
 }
 
+const subscribeReady = () => () => {};
+
 export function GuestSpeedMathDuel() {
+  const ready = useSyncExternalStore(
+    subscribeReady,
+    () => true,
+    () => false,
+  );
   const [isPlaying, setIsPlaying] = useState(false);
   const [timeLeft, setTimeLeft] = useState(60);
   const [score, setScore] = useState(0);
@@ -166,10 +179,14 @@ export function GuestSpeedMathDuel() {
           <button
             type="button"
             onClick={startNewGame}
+            disabled={!ready}
+            aria-busy={!ready}
             className="inline-flex items-center gap-2 px-6 py-3 rounded-2xl bg-accent-bg text-accent-fg font-bold text-sm shadow-md hover:opacity-90 transition"
           >
             <Play className="w-4 h-4" />
-            <span>Düelloyu Başlat (60 sn)</span>
+            <span>
+              {ready ? 'Düelloyu Başlat (60 sn)' : 'Oyun hazırlanıyor...'}
+            </span>
           </button>
         </div>
       )}

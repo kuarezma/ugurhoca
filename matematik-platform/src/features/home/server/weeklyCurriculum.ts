@@ -32,6 +32,7 @@ function toIstanbulIsoDate(now: Date): string {
 export function resolveWeeklyCurriculumForDate(now: Date = new Date()): {
   weekLabel: string | null;
   items: CurriculumCardInput[];
+  period: 'current' | 'upcoming' | 'past';
 } {
   const isoDate = toIstanbulIsoDate(now);
   const grades: Array<5 | 6 | 7 | 8> = [5, 6, 7, 8];
@@ -91,5 +92,11 @@ export function resolveWeeklyCurriculumForDate(now: Date = new Date()): {
     weekLabel = `${startText} – ${endText}`;
   }
 
-  return { weekLabel, items: resolved };
+  const period =
+    matchedRange && isoDate < matchedRange.weekStart
+      ? 'upcoming'
+      : matchedRange && isoDate > matchedRange.weekEnd
+        ? 'past'
+        : 'current';
+  return { weekLabel, items: resolved, period };
 }

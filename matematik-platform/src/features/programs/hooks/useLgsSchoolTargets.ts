@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react';
 import type { LgsSchoolPageData } from '@/features/programs/types';
 
 export function useLgsSchoolTargets(preferredYear = 2026) {
+  const [attempt, setAttempt] = useState(0);
   const [dataYear, setDataYear] = useState(preferredYear);
   const [error, setError] = useState('');
   const [historyYears, setHistoryYears] = useState<number[]>([]);
@@ -12,6 +13,11 @@ export function useLgsSchoolTargets(preferredYear = 2026) {
 
   useEffect(() => {
     const controller = new AbortController();
+    let timedOut = false;
+    const timeout = setTimeout(() => {
+      timedOut = true;
+      controller.abort();
+    }, 30000);
 
     const loadSchools = async () => {
       setLoading(true);
@@ -29,9 +35,8 @@ export function useLgsSchoolTargets(preferredYear = 2026) {
 
         const result = payload?.data;
 
-        if (controller.signal.aborted) {
-          return;
-        }
+        if (timedOut) throw new Error('timeout');
+        if (controller.signal.aborted) return;
 
         if (!response.ok || !result) {
           setSchools([]);
@@ -49,9 +54,16 @@ export function useLgsSchoolTargets(preferredYear = 2026) {
         setError(result.error);
         setHistoryYears(result.historyYears || []);
       } catch (fetchError) {
+        if (timedOut) {
+          setSchools([]);
+          setHistoryYears([]);
+          setError('Okul verileri zamanında yüklenemedi. Lütfen tekrar dene.');
+          return;
+        }
         if (
           controller.signal.aborted ||
-          (fetchError instanceof DOMException && fetchError.name === 'AbortError')
+          (fetchError instanceof DOMException &&
+            fetchError.name === 'AbortError')
         ) {
           return;
         }
@@ -62,7 +74,8 @@ export function useLgsSchoolTargets(preferredYear = 2026) {
           'LGS okul verileri yüklenemedi. İnternet bağlantını kontrol edip tekrar dene.',
         );
       } finally {
-        if (!controller.signal.aborted) {
+        clearTimeout(timeout);
+        if (!controller.signal.aborted || timedOut) {
           setLoading(false);
         }
       }
@@ -71,9 +84,10 @@ export function useLgsSchoolTargets(preferredYear = 2026) {
     void loadSchools();
 
     return () => {
+      clearTimeout(timeout);
       controller.abort();
     };
-  }, [preferredYear]);
+  }, [preferredYear, attempt]);
 
   return {
     dataYear,
@@ -81,5 +95,6 @@ export function useLgsSchoolTargets(preferredYear = 2026) {
     historyYears,
     loading,
     schools,
+    retry: () => setAttempt((value) => value + 1),
   };
 }

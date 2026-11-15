@@ -41,6 +41,7 @@ export default function Home() {
         <HomeWeeklyCurriculumSection
           items={weeklyCurriculum.items}
           weekLabel={weeklyCurriculum.weekLabel}
+          period={weeklyCurriculum.period}
         />
       }
       recentDocumentsSlot={

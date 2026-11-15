@@ -11,6 +11,7 @@ import {
   Target,
 } from 'lucide-react';
 import { applyAnswerChange } from '@/lib/examInputs';
+import { parseLgsInputs } from '@/lib/lgsInputTransfer';
 import { useTheme } from '@/components/ThemeProvider';
 import { ProgramBackLink } from '@/features/programs/components/ProgramBackLink';
 import { ProgramMetricCard } from '@/features/programs/components/ProgramMetricCard';
@@ -62,11 +63,17 @@ const createInitialVisibleSchoolCounts = (): Record<
 export default function LgsWizardPage() {
   const { theme } = useTheme();
   const isLight = theme === 'light';
-  const { dataYear, error, historyYears, loading, schools } =
+  const { dataYear, error, historyYears, loading, schools, retry } =
     useLgsSchoolTargets();
 
   const [step, setStep] = useState<1 | 2 | 3>(1);
   const [inputs, setInputs] = useState(createInitialLgsInputs());
+
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    const restored = parseLgsInputs(params);
+    if (restored) setInputs(restored);
+  }, []);
 
   const [query, setQuery] = useState('');
   const [province, setProvince] = useState('all');
@@ -259,7 +266,12 @@ export default function LgsWizardPage() {
 
     setInputs((prev) => ({
       ...prev,
-      [subjectKey]: applyAnswerChange(prev[subjectKey], field, rawValue, meta.questions),
+      [subjectKey]: applyAnswerChange(
+        prev[subjectKey],
+        field,
+        rawValue,
+        meta.questions,
+      ),
     }));
   };
 
@@ -281,14 +293,10 @@ export default function LgsWizardPage() {
         >
           <ProgramWizardHeader
             badgeClassName="text-white bg-sky-700"
-            badgeLabel="LGS 2026 Sihirbazı"
+            badgeLabel="LGS Tercih Sihirbazı"
             dataYear={dataYear}
-            dataYearNote={
-              dataYear < 2026
-                ? 'En güncel tam yerleştirme verisi kullanılıyor.'
-                : undefined
-            }
-            description="13 Haziran 2026 baz alınarak tahmini LGS puanı hesaplanır. Ardından gerçek veritabanındaki hedef lise verilerine göre iddialı, dengeli ve güvenli seçenekler listelenir."
+            dataYearNote="Okul verilerinin yılı gösterilir; puan ve öneriler tahminidir."
+            description="Netlerine göre tahmini LGS puanını hesapla ve mevcut okul verileriyle hedeflerini karşılaştır. Resmî tercih kılavuzunu kontrol et."
             isLight={isLight}
             title="LGS Puan Hesaplama ve Lise Hedef Belirleme"
           />
@@ -465,33 +473,58 @@ export default function LgsWizardPage() {
                 </div>
 
                 <div className="mt-4 rounded-2xl border border-default bg-surface-2 p-3 text-sm text-secondary">
-                  Filtreye uygun okul sayısı:{' '}
-                  <span className="font-bold text-primary">{evaluatedSchools.length}</span>
+                  {loading ? (
+                    'Okul verileri yükleniyor...'
+                  ) : error ? (
+                    'Okul sayısı şu anda gösterilemiyor.'
+                  ) : (
+                    <>
+                      Filtreye uygun okul sayısı:{' '}
+                      <span className="font-bold text-primary">
+                        {evaluatedSchools.length}
+                      </span>
+                    </>
+                  )}
                 </div>
 
                 {error ? (
                   <div className="mt-3 rounded-2xl border border-rose-300 dark:border-rose-500/30 bg-rose-50 dark:bg-rose-500/10 p-3 text-sm text-rose-800 dark:text-rose-200">
-                    {error}
+                    {error}{' '}
+                    <button
+                      type="button"
+                      onClick={retry}
+                      className="font-bold underline"
+                    >
+                      Tekrar Dene
+                    </button>
                   </div>
                 ) : null}
 
-                <div className="mt-3 rounded-2xl border border-indigo-200 dark:border-indigo-500/30 bg-indigo-50 dark:bg-indigo-500/10 p-3 text-sm text-indigo-900 dark:text-indigo-200">
-                  Veritabanı kapsamı:{' '}
-                  <span className="font-bold text-primary">{provinces.length} il</span>,{' '}
-                  <span className="font-bold text-primary">{totalDistrictCount} ilçe</span>,{' '}
-                  <span className="font-bold text-primary">
-                    {groupedSchools.length} okul
-                  </span>
-                  {orderedHistoryYears.length ? (
-                    <>
-                      ,{' '}
-                      <span className="font-bold text-primary">
-                        {orderedHistoryYears.length} yıl trendi
-                      </span>{' '}
-                      ({orderedHistoryYears.join(', ')})
-                    </>
-                  ) : null}
-                </div>
+                {!loading && !error && (
+                  <div className="mt-3 rounded-2xl border border-indigo-200 dark:border-indigo-500/30 bg-indigo-50 dark:bg-indigo-500/10 p-3 text-sm text-indigo-900 dark:text-indigo-200">
+                    Veritabanı kapsamı:{' '}
+                    <span className="font-bold text-primary">
+                      {provinces.length} il
+                    </span>
+                    ,{' '}
+                    <span className="font-bold text-primary">
+                      {totalDistrictCount} ilçe
+                    </span>
+                    ,{' '}
+                    <span className="font-bold text-primary">
+                      {groupedSchools.length} okul
+                    </span>
+                    {orderedHistoryYears.length ? (
+                      <>
+                        ,{' '}
+                        <span className="font-bold text-primary">
+                          {orderedHistoryYears.length} yıl trendi
+                        </span>{' '}
+                        ({orderedHistoryYears.join(', ')})
+                      </>
+                    ) : null}
+                  </div>
+                )}
 
                 <div className="mt-4 flex flex-wrap gap-2">
                   <button
@@ -527,8 +560,14 @@ export default function LgsWizardPage() {
                     </div>
                   </div>
                   <div className="text-sm text-secondary">
-                    Filtreye uygun toplam okul:{' '}
-                    <span className="font-bold text-primary">{evaluatedSchools.length}</span>
+                    {!loading && !error && (
+                      <>
+                        Filtreye uygun toplam okul:{' '}
+                        <span className="font-bold text-primary">
+                          {evaluatedSchools.length}
+                        </span>
+                      </>
+                    )}
                   </div>
                 </div>
               </div>
@@ -540,7 +579,14 @@ export default function LgsWizardPage() {
               )}
               {!loading && error && (
                 <div className="rounded-3xl border border-rose-300 dark:border-rose-500/30 bg-rose-50 dark:bg-rose-500/10 p-5 text-sm text-rose-800 dark:text-rose-200">
-                  {error}
+                  {error}{' '}
+                  <button
+                    type="button"
+                    onClick={retry}
+                    className="font-bold underline"
+                  >
+                    Tekrar Dene
+                  </button>
                 </div>
               )}
 
@@ -645,9 +691,7 @@ export default function LgsWizardPage() {
                                   </div>
                                 </div>
                                 <div className="rounded-xl border border-default dark:border-slate-400 bg-surface-1 px-3 py-2">
-                                  <div className="text-secondary">
-                                    Baz Yıl
-                                  </div>
+                                  <div className="text-secondary">Baz Yıl</div>
                                   <div className="font-black text-primary">
                                     {school.latest_year}
                                   </div>

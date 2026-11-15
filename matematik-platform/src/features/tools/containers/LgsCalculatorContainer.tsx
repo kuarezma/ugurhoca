@@ -2,6 +2,7 @@
 
 import { useState } from 'react';
 import { applyAnswerChange } from '@/lib/examInputs';
+import { serializeLgsInputs } from '@/lib/lgsInputTransfer';
 import Link from 'next/link';
 import {
   School,
@@ -23,21 +24,21 @@ import { FaqAccordion, type FaqItem } from '../components/FaqAccordion';
 
 const LGS_FAQS: FaqItem[] = [
   {
-    q: "LGS puanı nasıl hesaplanır?",
-    a: "MEB LGS'de öğrencilerin her derse ait net sayısı (Doğru - Yanlış / 3) hesaplanır. Türkçe, Matematik ve Fen Bilimleri netleri 4 katsayısıyla; T.C. İnkılap Tarihi, Din Kültürü ve Yabancı Dil netleri ise 1 katsayısıyla çarpılarak standart puan hesaplanır."
+    q: 'LGS puanı nasıl hesaplanır?',
+    a: "MEB LGS'de öğrencilerin her derse ait net sayısı (Doğru - Yanlış / 3) hesaplanır. Bu araç ders ağırlıklarına göre yaklaşık puan üretir. Resmî puan, sınavın ortalama ve standart sapmalarına da bağlıdır.",
   },
   {
     q: "LGS'de 3 yanlış 1 doğruyu götürür mü?",
-    a: "Evet. MEB LGS sınavında her ders için yapılan 3 yanlış cevap, o dersteki 1 doğru cevabı eksiltir. Bu nedenle emin olunmayan sorularda rastgele tahmin yapmak yerine boş bırakmak net kaybını önler."
+    a: 'Evet. MEB LGS sınavında her ders için yapılan 3 yanlış cevap, o dersteki 1 doğru cevabı eksiltir. Bu nedenle emin olunmayan sorularda rastgele tahmin yapmak yerine boş bırakmak net kaybını önler.',
   },
   {
-    q: "Lise tercihlerinde puan mı yoksa yüzdelik dilim mi önemlidir?",
-    a: "Kesinlikle yüzdelik dilim önemlidir. Sınavın zorluğuna göre taban puanlar her yıl 10-30 puan arasında değişebilir ancak okulların yüzdelik dilimleri çok daha kararlı ve güvenilirdir."
+    q: 'Lise tercihlerinde puan mı yoksa yüzdelik dilim mi önemlidir?',
+    a: 'Tercihlerde geçmiş yılların yüzdelik dilimleri yararlı bir karşılaştırma sağlar. Kontenjanlar ve sonuçlar değişebileceğinden güncel MEB tercih kılavuzunu incele.',
   },
   {
-    q: "Tüm soruları doğru yapan öğrenci kaç puan alır?",
-    a: "LGS'de toplam 90 soru (50 sözel + 40 sayısal) bulunur. Tüm soruları doğru yanıtlayan bir öğrenci tam 500.000 puan alarak Türkiye 1.si olur."
-  }
+    q: 'Tüm soruları doğru yapan öğrenci kaç puan alır?',
+    a: "LGS'de toplam 90 soru (50 sözel + 40 sayısal) bulunur. Bu araç tüm doğru için 500 tahmini puan gösterir; resmî sonuç sınav istatistikleriyle hesaplanır.",
+  },
 ];
 
 export function LgsCalculatorContainer() {
@@ -46,7 +47,7 @@ export function LgsCalculatorContainer() {
   const handleInputChange = (
     key: LgsSubjectKey,
     field: 'correct' | 'wrong',
-    rawValue: string | number
+    rawValue: string | number,
   ) => {
     const maxQ = lgsSubjects.find((s) => s.key === key)?.questions || 20;
     setInputs((prev) => ({
@@ -84,12 +85,17 @@ export function LgsCalculatorContainer() {
       <div className="mx-auto max-w-4xl">
         {/* Navigation Breadcrumb */}
         <div className="mb-6 flex items-center gap-2 text-xs font-semibold text-secondary">
-          <Link href="/araclar" className="hover:text-primary transition flex items-center gap-1">
+          <Link
+            href="/araclar"
+            className="hover:text-primary transition flex items-center gap-1"
+          >
             <ArrowLeft className="h-3.5 w-3.5" />
             Tüm Araçlar
           </Link>
           <span>/</span>
-          <span className="text-accent-fg font-bold">LGS Puan Hesaplama Robotu</span>
+          <span className="text-accent-fg font-bold">
+            LGS Puan Hesaplama Robotu
+          </span>
         </div>
 
         {/* Header Hero */}
@@ -104,7 +110,8 @@ export function LgsCalculatorContainer() {
                   2026/2027 MEB LGS Puan & Yüzdelik Dilim Robotu
                 </h1>
                 <p className="text-xs sm:text-sm text-secondary mt-1">
-                  MEB standart sapma ve ağırlıklı katsayılarıyla birebir uyumlu anlık net ve puan hesabı.
+                  Netlerine ve ders ağırlıklarına göre tahmini puan hesaplanır.
+                  Gerçek sonuç sınavın istatistiklerine göre değişir.
                 </p>
               </div>
             </div>
@@ -128,8 +135,12 @@ export function LgsCalculatorContainer() {
               <div className="flex items-center justify-between border-b border-default pb-3 mb-4 text-xs font-bold text-secondary">
                 <span>Ders Adı (Soru Sayısı)</span>
                 <div className="flex items-center gap-6 pr-2">
-                  <span className="text-emerald-800 dark:text-emerald-300">Doğru</span>
-                  <span className="text-rose-800 dark:text-rose-300">Yanlış</span>
+                  <span className="text-emerald-800 dark:text-emerald-300">
+                    Doğru
+                  </span>
+                  <span className="text-rose-800 dark:text-rose-300">
+                    Yanlış
+                  </span>
                   <span className="text-accent-fg">Net</span>
                 </div>
               </div>
@@ -145,7 +156,9 @@ export function LgsCalculatorContainer() {
                       className="flex items-center justify-between gap-2 rounded-2xl border border-default bg-surface-2 p-3 text-xs"
                     >
                       <div className="flex-1 min-w-0">
-                        <span className="font-bold text-primary block break-words">{sub.label}</span>
+                        <span className="font-bold text-primary block break-words">
+                          {sub.label}
+                        </span>
                         <span className="text-[10px] text-secondary">
                           {sub.questions} Soru · Katsayı: {sub.coefficient}x
                         </span>
@@ -159,7 +172,11 @@ export function LgsCalculatorContainer() {
                           value={item.correct || ''}
                           placeholder="0"
                           onChange={(e) =>
-                            handleInputChange(sub.key, 'correct', e.target.value)
+                            handleInputChange(
+                              sub.key,
+                              'correct',
+                              e.target.value,
+                            )
                           }
                           aria-label={`${sub.label} doğru`}
                           className="h-9 w-12 rounded-xl border border-emerald-500/40 bg-surface-1 text-center font-mono font-bold text-accent-success-ink dark:text-emerald-300 focus:outline-none focus:ring-2 focus:ring-emerald-500"
@@ -203,13 +220,17 @@ export function LgsCalculatorContainer() {
 
               <div className="grid grid-cols-2 gap-3 pt-2">
                 <div className="rounded-2xl border border-default bg-surface-2 p-3">
-                  <span className="text-[11px] text-secondary block">Toplam Net</span>
+                  <span className="text-[11px] text-secondary block">
+                    Toplam Net
+                  </span>
                   <span className="text-lg font-black font-mono text-emerald-800 dark:text-emerald-300">
                     {result.totalNet.toFixed(2)} / 90
                   </span>
                 </div>
                 <div className="rounded-2xl border border-default bg-surface-2 p-3">
-                  <span className="text-[11px] text-secondary block">Tahmini Yüzdelik</span>
+                  <span className="text-[11px] text-secondary block">
+                    Tahmini Yüzdelik
+                  </span>
                   <span className="text-lg font-black font-mono text-accent-fg">
                     %{result.estimatedPercentile.toFixed(2)}
                   </span>
@@ -218,7 +239,7 @@ export function LgsCalculatorContainer() {
 
               <div className="pt-2">
                 <Link
-                  href="/programlar/lgs"
+                  href={`/programlar/lgs?${serializeLgsInputs(inputs)}`}
                   className="w-full flex items-center justify-center gap-2 rounded-2xl px-4 py-3 text-xs sm:text-sm font-bold transition hover:scale-[1.02] active:scale-[0.98] bg-brand-primary hover:bg-brand-primary-soft text-slate-950 dark:text-slate-950 shadow-btn-3d-green active:translate-y-1 active:shadow-none"
                 >
                   <Target className="h-4 w-4" />
@@ -242,15 +263,21 @@ export function LgsCalculatorContainer() {
                       key={preset.name}
                       className="flex items-center justify-between rounded-xl border border-default bg-surface-2 p-2.5"
                     >
-                      <span className="font-semibold text-primary">{preset.name}</span>
+                      <span className="font-semibold text-primary">
+                        {preset.name}
+                      </span>
                       <div className="flex items-center gap-2 font-mono">
                         <span className="text-secondary">{preset.score}</span>
                         <span
                           className={`font-bold ${
-                            reached ? "text-emerald-800 dark:text-emerald-300" : "text-rose-800 dark:text-rose-300"
+                            reached
+                              ? 'text-emerald-800 dark:text-emerald-300'
+                              : 'text-rose-800 dark:text-rose-300'
                           }`}
                         >
-                          {reached ? `+${diff.toFixed(1)}` : `${diff.toFixed(1)}`}
+                          {reached
+                            ? `+${diff.toFixed(1)}`
+                            : `${diff.toFixed(1)}`}
                         </span>
                       </div>
                     </div>

@@ -323,7 +323,7 @@ export function HomeHeroSection({
             <div className="grid grid-cols-3 gap-2 sm:gap-2.5 pt-1">
               <div className="rounded-2xl border border-sky-200/70 dark:border-sky-400/20 bg-surface-2/60 backdrop-blur-md px-2 sm:px-3 py-2 text-center shadow-xs">
                 <div className="text-sm sm:text-base font-black text-primary">
-                  120+
+                  Ücretsiz
                 </div>
                 <div className="text-[11px] font-semibold text-secondary truncate">
                   PDF Föy
@@ -341,7 +341,7 @@ export function HomeHeroSection({
                 <div className="text-sm sm:text-base font-black text-primary">
                   12
                 </div>
-                <div className="text-[11px] font-semibold text-secondary truncate">
+                <div className="text-[11px] font-semibold leading-tight text-secondary whitespace-normal">
                   Akademik Stüdyo
                 </div>
               </div>
@@ -353,7 +353,7 @@ export function HomeHeroSection({
                   aria-hidden="true"
                   className="mt-0.5 h-4 w-4 shrink-0 text-emerald-700 dark:text-emerald-300"
                 />
-                <span>%100 Ücretsiz & Reklamsız · 100+ Yaprak Test & Föy</span>
+                <span>%100 Ücretsiz & Reklamsız · Yaprak Test & Föy</span>
               </p>
               {!user ? (
                 <SafeLink
@@ -400,7 +400,9 @@ export function HomeHeroSection({
                 </span>
                 <span className="flex w-full items-center justify-between gap-1.5 sm:gap-2 text-xs sm:text-sm font-semibold leading-snug text-primary z-10">
                   <span>
-                    {grade === 8 ? '8. Sınıf (LGS)' : `${grade}. Sınıf Matematik`}
+                    {grade === 8
+                      ? '8. Sınıf (LGS)'
+                      : `${grade}. Sınıf Matematik`}
                   </span>
                   <ArrowRight
                     aria-hidden="true"

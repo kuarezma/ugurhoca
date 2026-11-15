@@ -5,6 +5,14 @@ vi.mock('server-only', () => ({}));
 import { resolveWeeklyCurriculumForDate } from './weeklyCurriculum';
 
 describe('resolveWeeklyCurriculumForDate', () => {
+  it('marks the next teaching week during the autumn break', () => {
+    const result = resolveWeeklyCurriculumForDate(
+      new Date('2026-11-16T10:00:00Z'),
+    );
+    expect(result.period).toBe('upcoming');
+    expect(result.weekLabel).toContain('23 Kasım');
+  });
+
   it('resolves official 2026-2027 MEB annual plan topics for all 4 grades across autumn and spring weeks', () => {
     const autumn = resolveWeeklyCurriculumForDate(
       new Date('2026-11-10T10:00:00Z'),
