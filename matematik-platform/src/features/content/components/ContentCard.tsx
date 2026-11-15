@@ -215,8 +215,10 @@ function ContentCard({
 
   const statsBar = (
     <div
-      className={`flex flex-col gap-2.5 sm:flex-row sm:items-center sm:justify-between pt-3.5 border-t border-purple-200/80 dark:border-purple-800/40 ${
-        viewMode === 'grid' ? 'mb-2' : ''
+      className={`flex flex-col gap-2.5 pt-3.5 border-t border-purple-200/80 dark:border-purple-800/40 ${
+        viewMode === 'list'
+          ? 'md:flex-row md:items-center md:justify-between'
+          : 'mb-1'
       }`}
     >
       <div className="flex flex-wrap items-center gap-3 sm:gap-3.5 text-xs font-bold text-slate-700 dark:text-slate-200">
@@ -341,8 +343,8 @@ function ContentCard({
       <div className="group relative overflow-hidden rounded-3xl border border-sky-200/80 dark:border-sky-400/20 bg-surface-1/95 p-5 sm:p-6 shadow-[inset_0_1px_0_rgba(255,255,255,0.9),0_12px_28px_-10px_rgba(14,165,233,0.12)] dark:shadow-[inset_0_1px_0_rgba(255,255,255,0.08),0_16px_36px_-12px_rgba(2,6,23,0.5)] hover:border-sky-400/80 hover:shadow-xl transition-[transform,box-shadow,border-color] duration-200 ease-out">
         <div className="absolute top-0 inset-x-0 h-1.5 bg-gradient-to-r from-sky-400 via-indigo-400 to-emerald-400 transition-all duration-200" />
         <div className="space-y-4">
-          <div className="flex items-start justify-between gap-3 sm:gap-4">
-            <div className="flex items-center gap-3 sm:gap-4 min-w-0">
+          <div className="flex flex-col gap-2.5 sm:flex-row sm:items-start sm:justify-between sm:gap-4">
+            <div className="flex flex-1 items-start sm:items-center gap-3 sm:gap-4 min-w-0">
               {showDriveThumbnail ? (
                 <div className="relative h-12 w-12 sm:h-14 sm:w-14 flex-shrink-0 overflow-hidden rounded-2xl border border-sky-300 dark:border-sky-700 shadow-md ring-2 ring-sky-500/20 group-hover:scale-105 transition-transform duration-300">
                   {!thumbnailLoaded && (
@@ -366,11 +368,11 @@ function ContentCard({
               ) : (
                 <AcademicSheetCover content={content} size="sm" />
               )}
-              <div className="min-w-0">
-                <h3 className="text-base sm:text-xl font-black leading-snug text-primary group-hover:text-sky-600 dark:group-hover:text-sky-400 transition-colors truncate">
+              <div className="min-w-0 flex-1">
+                <h3 className="text-base sm:text-xl font-black leading-snug text-primary group-hover:text-sky-600 dark:group-hover:text-sky-400 transition-colors line-clamp-2">
                   <Link
                     href={`/icerikler/${documentSlug}`}
-                    className="hover:underline focus:outline-hidden"
+                    className="hover:underline focus:outline-none focus-visible:underline"
                   >
                     {content.title}
                   </Link>
@@ -380,7 +382,7 @@ function ContentCard({
                 </p>
               </div>
             </div>
-            <div className="flex max-w-[52%] flex-wrap justify-end gap-1.5 sm:max-w-none sm:items-center sm:gap-2">
+            <div className="flex flex-wrap items-center gap-1.5 sm:shrink-0 sm:justify-end sm:gap-2">
               {content.isNew && (
                 <span className="px-2.5 sm:px-3 py-1 rounded-full bg-emerald-500/20 text-emerald-900 dark:text-emerald-100 text-[11px] sm:text-xs font-black border border-emerald-400/40 shadow-xs backdrop-blur-md">
                   Yeni
@@ -399,7 +401,7 @@ function ContentCard({
               )}
               <Chip
                 tone={gradeBadgeTone}
-                className="ml-auto rounded-full px-3.5 py-1 text-xs font-black shadow-xs border"
+                className="rounded-full px-3.5 py-1 text-xs font-black shadow-xs border"
               >
                 {getContentPrimaryGradeLabel(content)}
               </Chip>
@@ -444,7 +446,10 @@ function ContentCard({
     <div className="group relative flex flex-col justify-between overflow-hidden rounded-3xl border border-sky-200/80 dark:border-sky-400/20 bg-surface-1/95 shadow-[inset_0_1px_0_rgba(255,255,255,0.9),0_14px_32px_-10px_rgba(14,165,233,0.14)] dark:shadow-[inset_0_1px_0_rgba(255,255,255,0.08),0_18px_40px_-12px_rgba(2,6,23,0.5)] hover:border-sky-400/80 hover:-translate-y-1 transition-[transform,box-shadow,border-color] duration-200 ease-out">
       <div className="absolute top-0 inset-x-0 h-1.5 bg-gradient-to-r from-sky-400 via-indigo-400 to-emerald-400 transition-all duration-200" />
 
-      <div className="pointer-events-none absolute -top-20 -right-20 h-44 w-44 rounded-full bg-gradient-to-br from-sky-400/15 via-indigo-400/10 to-transparent blur-3xl group-hover:scale-125 transition-transform duration-500" />
+      <div
+        aria-hidden="true"
+        className="pointer-events-none absolute -top-20 -right-20 h-44 w-44 rounded-full bg-gradient-to-br from-sky-400/15 via-indigo-400/10 to-transparent blur-3xl group-hover:scale-125 transition-transform duration-500"
+      />
 
       <div className="p-5 sm:p-6 flex flex-col h-full justify-between gap-4">
         <div>
@@ -506,7 +511,7 @@ function ContentCard({
           <h3 className="text-base sm:text-lg font-black leading-snug text-primary mb-2 line-clamp-2 group-hover:text-sky-600 dark:group-hover:text-sky-400 transition-colors">
             <Link
               href={`/icerikler/${documentSlug}`}
-              className="hover:underline focus:outline-hidden"
+              className="hover:underline focus:outline-none focus-visible:underline"
             >
               {content.title}
             </Link>

@@ -22,7 +22,7 @@ import type { ContentsViewProps } from './view-types';
 
 export function ContentsView({ loadMoreRef, ...props }: ContentsViewProps) {
   return (
-    <main className="page-surface icerikler-page min-h-screen gradient-bg pb-[max(6rem,calc(env(safe-area-inset-bottom)+5.5rem))] relative">
+    <main className="page-surface icerikler-page min-h-screen gradient-bg pb-12 sm:pb-16 relative">
       <Suspense fallback={null}>
         <ContentUrlFilters onChange={props.setSearchParams} />
       </Suspense>

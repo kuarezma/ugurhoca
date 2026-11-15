@@ -298,7 +298,10 @@ export function HomeHeroSection({
           <div className="relative overflow-hidden rounded-3xl border border-sky-200/75 dark:border-sky-400/20 bg-surface-1/75 backdrop-blur-2xl p-6 sm:p-8 shadow-[inset_0_1px_0_rgba(255,255,255,0.9),0_18px_45px_-15px_rgba(14,165,233,0.14)] dark:shadow-[inset_0_1px_0_rgba(255,255,255,0.12),0_20px_50px_-15px_rgba(2,6,23,0.65)] space-y-5 lg:col-span-7">
             {/* Üst Prizmatik Işık Kırılım Çizgisi */}
             <div className="absolute inset-x-0 top-0 h-[2px] bg-gradient-to-r from-sky-400 via-indigo-400 to-emerald-400" />
-            <div className="pointer-events-none absolute -right-24 -top-24 h-64 w-64 rounded-full bg-gradient-to-br from-sky-400/15 via-indigo-400/10 to-transparent blur-3xl" />
+            <div
+              aria-hidden="true"
+              className="pointer-events-none absolute -right-24 -top-24 h-64 w-64 rounded-full bg-gradient-to-br from-sky-400/15 via-indigo-400/10 to-transparent blur-3xl"
+            />
 
             <div className="inline-flex items-center gap-2 rounded-full border border-emerald-300/80 bg-emerald-50/80 dark:border-emerald-700/60 dark:bg-emerald-950/50 px-3.5 py-1.5 text-xs font-semibold text-emerald-900 dark:text-emerald-200 backdrop-blur-md shadow-xs">
               <GraduationCap
@@ -317,8 +320,8 @@ export function HomeHeroSection({
             </p>
 
             {/* Mini Kristal İstatistik Kapsülleri */}
-            <div className="grid grid-cols-3 gap-2.5 pt-1">
-              <div className="rounded-2xl border border-sky-200/70 dark:border-sky-400/20 bg-surface-2/60 backdrop-blur-md px-3 py-2 text-center shadow-xs">
+            <div className="grid grid-cols-3 gap-2 sm:gap-2.5 pt-1">
+              <div className="rounded-2xl border border-sky-200/70 dark:border-sky-400/20 bg-surface-2/60 backdrop-blur-md px-2 sm:px-3 py-2 text-center shadow-xs">
                 <div className="text-sm sm:text-base font-black text-primary">
                   120+
                 </div>
@@ -326,7 +329,7 @@ export function HomeHeroSection({
                   PDF Föy
                 </div>
               </div>
-              <div className="rounded-2xl border border-emerald-200/70 dark:border-emerald-400/20 bg-surface-2/60 backdrop-blur-md px-3 py-2 text-center shadow-xs">
+              <div className="rounded-2xl border border-emerald-200/70 dark:border-emerald-400/20 bg-surface-2/60 backdrop-blur-md px-2 sm:px-3 py-2 text-center shadow-xs">
                 <div className="text-sm sm:text-base font-black text-primary">
                   20+
                 </div>
@@ -334,7 +337,7 @@ export function HomeHeroSection({
                   Zihin Oyunu
                 </div>
               </div>
-              <div className="rounded-2xl border border-indigo-200/70 dark:border-indigo-400/20 bg-surface-2/60 backdrop-blur-md px-3 py-2 text-center shadow-xs">
+              <div className="rounded-2xl border border-indigo-200/70 dark:border-indigo-400/20 bg-surface-2/60 backdrop-blur-md px-2 sm:px-3 py-2 text-center shadow-xs">
                 <div className="text-sm sm:text-base font-black text-primary">
                   12
                 </div>
@@ -375,25 +378,30 @@ export function HomeHeroSection({
               <SafeLink
                 key={grade}
                 href={`/icerikler?grade=${grade}`}
-                className={`${cardClassName} relative overflow-hidden flex min-h-36 flex-col justify-between p-4.5 sm:p-5 ${gradeStyles[grade].card}`}
+                className={`${cardClassName} relative overflow-hidden flex min-h-36 flex-col justify-between p-4 sm:p-5 ${gradeStyles[grade].card}`}
               >
                 {/* Üst Parlayan Prizmatik Renk Kırılım Şeridi */}
                 <div
                   className={`absolute inset-x-0 top-0 h-1 bg-gradient-to-r ${gradeStyles[grade].prismBar}`}
                 />
                 {/* Sağ Alt Köşede Yarı Saydam SVG Geometrik Prizma/Motif */}
-                <div className="pointer-events-none absolute -bottom-2 -right-2 select-none">
+                <div
+                  aria-hidden="true"
+                  className="pointer-events-none absolute -bottom-2 -right-2 select-none"
+                >
                   {gradeStyles[grade].svgWatermark}
                 </div>
 
                 <span
                   aria-hidden="true"
-                  className={`flex h-12 w-12 items-center justify-center rounded-2xl font-display text-3xl font-extrabold ${gradeStyles[grade].number}`}
+                  className={`flex h-11 w-11 sm:h-12 sm:w-12 items-center justify-center rounded-2xl font-display text-2xl sm:text-3xl font-extrabold ${gradeStyles[grade].number}`}
                 >
                   {grade}
                 </span>
-                <span className="flex w-full items-center justify-between gap-2 text-sm font-semibold text-primary z-10">
-                  {grade === 8 ? '8. Sınıf (LGS)' : `${grade}. Sınıf Matematik`}
+                <span className="flex w-full items-center justify-between gap-1.5 sm:gap-2 text-xs sm:text-sm font-semibold leading-snug text-primary z-10">
+                  <span>
+                    {grade === 8 ? '8. Sınıf (LGS)' : `${grade}. Sınıf Matematik`}
+                  </span>
                   <ArrowRight
                     aria-hidden="true"
                     className="h-4 w-4 shrink-0 text-tertiary transition-transform group-hover:translate-x-0.5"

@@ -81,7 +81,10 @@ function HomeDailyQuoteInner() {
       <div className="relative overflow-hidden rounded-3xl border border-sky-200/75 dark:border-sky-400/20 bg-surface-1/80 backdrop-blur-2xl p-6 sm:p-8 shadow-[inset_0_1px_0_rgba(255,255,255,0.9),0_18px_45px_-15px_rgba(14,165,233,0.12)] dark:shadow-[inset_0_1px_0_rgba(255,255,255,0.1),0_20px_50px_-15px_rgba(2,6,23,0.65)] font-sans">
         {/* Üst Prizmatik Işık Kırılım Çizgisi */}
         <div className="absolute inset-x-0 top-0 h-[2px] bg-gradient-to-r from-sky-400 via-indigo-400 to-emerald-400" />
-        <div className="pointer-events-none absolute -right-20 -top-20 h-48 w-48 rounded-full bg-gradient-to-br from-indigo-400/10 via-sky-400/10 to-transparent blur-2xl" />
+        <div
+          aria-hidden="true"
+          className="pointer-events-none absolute -right-20 -top-20 h-48 w-48 rounded-full bg-gradient-to-br from-indigo-400/10 via-sky-400/10 to-transparent blur-2xl"
+        />
 
         <div className="relative flex flex-col gap-5 sm:flex-row sm:items-start">
           <div

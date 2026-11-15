@@ -29,7 +29,7 @@ export default function ContentDeleteConfirmModal({
   const containerRef = useAccessibleModal<HTMLDivElement>(true, handleClose);
 
   return (
-    <div className="fixed inset-0 z-[80] flex items-center justify-center p-4 sm:p-6">
+    <div className="fixed inset-0 z-[110] flex items-center justify-center p-4 sm:p-6">
       <div
         onClick={deleting ? undefined : handleClose}
         className="absolute inset-0 bg-black/70 backdrop-blur-sm"

@@ -53,6 +53,47 @@ type TopicGroup = {
   worksheetsCount: number;
 };
 
+function resolvePackTopicName(doc: ContentDocument): string {
+  const outcome = getWorksheetOutcomeLabel(doc);
+  if (outcome) {
+    return getWorksheetTitleTopic({ outcome });
+  }
+  if (doc.learning_outcome?.trim()) {
+    return getWorksheetTitleTopic({ outcome: doc.learning_outcome });
+  }
+
+  const rawDesc = doc.description?.trim().replace(/\s+/g, ' ') || '';
+  const isShortTopicLabel =
+    rawDesc.length > 0 &&
+    rawDesc.length <= 68 &&
+    !/^\d{4}\s*-\s*\d{4}/.test(rawDesc) &&
+    !/[.,;].*[.,;]/.test(rawDesc);
+
+  if (isShortTopicLabel) {
+    return getWorksheetTitleTopic({ subject: rawDesc });
+  }
+
+  if (
+    doc.type === 'deneme-sinav' ||
+    /yazılı|ortak sınav|senaryo/i.test(doc.title)
+  ) {
+    return 'Yazılı Hazırlık ve Ortak Sınavlar';
+  }
+
+  const titleSegments = doc.title
+    .split(/\s+-\s+/)
+    .map((s) => s.trim())
+    .filter(Boolean);
+  if (titleSegments.length >= 2) {
+    const candidate = titleSegments[1].replace(/\s*\(Test-\d+\)\s*$/i, '').trim();
+    if (candidate && candidate.length <= 68 && !/^yaprak test/i.test(candidate)) {
+      return candidate;
+    }
+  }
+
+  return 'Genel Matematik';
+}
+
 export default function ContentTopicPacks({
   documents,
   isCompleted,
@@ -76,12 +117,7 @@ export default function ContentTopicPacks({
     const map = new Map<string, ContentDocument[]>();
 
     for (const doc of documents) {
-      const outcome = getWorksheetOutcomeLabel(doc);
-      const topic =
-        getWorksheetTitleTopic({ outcome, subject: doc.description }) ||
-        doc.learning_outcome ||
-        outcome ||
-        'Genel Matematik';
+      const topic = resolvePackTopicName(doc);
 
       const existing = map.get(topic) || [];
       existing.push(doc);
@@ -183,9 +219,9 @@ export default function ContentTopicPacks({
                 <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl shadow-lg shadow-purple-500/20 bg-brand-secondary text-slate-950 dark:text-slate-950">
                   <FolderTree className="h-6 w-6" />
                 </div>
-                <div className="min-w-0">
-                  <div className="flex items-center gap-2 min-w-0">
-                    <h3 className="min-w-0 break-words text-lg sm:text-xl font-bold text-slate-900 dark:text-white group-hover:text-purple-600 dark:group-hover:text-purple-300">
+                <div className="min-w-0 flex-1">
+                  <div className="flex flex-wrap items-center gap-2 min-w-0">
+                    <h3 className="min-w-0 break-words line-clamp-2 text-base sm:text-xl font-bold text-slate-900 dark:text-white group-hover:text-purple-600 dark:group-hover:text-purple-300">
                       {group.topicName}
                     </h3>
                     <span className="shrink-0 rounded-full border border-purple-400/30 bg-purple-50 text-purple-700 dark:bg-purple-500/15 dark:text-purple-200 px-2.5 py-0.5 text-xs font-semibold">
@@ -253,7 +289,7 @@ export default function ContentTopicPacks({
                   transition={{ duration: 0.25 }}
                   className="border-t border-slate-200 dark:border-white/10 bg-slate-50/50 dark:bg-slate-950/30 p-4 sm:p-6"
                 >
-                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                  <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-5">
                     {group.documents.map((doc, idx) => (
                       <ContentCard
                         key={doc.id}

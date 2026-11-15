@@ -385,7 +385,7 @@ export function HomeRecentDocumentsSection({
                 <span className={`h-2 w-2 rounded-full ${style.pillDot}`} />
                 <span>{style.label}</span>
                 {isUserGrade && (
-                  <span className="ml-0.5 rounded-full bg-surface-3 px-1.5 py-0.2 text-xs font-black">
+                  <span className="ml-0.5 rounded-full bg-surface-3 px-1.5 py-0.5 text-xs font-black">
                     Sınıfın
                   </span>
                 )}
@@ -445,6 +445,16 @@ export function HomeRecentDocumentsSection({
               /el yazısı|el yazisi|çözümlü|cozumlu/i.test(
                 `${doc.title} ${cleanDescription}`,
               );
+            const hasStudentPdf = Boolean(doc.file_url?.trim());
+            const hasSeparateSolutionPdf = Boolean(
+              hasSolutionPdf && doc.solution_url !== doc.file_url,
+            );
+            const actionColsClass =
+              hasStudentPdf && hasSeparateSolutionPdf
+                ? 'sm:grid-cols-3'
+                : hasStudentPdf || hasSeparateSolutionPdf
+                  ? 'sm:grid-cols-2'
+                  : 'sm:grid-cols-1';
             const isFresh =
               Boolean(doc.isNew) ||
               Boolean(doc.is_new) ||
@@ -538,7 +548,7 @@ export function HomeRecentDocumentsSection({
                       <span className="text-primary font-bold">Uğur Hoca</span>
                     </div>
 
-                    <div className="grid grid-cols-1 sm:grid-cols-3 gap-2.5">
+                    <div className={`grid grid-cols-1 ${actionColsClass} gap-2.5`}>
                       <SafeLink
                         href={`/icerikler?id=${doc.id}`}
                         className="inline-flex items-center justify-center gap-1.5 rounded-2xl border border-indigo-300/80 dark:border-indigo-700/80 bg-indigo-50/80 dark:bg-indigo-950/60 hover:bg-indigo-100/90 dark:hover:bg-indigo-900/60 px-3.5 py-2.5 text-xs font-bold text-indigo-950 dark:text-indigo-200 backdrop-blur-md transition-all shadow-xs"

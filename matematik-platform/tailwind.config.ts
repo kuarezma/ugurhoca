@@ -38,6 +38,7 @@ const config: Config = {
   theme: {
     extend: {
       spacing: {
+        '4.5': '1.125rem',
         13: '3.25rem',
       },
       borderColor: {
@@ -81,6 +82,7 @@ const config: Config = {
         accent: tokenColor('--brand-primary-rgb'),
         'accent-muted': tokenColor('--brand-primary-deep-rgb'),
         background: tokenColor('--surface-0-rgb'),
+        canvas: tokenColor('--surface-0-rgb'),
         border: 'var(--border-default)',
         card: 'var(--surface-2)',
         foreground: 'var(--text-primary)',
@@ -176,7 +178,15 @@ const config: Config = {
           { lineHeight: '1.15', letterSpacing: '-0.01em', fontWeight: '700' },
         ],
       },
+      backdropBlur: {
+        xs: '2px',
+      },
+      dropShadow: {
+        xs: '0 1px 1px rgb(0 0 0 / 0.05)',
+      },
       boxShadow: {
+        '2xs': '0 1px 1px 0 rgb(0 0 0 / 0.05)',
+        xs: '0 1px 2px 0 rgb(0 0 0 / 0.05)',
         'brand-glow': '0 0 30px rgba(124, 58, 237, 0.35)',
         'brand-glow-lg': '0 0 60px rgba(124, 58, 237, 0.45)',
         'accent-glow': '0 0 25px rgba(250, 204, 21, 0.35)',

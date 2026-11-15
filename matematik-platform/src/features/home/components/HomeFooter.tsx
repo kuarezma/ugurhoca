@@ -11,7 +11,7 @@ type HomeFooterProps = {
 
 export function HomeFooter(_props: HomeFooterProps) {
   return (
-    <footer className="relative border-t border-sky-200/60 dark:border-sky-400/20 mt-12 px-4 pt-12 pb-12 bg-surface-1/80 backdrop-blur-2xl font-sans">
+    <footer className="relative border-t border-sky-200/60 dark:border-sky-400/20 mt-12 px-4 pt-12 pb-[calc(6.25rem+env(safe-area-inset-bottom,0px))] md:pb-12 bg-surface-1/80 backdrop-blur-2xl font-sans">
       {/* Üst Prizmatik Işık Kırılım Çizgisi */}
       <div className="absolute inset-x-0 top-0 h-[1.5px] bg-gradient-to-r from-sky-400/50 via-indigo-400/50 to-emerald-400/50" />
 

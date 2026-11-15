@@ -247,7 +247,7 @@ export default function RootLayout({
           <div
             id="ana-icerik"
             tabIndex={-1}
-            className="relative z-10 w-full max-w-full overflow-x-clip"
+            className="relative w-full max-w-full overflow-x-clip"
           >
             {children}
             <GlobalFooterGate />

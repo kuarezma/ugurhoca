@@ -86,12 +86,12 @@ export function WorksheetBreadcrumbs({
         <div
           role="group"
           aria-label="Yaprak test listeleme sırası"
-          className="inline-flex items-center rounded-2xl border border-border-default bg-surface-1 p-1 shadow-xs"
+          className="inline-flex max-w-full flex-wrap sm:flex-nowrap items-center gap-0.5 rounded-2xl border border-border-default bg-surface-1 p-1 shadow-xs"
         >
           <button
             type="button"
             onClick={() => setWorksheetSortBy('curriculum')}
-            className={`rounded-xl px-3 py-1.5 text-xs font-bold transition-all ${
+            className={`rounded-xl px-2.5 sm:px-3 py-1.5 text-[11px] sm:text-xs font-bold transition-all ${
               worksheetSortBy === 'curriculum'
                 ? 'bg-accent-bg text-primary dark:text-primary shadow-xs'
                 : 'text-secondary hover:text-primary'
@@ -102,7 +102,7 @@ export function WorksheetBreadcrumbs({
           <button
             type="button"
             onClick={() => setWorksheetSortBy('newest')}
-            className={`rounded-xl px-3 py-1.5 text-xs font-bold transition-all ${
+            className={`rounded-xl px-2.5 sm:px-3 py-1.5 text-[11px] sm:text-xs font-bold transition-all ${
               worksheetSortBy === 'newest'
                 ? 'bg-accent-bg text-primary dark:text-primary shadow-xs'
                 : 'text-secondary hover:text-primary'
