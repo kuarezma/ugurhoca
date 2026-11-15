@@ -64,7 +64,7 @@ export function MobileBottomNav() {
                 }}
                 className={`relative flex min-h-[46px] min-w-[54px] flex-col items-center justify-center rounded-2xl px-2 py-1.5 font-display text-[11px] font-bold transition-all duration-150 active:scale-95 select-none ${
                   isActive
-                    ? 'text-sky-600 dark:text-sky-400 font-extrabold'
+                    ? 'text-sky-700 dark:text-sky-400 font-extrabold'
                     : 'text-secondary hover:text-primary'
                 }`}
               >
