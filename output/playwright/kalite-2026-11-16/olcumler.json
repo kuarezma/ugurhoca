@@ -1,0 +1,71 @@
+{
+  "date": "2026-11-16",
+  "site": "https://www.ugurhoca.com/",
+  "browser": "Codex IAB Chromium",
+  "viewports": [
+    {
+      "width": 390,
+      "height": 844
+    },
+    {
+      "width": 320,
+      "height": 740
+    },
+    {
+      "width": 1440,
+      "height": 900
+    }
+  ],
+  "guest": true,
+  "warmDesktopReload": {
+    "ttfbMs": 104,
+    "domContentLoadedMs": 172,
+    "loadMs": 242,
+    "fcpMs": 274,
+    "lcpMs": 273.62,
+    "cls": 0,
+    "longTaskCount": 0,
+    "scripts": 20,
+    "scriptTransferBytes": 0
+  },
+  "limitations": [
+    "Tek önbellekli masaüstü örneği; ilk ziyaret ve alan verisi değildir.",
+    "Network event buffer truncated=true; tüm isteklerin hatasız olduğu iddia edilemez.",
+    "Mobil görünüm emülasyonu; fiziksel telefon ve klavye test edilmedi."
+  ],
+  "homeMobile": {
+    "documentHeight": 11063,
+    "viewportHeight": 844
+  },
+  "homeDesktop": {
+    "documentHeight": 6090,
+    "visibleDimensionBackdropElements": 113
+  },
+  "singleClickContent": {
+    "target": "/icerikler?grade=5",
+    "requests": [
+      {
+        "type": "Fetch",
+        "kind": "RSC prefetch/navigation"
+      },
+      {
+        "type": "Prefetch",
+        "kind": "HTML"
+      },
+      {
+        "type": "Fetch",
+        "kind": "RSC prefetch/navigation"
+      }
+    ],
+    "documentNavigationObserved": false
+  },
+  "backButton": {
+    "before": "/icerikler?type=yaprak-test&grade=5",
+    "after": "/icerikler?type=yaprak-test",
+    "actualScreen": "5. Sınıf, 13 içerik; başlık tüm sınıflar"
+  },
+  "localChecks": {
+    "typecheck": "exit 0",
+    "lint": "exit 0"
+  }
+}
