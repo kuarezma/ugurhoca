@@ -18,6 +18,7 @@ import { WorksheetGradeSelection } from './helpers';
 
 type ContentFiltersProps = {
   contentLoadError: string | null;
+  retryPreview?: () => void;
   isWorksheetBrowser: boolean;
   selectedWorksheetGrade: WorksheetGradeSelection | null;
   loadWorksheetGradeDocuments: (
@@ -59,6 +60,7 @@ type ContentFiltersProps = {
 };
 
 export function ContentFilters({
+  retryPreview,
   contentLoadError,
   isWorksheetBrowser,
   selectedWorksheetGrade,
@@ -98,6 +100,10 @@ export function ContentFilters({
             type="button"
             className="text-sm font-semibold text-primary underline"
             onClick={() => {
+              if (retryPreview) {
+                retryPreview();
+                return;
+              }
               if (isWorksheetBrowser && selectedWorksheetGrade !== null) {
                 void loadWorksheetGradeDocuments(selectedWorksheetGrade, true);
               } else {
@@ -127,47 +133,48 @@ export function ContentFilters({
         sortBy={isWorksheetBrowser ? worksheetSortBy : sortBy}
         totalResults={activeTotalResults}
         viewMode={viewMode}
-      />
-
-      <div className="mt-5 border-t border-border-default dark:border-border-default pt-4">
-        <ContentCategoryChips
-          selectedGrade={
-            isWorksheetBrowser
-              ? String(selectedWorksheetGrade ?? 'all')
-              : String(selectedGrade)
-          }
-          selectedType={selectedType}
-          onSelectGrade={(g) => {
-            if (isWorksheetBrowser) {
-              if (g === 'all') {
-                resetWorksheetHierarchy();
-                updateWorksheetBrowserUrl(null);
-              } else {
-                const nextGrade =
-                  g === 'Mezun'
-                    ? 'Mezun'
-                    : (Number(g) as WorksheetGradeSelection);
-                updateWorksheetBrowserUrl(nextGrade);
-                void loadWorksheetGradeDocuments(nextGrade);
+      >
+        <div className="mt-5 border-t border-border-default dark:border-border-default pt-4">
+          <ContentCategoryChips
+            showGrades={!isWorksheetBrowser}
+            selectedGrade={
+              isWorksheetBrowser
+                ? String(selectedWorksheetGrade ?? 'all')
+                : String(selectedGrade)
+            }
+            selectedType={selectedType}
+            onSelectGrade={(g) => {
+              if (isWorksheetBrowser) {
+                if (g === 'all') {
+                  resetWorksheetHierarchy();
+                  updateWorksheetBrowserUrl(null);
+                } else {
+                  const nextGrade =
+                    g === 'Mezun'
+                      ? 'Mezun'
+                      : (Number(g) as WorksheetGradeSelection);
+                  updateWorksheetBrowserUrl(nextGrade);
+                  void loadWorksheetGradeDocuments(nextGrade);
+                }
+                return;
               }
-              return;
-            }
-            startTransition(() => {
-              if (g === 'all') setSelectedGrade('all');
-              else if (g === 'Mezun') setSelectedGrade('Mezun');
-              else setSelectedGrade(Number(g));
-            });
-            const url = new URL(window.location.href);
-            if (g === 'all') {
-              url.searchParams.delete('grade');
-            } else {
-              url.searchParams.set('grade', g);
-            }
-            window.history.pushState({}, '', url.toString());
-          }}
-          onSelectType={(t) => handleTypeChange(t)}
-        />
-      </div>
+              startTransition(() => {
+                if (g === 'all') setSelectedGrade('all');
+                else if (g === 'Mezun') setSelectedGrade('Mezun');
+                else setSelectedGrade(Number(g));
+              });
+              const url = new URL(window.location.href);
+              if (g === 'all') {
+                url.searchParams.delete('grade');
+              } else {
+                url.searchParams.set('grade', g);
+              }
+              window.history.pushState({}, '', url.toString());
+            }}
+            onSelectType={(t) => handleTypeChange(t)}
+          />
+        </div>
+      </ContentFilterBar>
     </div>
   );
 }

@@ -1,5 +1,5 @@
 import RouteLoadingShell from '@/components/RouteLoadingShell';
 
 export default function Loading() {
-  return <RouteLoadingShell />;
+  return <RouteLoadingShell variant="content" />;
 }

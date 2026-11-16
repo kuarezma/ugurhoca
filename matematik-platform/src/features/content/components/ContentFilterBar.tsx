@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useId, useState, type ReactNode } from 'react';
 import {
   ArrowUpDown,
   BookOpen,
@@ -23,6 +23,7 @@ export type ContentViewMode = 'grid' | 'list' | 'packs';
 
 type ContentFilterBarProps = {
   isWorksheetBrowser: boolean;
+  children?: ReactNode;
   onClearSearch: () => void;
   onQuickFilterChange: (filter: ContentQuickFilter) => void;
   onSearchChange: (value: string) => void;
@@ -37,6 +38,7 @@ type ContentFilterBarProps = {
 };
 
 export default function ContentFilterBar({
+  children,
   onClearSearch,
   onQuickFilterChange,
   onSearchChange,
@@ -50,174 +52,190 @@ export default function ContentFilterBar({
   viewMode,
 }: ContentFilterBarProps) {
   const [mobileOpen, setMobileOpen] = useState(false);
+  const panelId = useId();
 
   return (
     <div className="space-y-4">
+      {/* Search Input */}
+      <div className="relative flex-1 group">
+        <Search className="pointer-events-none absolute left-4 top-1/2 h-5 w-5 -translate-y-1/2 text-secondary transition-colors group-focus-within:text-purple-500" />
+        <input
+          id="content-search-input"
+          name="q"
+          type="text"
+          aria-label={searchPlaceholder}
+          placeholder={searchPlaceholder}
+          value={searchTerm}
+          onChange={(e) => onSearchChange(e.target.value)}
+          className="w-full rounded-2xl border border-default dark:border-slate-400 bg-surface-2/60 py-3 pl-12 pr-10 text-sm sm:text-base text-primary placeholder:text-secondary backdrop-blur-md transition-all focus:border-purple-500/50 focus:bg-surface-1 focus:outline-none focus:ring-2 focus:ring-purple-500/20"
+        />
+        {searchTerm && (
+          <button
+            onClick={onClearSearch}
+            className="absolute right-3.5 top-1/2 -translate-y-1/2 rounded-full p-1 text-secondary transition-colors hover:bg-surface-3 hover:text-primary"
+            title="Aramayı Temizle"
+          >
+            <X className="h-4 w-4" />
+          </button>
+        )}
+      </div>
+
       <button
         type="button"
         onClick={() => setMobileOpen((prev) => !prev)}
-        className="flex w-full items-center justify-between rounded-2xl border border-default dark:border-slate-500 bg-surface-2/80 px-4 py-3 text-sm font-semibold text-primary backdrop-blur-md transition-colors hover:bg-surface-3 md:hidden"
+        aria-expanded={mobileOpen}
+        aria-controls={panelId}
+        className="flex w-full items-center justify-between gap-3 rounded-2xl border border-default dark:border-slate-500 bg-surface-2/80 px-4 py-3 text-sm font-semibold text-primary backdrop-blur-md transition-colors hover:bg-surface-3 md:hidden"
       >
-        <span>Filtre ve Arama Seçenekleri</span>
-        <span className="text-xs font-bold text-sky-800 dark:text-sky-300">
+        <span className="text-left">Filtre ve Sıralama Seçenekleri</span>
+        <span className="shrink-0 text-xs font-bold text-sky-800 dark:text-sky-300">
           {mobileOpen ? 'Kapat' : 'Aç'}
         </span>
       </button>
 
-      <div className={`${mobileOpen ? 'block' : 'hidden'} space-y-4 md:block`}>
+      <div
+        id={panelId}
+        className={`${mobileOpen ? 'block' : 'hidden'} space-y-4 md:block`}
+      >
         {/* Search and Sort row */}
-          <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-            {/* Search Input */}
-            <div className="relative flex-1 group">
-              <Search className="pointer-events-none absolute left-4 top-1/2 h-5 w-5 -translate-y-1/2 text-secondary transition-colors group-focus-within:text-purple-500" />
-              <input
-                id="content-search-input"
-                name="q"
-                type="text"
-                aria-label={searchPlaceholder}
-                placeholder={searchPlaceholder}
-                value={searchTerm}
-                onChange={(e) => onSearchChange(e.target.value)}
-                className="w-full rounded-2xl border border-default dark:border-slate-400 bg-surface-2/60 py-3 pl-12 pr-10 text-sm sm:text-base text-primary placeholder:text-secondary backdrop-blur-md transition-all focus:border-purple-500/50 focus:bg-surface-1 focus:outline-none focus:ring-2 focus:ring-purple-500/20"
-              />
-              {searchTerm && (
-                <button
-                  onClick={onClearSearch}
-                  className="absolute right-3.5 top-1/2 -translate-y-1/2 rounded-full p-1 text-secondary transition-colors hover:bg-surface-3 hover:text-primary"
-                  title="Aramayı Temizle"
-                >
-                  <X className="h-4 w-4" />
-                </button>
-              )}
+        <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+          {/* Sort and View Mode */}
+          <div className="flex flex-wrap sm:flex-nowrap items-center gap-2">
+            <div className="relative flex flex-1 min-w-[170px] sm:flex-initial items-center">
+              <ArrowUpDown className="pointer-events-none absolute left-3.5 h-4 w-4 text-secondary" />
+              <select
+                id="content-sort-select"
+                name="sort"
+                value={sortBy}
+                onChange={(e) =>
+                  onSortChange(e.target.value as ContentSortOrder)
+                }
+                aria-label="Sıralama ölçütü"
+                className="w-full sm:w-auto appearance-none rounded-2xl border border-default dark:border-slate-400 bg-surface-2/60 py-3 pl-9 pr-8 text-xs sm:text-sm font-semibold text-primary backdrop-blur-md transition-all hover:bg-surface-3 focus:border-purple-500/50 focus:outline-none focus:ring-2 focus:ring-purple-500/20"
+              >
+                {CONTENT_SORT_OPTIONS.map((opt) => (
+                  <option
+                    key={opt.id}
+                    value={opt.id}
+                    className="bg-surface-1 text-primary"
+                  >
+                    {opt.label}
+                  </option>
+                ))}
+              </select>
             </div>
 
-            {/* Sort and View Mode */}
-            <div className="flex flex-wrap sm:flex-nowrap items-center gap-2">
-              <div className="relative flex flex-1 min-w-[170px] sm:flex-initial items-center">
-                <ArrowUpDown className="pointer-events-none absolute left-3.5 h-4 w-4 text-secondary" />
-                <select
-                  id="content-sort-select"
-                  name="sort"
-                  value={sortBy}
-                  onChange={(e) => onSortChange(e.target.value as ContentSortOrder)}
-                  aria-label="Sıralama ölçütü"
-                  className="w-full sm:w-auto appearance-none rounded-2xl border border-default dark:border-slate-400 bg-surface-2/60 py-3 pl-9 pr-8 text-xs sm:text-sm font-semibold text-primary backdrop-blur-md transition-all hover:bg-surface-3 focus:border-purple-500/50 focus:outline-none focus:ring-2 focus:ring-purple-500/20"
-                >
-                  {CONTENT_SORT_OPTIONS.map((opt) => (
-                    <option key={opt.id} value={opt.id} className="bg-surface-1 text-primary">
-                      {opt.label}
-                    </option>
-                  ))}
-                </select>
-              </div>
-
-              {/* View Mode Switcher */}
-              <div className="flex items-center rounded-2xl border border-default dark:border-slate-400 bg-surface-2/60 p-1 backdrop-blur-md shadow-xs">
-                <button
-                  onClick={() => onViewModeChange('grid')}
-                  title="Kılavuz Görünümü"
-                  className={`rounded-xl p-2 transition-all ${
-                    viewMode === 'grid'
-                      ? 'shadow-md shadow-brand-primary/25 font-semibold bg-brand-primary text-slate-950 dark:text-slate-950'
-                      : 'text-secondary hover:text-primary hover:bg-surface-3/50'
-                  }`}
-                >
-                  <Grid className="h-4 w-4 sm:h-5 sm:w-5" />
-                </button>
-                <button
-                  onClick={() => onViewModeChange('list')}
-                  title="Liste Görünümü"
-                  className={`rounded-xl p-2 transition-all ${
-                    viewMode === 'list'
-                      ? 'shadow-md shadow-brand-primary/25 font-semibold bg-brand-primary text-slate-950 dark:text-slate-950'
-                      : 'text-secondary hover:text-primary hover:bg-surface-3/50'
-                  }`}
-                >
-                  <List className="h-4 w-4 sm:h-5 sm:w-5" />
-                </button>
-                <button
-                  onClick={() => onViewModeChange('packs')}
-                  title="Konu Setleri"
-                  className={`flex items-center gap-1.5 rounded-xl px-2.5 py-2 text-xs font-semibold transition-all ${
-                    viewMode === 'packs'
-                      ? 'shadow-md shadow-brand-primary/25 bg-brand-primary text-slate-950 dark:text-slate-950'
-                      : 'text-secondary hover:text-primary hover:bg-surface-3/50'
-                  }`}
-                >
-                  <FolderTree className="h-4 w-4" />
-                  <span className="hidden md:inline">Setler</span>
-                </button>
-              </div>
+            {/* View Mode Switcher */}
+            <div className="flex items-center rounded-2xl border border-default dark:border-slate-400 bg-surface-2/60 p-1 backdrop-blur-md shadow-xs">
+              <button
+                onClick={() => onViewModeChange('grid')}
+                title="Kart Görünümü"
+                aria-pressed={viewMode === 'grid'}
+                className={`rounded-xl p-2 transition-all ${
+                  viewMode === 'grid'
+                    ? 'shadow-md shadow-brand-primary/25 font-semibold bg-brand-primary text-slate-950 dark:text-slate-950'
+                    : 'text-secondary hover:text-primary hover:bg-surface-3/50'
+                }`}
+              >
+                <Grid className="h-4 w-4 sm:h-5 sm:w-5" />
+              </button>
+              <button
+                onClick={() => onViewModeChange('list')}
+                title="Liste Görünümü"
+                aria-pressed={viewMode === 'list'}
+                className={`rounded-xl p-2 transition-all ${
+                  viewMode === 'list'
+                    ? 'shadow-md shadow-brand-primary/25 font-semibold bg-brand-primary text-slate-950 dark:text-slate-950'
+                    : 'text-secondary hover:text-primary hover:bg-surface-3/50'
+                }`}
+              >
+                <List className="h-4 w-4 sm:h-5 sm:w-5" />
+              </button>
+              <button
+                onClick={() => onViewModeChange('packs')}
+                title="Konu Setleri"
+                aria-pressed={viewMode === 'packs'}
+                className={`flex items-center gap-1.5 rounded-xl px-2.5 py-2 text-xs font-semibold transition-all ${
+                  viewMode === 'packs'
+                    ? 'shadow-md shadow-brand-primary/25 bg-brand-primary text-slate-950 dark:text-slate-950'
+                    : 'text-secondary hover:text-primary hover:bg-surface-3/50'
+                }`}
+              >
+                <FolderTree className="h-4 w-4" />
+                <span className="hidden md:inline">Setler</span>
+              </button>
             </div>
           </div>
-
-          {/* Quick Filters Row */}
-          {viewMode !== 'packs' && (
-            <div className="flex flex-wrap items-center justify-between gap-2.5 pt-1">
-              <div className="flex flex-wrap items-center gap-2">
-                <button
-                  onClick={() => onQuickFilterChange('all')}
-                  className={`rounded-full px-3.5 py-1.5 text-xs font-semibold transition-all duration-200 ${
-                    quickFilter === 'all'
-                      ? 'border border-green-700 dark:border-brand-primary bg-brand-primary/15 text-tone-success-fg dark:text-brand-primary-soft shadow-sm shadow-brand-primary/20'
-                      : 'border border-default dark:border-slate-400 bg-surface-2/60 text-secondary hover:bg-surface-3 hover:text-primary'
-                  }`}
-                >
-                  Tümü
-                </button>
-                <button
-                  onClick={() => onQuickFilterChange('favorites')}
-                  className={`flex items-center gap-1.5 rounded-full px-3.5 py-1.5 text-xs font-semibold transition-all duration-200 ${
-                    quickFilter === 'favorites'
-                      ? 'border border-green-700 dark:border-brand-primary bg-brand-primary/15 text-tone-success-fg dark:text-brand-primary-soft shadow-sm shadow-brand-primary/20'
-                      : 'border border-default dark:border-slate-400 bg-surface-2/60 text-secondary hover:bg-surface-3 hover:text-primary'
-                  }`}
-                >
-                  <Star className="h-3.5 w-3.5 fill-current text-amber-500 dark:text-amber-400" />
-                  Favorilerim
-                </button>
-                <button
-                  onClick={() => onQuickFilterChange('completed')}
-                  className={`flex items-center gap-1.5 rounded-full px-3.5 py-1.5 text-xs font-semibold transition-all duration-200 ${
-                    quickFilter === 'completed'
-                      ? 'border border-green-700 dark:border-brand-primary bg-brand-primary/15 text-tone-success-fg dark:text-brand-primary-soft shadow-sm shadow-brand-primary/20'
-                      : 'border border-default dark:border-slate-400 bg-surface-2/60 text-secondary hover:bg-surface-3 hover:text-primary'
-                  }`}
-                >
-                  <CheckCircle2 className="h-3.5 w-3.5 text-accent-success-ink dark:text-emerald-400" />
-                  Çözülenler
-                </button>
-                <button
-                  onClick={() => onQuickFilterChange('with_solution')}
-                  className={`flex items-center gap-1.5 rounded-full px-3.5 py-1.5 text-xs font-semibold transition-all duration-200 ${
-                    quickFilter === 'with_solution'
-                      ? 'border border-teal-600 dark:border-teal-400 bg-teal-500/15 text-teal-700 dark:text-teal-300 shadow-sm shadow-teal-500/20'
-                      : 'border border-default dark:border-slate-400 bg-surface-2/60 text-secondary hover:bg-surface-3 hover:text-primary'
-                  }`}
-                >
-                  <BookOpen className="h-3.5 w-3.5 text-teal-600 dark:text-teal-400" />
-                  Çözümlü
-                </button>
-                <button
-                  onClick={() => onQuickFilterChange('with_video')}
-                  className={`flex items-center gap-1.5 rounded-full px-3.5 py-1.5 text-xs font-semibold transition-all duration-200 ${
-                    quickFilter === 'with_video'
-                      ? 'border border-green-700 dark:border-brand-primary bg-brand-primary/15 text-tone-success-fg dark:text-brand-primary-soft shadow-sm shadow-brand-primary/20'
-                      : 'border border-default dark:border-slate-400 bg-surface-2/60 text-secondary hover:bg-surface-3 hover:text-primary'
-                  }`}
-                >
-                  <Video className="h-3.5 w-3.5 text-rose-600 dark:text-rose-400" />
-                  Videolu
-                </button>
-              </div>
-
-              <div className="flex items-center gap-1.5 rounded-full border border-default dark:border-white/[0.06] bg-surface-2/50 px-3 py-1 text-xs font-medium text-secondary">
-                <span className="h-1.5 w-1.5 rounded-full bg-purple-500 animate-pulse" />
-                <span>{totalResults} içerik bulundu</span>
-              </div>
-            </div>
-          )}
         </div>
+
+        {/* Quick Filters Row */}
+        {viewMode !== 'packs' && (
+          <div className="flex flex-wrap items-center justify-between gap-2.5 pt-1">
+            <div className="flex flex-wrap items-center gap-2">
+              <button
+                onClick={() => onQuickFilterChange('all')}
+                className={`rounded-full px-3.5 py-1.5 text-xs font-semibold transition-all duration-200 ${
+                  quickFilter === 'all'
+                    ? 'border border-green-700 dark:border-brand-primary bg-brand-primary/15 text-tone-success-fg dark:text-brand-primary-soft shadow-sm shadow-brand-primary/20'
+                    : 'border border-default dark:border-slate-400 bg-surface-2/60 text-secondary hover:bg-surface-3 hover:text-primary'
+                }`}
+              >
+                Tümü
+              </button>
+              <button
+                onClick={() => onQuickFilterChange('favorites')}
+                className={`flex items-center gap-1.5 rounded-full px-3.5 py-1.5 text-xs font-semibold transition-all duration-200 ${
+                  quickFilter === 'favorites'
+                    ? 'border border-green-700 dark:border-brand-primary bg-brand-primary/15 text-tone-success-fg dark:text-brand-primary-soft shadow-sm shadow-brand-primary/20'
+                    : 'border border-default dark:border-slate-400 bg-surface-2/60 text-secondary hover:bg-surface-3 hover:text-primary'
+                }`}
+              >
+                <Star className="h-3.5 w-3.5 fill-current text-amber-500 dark:text-amber-400" />
+                Favorilerim
+              </button>
+              <button
+                onClick={() => onQuickFilterChange('completed')}
+                className={`flex items-center gap-1.5 rounded-full px-3.5 py-1.5 text-xs font-semibold transition-all duration-200 ${
+                  quickFilter === 'completed'
+                    ? 'border border-green-700 dark:border-brand-primary bg-brand-primary/15 text-tone-success-fg dark:text-brand-primary-soft shadow-sm shadow-brand-primary/20'
+                    : 'border border-default dark:border-slate-400 bg-surface-2/60 text-secondary hover:bg-surface-3 hover:text-primary'
+                }`}
+              >
+                <CheckCircle2 className="h-3.5 w-3.5 text-accent-success-ink dark:text-emerald-400" />
+                Çözülenler
+              </button>
+              <button
+                onClick={() => onQuickFilterChange('with_solution')}
+                className={`flex items-center gap-1.5 rounded-full px-3.5 py-1.5 text-xs font-semibold transition-all duration-200 ${
+                  quickFilter === 'with_solution'
+                    ? 'border border-teal-600 dark:border-teal-400 bg-teal-500/15 text-teal-700 dark:text-teal-300 shadow-sm shadow-teal-500/20'
+                    : 'border border-default dark:border-slate-400 bg-surface-2/60 text-secondary hover:bg-surface-3 hover:text-primary'
+                }`}
+              >
+                <BookOpen className="h-3.5 w-3.5 text-teal-600 dark:text-teal-400" />
+                Çözümlü
+              </button>
+              <button
+                onClick={() => onQuickFilterChange('with_video')}
+                className={`flex items-center gap-1.5 rounded-full px-3.5 py-1.5 text-xs font-semibold transition-all duration-200 ${
+                  quickFilter === 'with_video'
+                    ? 'border border-green-700 dark:border-brand-primary bg-brand-primary/15 text-tone-success-fg dark:text-brand-primary-soft shadow-sm shadow-brand-primary/20'
+                    : 'border border-default dark:border-slate-400 bg-surface-2/60 text-secondary hover:bg-surface-3 hover:text-primary'
+                }`}
+              >
+                <Video className="h-3.5 w-3.5 text-rose-600 dark:text-rose-400" />
+                Videolu
+              </button>
+            </div>
+
+            <div className="flex items-center gap-1.5 rounded-full border border-default dark:border-white/[0.06] bg-surface-2/50 px-3 py-1 text-xs font-medium text-secondary">
+              <span className="h-1.5 w-1.5 rounded-full bg-purple-500" />
+              <span>{totalResults} içerik bulundu</span>
+            </div>
+          </div>
+        )}
+        {children}
       </div>
+    </div>
   );
 }

@@ -2,6 +2,7 @@
 
 import { useEffect, useRef, useState } from 'react';
 import { useTheme } from '@/components/ThemeProvider';
+import { isDataSaverOrSlowConnection } from '@/lib/performance-runtime';
 
 interface Particle {
   x: number;
@@ -59,9 +60,10 @@ export function SiteBackground() {
     if (!ctx) return;
 
     // Erişilebilirlik: Kullanıcı hareketi azaltmak istiyorsa döngüyü başlatma
-    const prefersReducedMotion = window.matchMedia(
-      '(prefers-reduced-motion: reduce)',
-    ).matches;
+    const prefersReducedMotion =
+      window.matchMedia('(prefers-reduced-motion: reduce)').matches ||
+      window.matchMedia('(max-width: 767px)').matches ||
+      isDataSaverOrSlowConnection();
 
     let animId: number;
     let width = 0;
@@ -135,6 +137,7 @@ export function SiteBackground() {
     };
 
     const handlePointerMove = (e: MouseEvent) => {
+      if (prefersReducedMotion) return;
       mouseRef.current = {
         x: e.clientX,
         y: e.clientY,
@@ -393,7 +396,7 @@ export function SiteBackground() {
         {/* İmleç Manyetik Işık Halkası — konum/görünürlük rAF ile doğrudan DOM'a yazılır */}
         <div
           ref={glowRef}
-          className="pointer-events-none absolute left-0 top-0 h-[26rem] w-[26rem] rounded-full opacity-0 blur-3xl transition-opacity duration-300"
+          className="pointer-events-none absolute hidden md:block left-0 top-0 h-[26rem] w-[26rem] rounded-full opacity-0 blur-3xl transition-opacity duration-300"
           style={{
             willChange: 'transform, opacity',
             background:

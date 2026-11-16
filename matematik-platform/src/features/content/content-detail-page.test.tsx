@@ -5,8 +5,11 @@ import ContentDetailPage, {
 } from '@/app/icerikler/[slug]/page';
 import * as serverSupabaseModule from '@/lib/supabase/server';
 import { notFound } from 'next/navigation';
+import { ThemeProvider } from '@/components/ThemeProvider';
 
 vi.mock('next/navigation', () => ({
+  usePathname: () => '/icerikler/document',
+  useRouter: () => ({ push: vi.fn(), prefetch: vi.fn() }),
   notFound: vi.fn(() => {
     throw new Error('NEXT_NOT_FOUND');
   }),
@@ -142,7 +145,7 @@ describe('ContentDetailPage', () => {
       params: Promise.resolve({ slug: sampleSlug }),
     });
 
-    render(PageJsx);
+    render(<ThemeProvider>{PageJsx}</ThemeProvider>);
 
     // Title
     expect(

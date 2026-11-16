@@ -1,6 +1,7 @@
+import type { ContentGradeFilter } from '@/features/content/types';
 import type { ContentDocument } from '@/types';
 import type { Dispatch, SetStateAction, RefObject } from 'react';
-import { useEffect, useCallback, startTransition } from 'react';
+import { useEffect, useCallback, useRef, startTransition } from 'react';
 
 import { loadWorksheetDocumentsByGrade } from '@/features/content/queries';
 
@@ -24,9 +25,11 @@ type UseWorksheetNavigationProps = {
   >;
   selectedWorksheetGrade: WorksheetGradeSelection | null;
   setSelectedType: Dispatch<SetStateAction<string>>;
+  setSelectedGrade: Dispatch<SetStateAction<ContentGradeFilter>>;
   appliedWorksheetLinkRef: RefObject<string | null>;
   worksheetGradeFromUrl: string | null;
   worksheetOutcomeFromUrl: string | null;
+  worksheetLoading: boolean;
 };
 
 export function useWorksheetNavigation({
@@ -40,17 +43,25 @@ export function useWorksheetNavigation({
   ensureWorksheetOutcomeCatalog,
   selectedWorksheetGrade,
   setSelectedType,
+  setSelectedGrade,
   appliedWorksheetLinkRef,
   worksheetGradeFromUrl,
   worksheetOutcomeFromUrl,
+  worksheetLoading,
 }: UseWorksheetNavigationProps) {
+  const inFlightGradeRef = useRef<WorksheetGradeSelection | null>(null);
   const resetWorksheetHierarchy = useCallback(() => {
     worksheetRequestIdRef.current += 1;
+    inFlightGradeRef.current = null;
+    appliedWorksheetLinkRef.current = null;
+    setContentLoadError(null);
     setSelectedWorksheetGrade(null);
     setSelectedWorksheetOutcome(null);
     setWorksheetDocuments([]);
     setWorksheetLoading(false);
   }, [
+    appliedWorksheetLinkRef,
+    setContentLoadError,
     setSelectedWorksheetGrade,
     setSelectedWorksheetOutcome,
     setWorksheetDocuments,
@@ -67,6 +78,7 @@ export function useWorksheetNavigation({
   const loadWorksheetGradeDocuments = useCallback(
     async (grade: WorksheetGradeSelection, preserveOutcome = false) => {
       const requestId = ++worksheetRequestIdRef.current;
+      inFlightGradeRef.current = grade;
       setWorksheetLoading(true);
       setContentLoadError(null);
       setSelectedWorksheetGrade(grade);
@@ -89,6 +101,7 @@ export function useWorksheetNavigation({
           setContentLoadError('Yaprak testler yüklenemedi. Yeniden deneyin.');
       } finally {
         if (requestId === worksheetRequestIdRef.current) {
+          inFlightGradeRef.current = null;
           setWorksheetLoading(false);
         }
       }
@@ -116,6 +129,7 @@ export function useWorksheetNavigation({
     (type: string) => {
       startTransition(() => {
         setSelectedType(type);
+        if (!isWorksheetType(type)) setSelectedGrade('all');
       });
       const url = new URL(window.location.href);
 
@@ -132,7 +146,7 @@ export function useWorksheetNavigation({
 
       window.history.pushState({}, '', url.toString());
     },
-    [setSelectedType],
+    [setSelectedGrade, setSelectedType],
   );
 
   const updateWorksheetBrowserUrl = useCallback(
@@ -169,23 +183,41 @@ export function useWorksheetNavigation({
     const outcome = worksheetOutcomeFromUrl?.trim() || '';
     const linkKey = `${String(grade || '')}:${outcome}`;
 
-    if (!grade || appliedWorksheetLinkRef.current === linkKey) {
+    if (!grade) {
+      resetWorksheetHierarchy();
       return;
     }
+    if (appliedWorksheetLinkRef.current === linkKey) return;
 
     appliedWorksheetLinkRef.current = linkKey;
+    // Kazanım geçmişinde aynı sınıfın verisini tekrar istemeyiz.
+    if (
+      selectedWorksheetGrade === grade &&
+      (!worksheetLoading || inFlightGradeRef.current === grade)
+    ) {
+      setSelectedWorksheetOutcome(outcome || null);
+      return;
+    }
+    const requestId = worksheetRequestIdRef.current + 1;
     void loadWorksheetGradeDocuments(grade).then(() => {
-      if (outcome) {
-        setSelectedWorksheetOutcome(outcome);
+      if (
+        requestId === worksheetRequestIdRef.current &&
+        appliedWorksheetLinkRef.current === linkKey
+      ) {
+        setSelectedWorksheetOutcome(outcome || null);
       }
     });
   }, [
     appliedWorksheetLinkRef,
     isWorksheetBrowser,
     loadWorksheetGradeDocuments,
+    resetWorksheetHierarchy,
+    selectedWorksheetGrade,
     setSelectedWorksheetOutcome,
     worksheetGradeFromUrl,
     worksheetOutcomeFromUrl,
+    worksheetLoading,
+    worksheetRequestIdRef,
   ]);
   return {
     resetWorksheetHierarchy,

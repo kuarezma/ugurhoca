@@ -324,7 +324,7 @@ export function HomeRecentDocumentsSection({
       {/* Üst Başlık ve Sınıf Filtre Sekmeleri */}
       <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4 pb-6 border-b border-subtle">
         <div className="space-y-1.5">
-          <div className="inline-flex items-center gap-1.5 rounded-full bg-accent-bg border border-sky-300/40 dark:border-sky-400/20 px-3.5 py-1 text-xs font-black text-accent-fg uppercase tracking-wider backdrop-blur-md shadow-xs">
+          <div className="inline-flex items-center gap-1.5 rounded-full bg-accent-bg border border-sky-300/40 dark:border-sky-400/20 px-3.5 py-1 text-xs font-black text-accent-fg uppercase tracking-wider shadow-xs">
             <Sparkles className="h-3.5 w-3.5 text-accent-fg shrink-0" />
             <span>Yeni Yüklenen İçerikler & Çözümlü Testler</span>
           </div>
@@ -463,7 +463,7 @@ export function HomeRecentDocumentsSection({
             return (
               <article
                 key={doc.id}
-                className={`group relative flex flex-col justify-between overflow-hidden rounded-3xl border transition-all duration-300 backdrop-blur-xl ${accent.card}`}
+                className={`${index >= 3 ? 'hidden sm:flex' : 'flex'} group relative flex-col justify-between overflow-hidden rounded-3xl border transition-all duration-300 ${accent.card}`}
               >
                 {/* Üst Renkli Kristal Prizma Şeridi */}
                 <div className={`h-1.5 w-full ${accent.topBar}`} />
@@ -474,7 +474,7 @@ export function HomeRecentDocumentsSection({
                     <div className="flex flex-wrap items-center justify-between gap-2 mb-3.5">
                       <div className="flex flex-wrap items-center gap-2">
                         <span
-                          className={`inline-flex items-center rounded-full border px-3 py-1 text-xs font-black backdrop-blur-md ${
+                          className={`inline-flex items-center rounded-full border px-3 py-1 text-xs font-black ${
                             gradeStyle
                               ? gradeStyle.badge
                               : 'bg-surface-2 text-secondary border-subtle'
@@ -548,10 +548,12 @@ export function HomeRecentDocumentsSection({
                       <span className="text-primary font-bold">Uğur Hoca</span>
                     </div>
 
-                    <div className={`grid grid-cols-1 ${actionColsClass} gap-2.5`}>
+                    <div
+                      className={`grid grid-cols-1 ${actionColsClass} gap-2.5`}
+                    >
                       <SafeLink
                         href={`/icerikler?id=${doc.id}`}
-                        className="inline-flex items-center justify-center gap-1.5 rounded-2xl border border-indigo-300/80 dark:border-indigo-700/80 bg-indigo-50/80 dark:bg-indigo-950/60 hover:bg-indigo-100/90 dark:hover:bg-indigo-900/60 px-3.5 py-2.5 text-xs font-bold text-indigo-950 dark:text-indigo-200 backdrop-blur-md transition-all shadow-xs"
+                        className="inline-flex items-center justify-center gap-1.5 rounded-2xl border border-indigo-300/80 dark:border-indigo-700/80 bg-indigo-50/80 dark:bg-indigo-950/60 hover:bg-indigo-100/90 dark:hover:bg-indigo-900/60 px-3.5 py-2.5 text-xs font-bold text-indigo-950 dark:text-indigo-200 transition-all shadow-xs"
                       >
                         <Eye className="h-4 w-4 shrink-0" />
                         <span>İncele</span>
@@ -562,7 +564,7 @@ export function HomeRecentDocumentsSection({
                           href={doc.file_url}
                           target="_blank"
                           rel="noopener noreferrer"
-                          className="inline-flex items-center justify-center gap-1.5 rounded-2xl border border-sky-300/80 dark:border-sky-700/80 bg-sky-50/80 dark:bg-sky-950/60 hover:bg-sky-100/90 dark:hover:bg-sky-900/60 px-3.5 py-2.5 text-xs font-bold text-sky-950 dark:text-sky-200 backdrop-blur-md transition-all shadow-xs"
+                          className="inline-flex items-center justify-center gap-1.5 rounded-2xl border border-sky-300/80 dark:border-sky-700/80 bg-sky-50/80 dark:bg-sky-950/60 hover:bg-sky-100/90 dark:hover:bg-sky-900/60 px-3.5 py-2.5 text-xs font-bold text-sky-950 dark:text-sky-200 transition-all shadow-xs"
                         >
                           <FileText className="h-4 w-4 shrink-0 text-sky-700 dark:text-sky-300" />
                           <span>Öğrenci PDF</span>

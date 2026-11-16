@@ -49,10 +49,17 @@ function ContentsPageInner({
   initialGrade = 'all',
   initialTotalCount = 0,
   initialType = 'all',
+  initialSearchParams = '',
+  initialWorksheetDocuments = EMPTY_CONTENT_DOCUMENTS,
+  initialWorksheetLoadSucceeded = false,
 }: ContentsPageProps) {
-  const [searchParams, setSearchParams] = useState(() => new URLSearchParams());
+  const [searchParams, setSearchParams] = useState(
+    () => new URLSearchParams(initialSearchParams),
+  );
+  const [urlFiltersReady, setUrlFiltersReady] = useState(false);
   const handleUrlFiltersChange = useCallback(
     (action: React.SetStateAction<URLSearchParams>) => {
+      setUrlFiltersReady(true);
       setSearchParams((prev) => {
         const nextParams = typeof action === 'function' ? action(prev) : action;
         return prev.toString() === nextParams.toString() ? prev : nextParams;
@@ -65,18 +72,22 @@ function ContentsPageInner({
     searchParams.get('type') || searchParams.get('category');
   const typeFromUrl = rawTypeFromUrl
     ? CONTENT_TYPE_MAPPING[rawTypeFromUrl] || rawTypeFromUrl
-    : initialType;
-  const worksheetGradeFromUrl = searchParams.get('grade');
+    : urlFiltersReady
+      ? 'all'
+      : initialType;
+  const worksheetGradeFromUrl =
+    searchParams.get('grade') ||
+    (!urlFiltersReady && initialGrade !== 'all' ? String(initialGrade) : null);
   const worksheetOutcomeFromUrl = searchParams.get('outcome');
   const searchFromUrl = searchParams.get('q') || '';
   const [user, setUser] = useState<ContentPageUser | null>(null);
   const [documents, setDocuments] =
     useState<ContentDocument[]>(initialDocuments);
-  const [searchTerm, setSearchTerm] = useState('');
+  const [searchTerm, setSearchTerm] = useState(searchFromUrl);
   useEffect(() => {
     setSearchTerm(searchFromUrl);
   }, [searchFromUrl]);
-  const [debouncedSearch, setDebouncedSearch] = useState('');
+  const [debouncedSearch, setDebouncedSearch] = useState(searchFromUrl);
   const [sortBy, setSortBy] = useState<ContentSortOrder>('newest');
   const [worksheetSortBy, setWorksheetSortBy] =
     useState<ContentSortOrder>('curriculum');
@@ -118,7 +129,7 @@ function ContentsPageInner({
   const [contentLoadError, setContentLoadError] = useState<string | null>(null);
   const [worksheetDocuments, setWorksheetDocuments] = useState<
     ContentDocument[]
-  >([]);
+  >(initialWorksheetDocuments);
   const [worksheetOutcomeCatalog, setWorksheetOutcomeCatalog] = useState<
     Record<number, WorksheetCatalogItem[]>
   >(WORKSHEET_OUTCOME_CATALOG);
@@ -129,13 +140,13 @@ function ContentsPageInner({
     : null;
   const [worksheetCatalogLoading, setWorksheetCatalogLoading] = useState(false);
   const [worksheetLoading, setWorksheetLoading] = useState(
-    Boolean(initialWorksheetGrade),
+    Boolean(initialWorksheetGrade) && !initialWorksheetLoadSucceeded,
   );
   const [selectedWorksheetGrade, setSelectedWorksheetGrade] =
     useState<WorksheetGradeSelection | null>(initialWorksheetGrade);
   const [selectedWorksheetOutcome, setSelectedWorksheetOutcome] = useState<
     string | null
-  >(null);
+  >(new URLSearchParams(initialSearchParams).get('outcome'));
   const [loadedFeedKey, setLoadedFeedKey] = useState<string>(() =>
     initialLoadSucceeded && !isWorksheetType(initialType)
       ? buildContentFeedFilterKey({
@@ -157,7 +168,11 @@ function ContentsPageInner({
   const loadMoreRef = useRef<HTMLDivElement>(null);
   const loadRequestIdRef = useRef(0);
   const worksheetRequestIdRef = useRef(0);
-  const appliedWorksheetLinkRef = useRef<string | null>(null);
+  const appliedWorksheetLinkRef = useRef<string | null>(
+    initialWorksheetLoadSucceeded && initialWorksheetGrade
+      ? `${initialWorksheetGrade}:${new URLSearchParams(initialSearchParams).get('outcome')?.trim() || ''}`
+      : null,
+  );
   const isWorksheetBrowser = isWorksheetType(selectedType);
 
   const {
@@ -222,9 +237,11 @@ function ContentsPageInner({
     ensureWorksheetOutcomeCatalog,
     selectedWorksheetGrade,
     setSelectedType,
+    setSelectedGrade,
     appliedWorksheetLinkRef,
     worksheetGradeFromUrl,
     worksheetOutcomeFromUrl,
+    worksheetLoading,
   });
 
   const handledRequestedDocIdRef = useRef<string | null>(null);
@@ -237,20 +254,22 @@ function ContentsPageInner({
   const previewUrlSyncedRef = useRef(false);
   const previewDocRef = useRef<ContentDocument | null>(null);
 
-  const { handleOpenPreview, handleClosePreview } = useContentPreview({
-    previewDocRef,
-    previewDoc,
-    setShowAnswerKey,
-    handledRequestedDocIdRef,
-    setPreviewDoc,
-    applyDocumentPatch,
-    user,
-    previewHistoryRef,
-    previewUrlSyncedRef,
-    searchParams,
-    documents,
-    worksheetDocuments,
-  });
+  const { handleOpenPreview, handleClosePreview, retryPreview } =
+    useContentPreview({
+      previewDocRef,
+      previewDoc,
+      setShowAnswerKey,
+      handledRequestedDocIdRef,
+      setPreviewDoc,
+      applyDocumentPatch,
+      user,
+      previewHistoryRef,
+      previewUrlSyncedRef,
+      searchParams,
+      documents,
+      worksheetDocuments,
+      setContentLoadError,
+    });
 
   const {
     handleDownloadDocument,
@@ -412,6 +431,11 @@ function ContentsPageInner({
       handleOpenEdit={handleOpenEdit}
       handleOpenComments={handleOpenComments}
       handleOpenPreview={handleOpenPreview}
+      retryPreview={
+        searchParams.has('id') || searchParams.has('doc')
+          ? retryPreview
+          : undefined
+      }
       toggleCompleted={toggleCompleted}
       toggleFavorite={toggleFavorite}
       handleToggleLike={handleToggleLike}

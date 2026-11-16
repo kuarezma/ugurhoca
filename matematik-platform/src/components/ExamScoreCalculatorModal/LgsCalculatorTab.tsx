@@ -172,7 +172,7 @@ export function LgsCalculatorTab({
               0,
               sub.questions - (input.correct + input.wrong),
             );
-            const net = Math.max(0, input.correct - input.wrong / 3);
+            const net = input.correct - input.wrong / 3;
 
             return (
               <div

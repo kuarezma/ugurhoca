@@ -1,0 +1,57 @@
+{
+  "home320": {
+    "width": 320,
+    "height": 740,
+    "documentWidth": 310,
+    "documentHeight": 7725,
+    "backdropElements": 41
+  },
+  "singleClick": {
+    "requests": [
+      {
+        "type": "fetch",
+        "navigation": false
+      },
+      {
+        "type": "fetch",
+        "navigation": false
+      },
+      {
+        "type": "fetch",
+        "navigation": false
+      }
+    ],
+    "documentNavigations": 0
+  },
+  "contents320": {
+    "width": 320,
+    "height": 740,
+    "documentWidth": 310,
+    "documentHeight": 3861,
+    "backdropElements": 36
+  },
+  "backRestoredGradeCards": true,
+  "lgs320": {
+    "width": 320,
+    "height": 740,
+    "documentWidth": 310,
+    "documentHeight": 3421,
+    "backdropElements": 4
+  },
+  "inputHeight": 44,
+  "home390": {
+    "width": 390,
+    "height": 844,
+    "documentWidth": 380,
+    "documentHeight": 7303,
+    "backdropElements": 41
+  },
+  "home1440": {
+    "width": 1440,
+    "height": 900,
+    "documentWidth": 1430,
+    "documentHeight": 4938,
+    "backdropElements": 64
+  },
+  "scope": "Yerel üretim sürümü; tarayıcı emülasyonu, gerçek telefon ve üretim alan verisi değildir."
+}

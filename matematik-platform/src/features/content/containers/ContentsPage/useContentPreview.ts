@@ -1,6 +1,6 @@
 import type { AppUser, ContentDocument } from '@/types';
 import type { Dispatch, SetStateAction, RefObject } from 'react';
-import { useEffect, useCallback } from 'react';
+import { useEffect, useCallback, useRef, useState } from 'react';
 
 import { trackStudentActivityEvent } from '@/features/analytics/trackActivity';
 
@@ -25,6 +25,7 @@ type UseContentPreviewProps = {
   searchParams: URLSearchParams;
   documents: ContentDocument[];
   worksheetDocuments: ContentDocument[];
+  setContentLoadError: Dispatch<SetStateAction<string | null>>;
 };
 
 export function useContentPreview({
@@ -40,17 +41,31 @@ export function useContentPreview({
   searchParams,
   documents,
   worksheetDocuments,
+  setContentLoadError,
 }: UseContentPreviewProps) {
+  const previewRequestIdRef = useRef(0);
+  const [retryVersion, setRetryVersion] = useState(0);
+  useEffect(
+    () => () => {
+      previewRequestIdRef.current += 1;
+      if (!previewDocRef.current) handledRequestedDocIdRef.current = null;
+    },
+    [handledRequestedDocIdRef, previewDocRef],
+  );
   useEffect(() => {
     previewDocRef.current = previewDoc;
   }, [previewDoc, previewDocRef]);
 
   const handleOpenPreview = useCallback(
     (content: ContentDocument) => {
+      previewRequestIdRef.current += 1;
+      if (previewDocRef.current?.id === content.id) return;
+      setContentLoadError(null);
       setShowAnswerKey(false);
       handledRequestedDocIdRef.current = content.id;
       const nextViews = (content.views || 0) + 1;
       const updatedDoc = { ...content, views: nextViews };
+      previewDocRef.current = updatedDoc;
       setPreviewDoc(updatedDoc);
       applyDocumentPatch(content.id, { views: nextViews });
       void updateDocumentMetric(content.id, { views: nextViews }).catch(
@@ -91,6 +106,8 @@ export function useContentPreview({
     },
     [
       applyDocumentPatch,
+      previewDocRef,
+      setContentLoadError,
       handledRequestedDocIdRef,
       previewHistoryRef,
       previewUrlSyncedRef,
@@ -101,12 +118,14 @@ export function useContentPreview({
   );
 
   const handleClosePreview = useCallback(() => {
+    previewRequestIdRef.current += 1;
     const closingId =
       previewDocRef.current?.id ||
       searchParams.get('id') ||
       searchParams.get('doc') ||
       null;
 
+    previewDocRef.current = null;
     setPreviewDoc(null);
     setShowAnswerKey(false);
     handledRequestedDocIdRef.current = closingId;
@@ -155,6 +174,7 @@ export function useContentPreview({
   const requestedDocId = searchParams.get('id') || searchParams.get('doc');
   useEffect(() => {
     if (!requestedDocId) {
+      previewRequestIdRef.current += 1;
       // Geri tuşu veya harici gezinme `?id=` parametresini düşürdüyse önizlemeyi
       // de kapat. `previewUrlSyncedRef` koşulu şart: açılış ile router'ın
       // useSearchParams güncellemesi arasındaki boşlukta burası "id yok" görür ve
@@ -163,6 +183,7 @@ export function useContentPreview({
         previewUrlSyncedRef.current = false;
         previewHistoryRef.current = null;
         handledRequestedDocIdRef.current = null;
+        previewDocRef.current = null;
         setPreviewDoc(null);
         setShowAnswerKey(false);
       } else if (!previewDocRef.current) {
@@ -193,12 +214,33 @@ export function useContentPreview({
       return;
     }
 
-    void loadDocumentById(requestedDocId).then((doc) => {
-      if (doc) {
-        handleOpenPreview(doc);
-      }
-    });
+    const requestId = ++previewRequestIdRef.current;
+    const isCurrentRequest = () => {
+      const url = new URL(window.location.href);
+      return (
+        requestId === previewRequestIdRef.current &&
+        (url.searchParams.get('id') || url.searchParams.get('doc')) ===
+          requestedDocId
+      );
+    };
+    void loadDocumentById(requestedDocId)
+      .then((doc) => {
+        if (!isCurrentRequest()) return;
+        if (doc) handleOpenPreview(doc);
+        else
+          setContentLoadError(
+            'İçerik bulunamadı. Başka bir içerik seçebilirsin.',
+          );
+      })
+      .catch(() => {
+        if (isCurrentRequest()) {
+          setContentLoadError(
+            'Önizleme yüklenemedi. İçeriği yeniden açmayı dene.',
+          );
+        }
+      });
   }, [
+    retryVersion,
     requestedDocId,
     documents,
     worksheetDocuments,
@@ -209,6 +251,14 @@ export function useContentPreview({
     previewHistoryRef,
     setPreviewDoc,
     setShowAnswerKey,
+    setContentLoadError,
   ]);
-  return { handleOpenPreview, handleClosePreview };
+  const retryPreview = useCallback(() => {
+    previewRequestIdRef.current += 1;
+    handledRequestedDocIdRef.current = null;
+    setContentLoadError(null);
+    setRetryVersion((version) => version + 1);
+  }, [handledRequestedDocIdRef, setContentLoadError]);
+
+  return { handleOpenPreview, handleClosePreview, retryPreview };
 }

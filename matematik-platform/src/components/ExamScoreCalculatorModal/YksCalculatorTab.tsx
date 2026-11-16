@@ -243,7 +243,7 @@ export function YksCalculatorTab({
                 correct: 0,
                 wrong: 0,
               };
-              const net = Math.max(0, current.correct - current.wrong / 4);
+              const net = current.correct - current.wrong / 4;
               return (
                 <div
                   key={key}
@@ -310,7 +310,7 @@ export function YksCalculatorTab({
                 correct: 0,
                 wrong: 0,
               };
-              const net = Math.max(0, current.correct - current.wrong / 4);
+              const net = current.correct - current.wrong / 4;
               return (
                 <div
                   key={key}

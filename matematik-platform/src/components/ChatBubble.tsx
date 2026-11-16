@@ -197,13 +197,16 @@ export default function ChatBubble() {
     const handleOpenChat = () => {
       setOpen(true);
     };
+    const handleCloseChat = () => setOpen(false);
     window.addEventListener('open-chat-bubble', handleOpenChat);
+    window.addEventListener('close-chat-bubble', handleCloseChat);
     return () => {
       window.removeEventListener(
         'open-teacher-chat-with-question',
         handleOpenWithQuestion,
       );
       window.removeEventListener('open-chat-bubble', handleOpenChat);
+      window.removeEventListener('close-chat-bubble', handleCloseChat);
     };
   }, []);
 
@@ -239,6 +242,11 @@ export default function ChatBubble() {
   useEffect(() => {
     if (!open) return;
     const handleClickOutside = (event: MouseEvent) => {
+      if (
+        event.target instanceof Element &&
+        event.target.closest('[data-chat-toggle]')
+      )
+        return;
       if (
         bubbleRef.current &&
         !bubbleRef.current.contains(event.target as Node)
@@ -534,16 +542,24 @@ export default function ChatBubble() {
     ],
   );
 
-  // Canlı ders odasında floating bubble gizlenir (kendi dahili sohbeti vardır)
-  if (!mounted || loading || pathname?.startsWith('/canli-ders/d/')) {
-    return null;
-  }
-
   const unreadCountBadge = currentUser?.isAdmin
     ? adminTotalUnread
     : currentUser
       ? studentUnreadCount
       : 0;
+
+  useEffect(() => {
+    window.dispatchEvent(
+      new CustomEvent('ugurhoca:chat-state', {
+        detail: { unreadCount: unreadCountBadge, open },
+      }),
+    );
+  }, [unreadCountBadge, open]);
+
+  // Canlı ders odasında floating bubble gizlenir (kendi dahili sohbeti vardır)
+  if (!mounted || loading || pathname?.startsWith('/canli-ders/d/')) {
+    return null;
+  }
 
   return (
     <div ref={bubbleRef}>

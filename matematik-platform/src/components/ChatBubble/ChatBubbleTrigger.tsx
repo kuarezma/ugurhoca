@@ -23,7 +23,7 @@ export function ChatBubbleTrigger({
       whileHover={{ scale: 1.06 }}
       whileTap={{ scale: 0.94 }}
       onClick={onToggle}
-      className="fixed bottom-[calc(5.5rem+env(safe-area-inset-bottom,0px))] md:bottom-6 right-3.5 md:right-6 z-40 flex h-13 w-13 md:h-[60px] md:w-[60px] items-center justify-center rounded-full focus:outline-none focus-visible:ring-4 focus-visible:ring-purple-400 bg-brand-primary hover:bg-brand-primary-soft text-slate-950 dark:text-slate-950 shadow-btn-3d-green active:translate-y-1 active:shadow-none"
+      className="fixed bottom-[calc(5.5rem+env(safe-area-inset-bottom,0px))] md:bottom-6 right-3.5 md:right-6 z-40 hidden md:flex h-13 w-13 md:h-[60px] md:w-[60px] items-center justify-center rounded-full focus:outline-none focus-visible:ring-4 focus-visible:ring-purple-400 bg-brand-primary hover:bg-brand-primary-soft text-slate-950 dark:text-slate-950 shadow-btn-3d-green active:translate-y-1 active:shadow-none"
       aria-label={isAdmin ? 'Öğrenci mesajları' : "Uğur Hoca'ya mesaj yaz"}
       aria-haspopup="dialog"
       aria-expanded={open}

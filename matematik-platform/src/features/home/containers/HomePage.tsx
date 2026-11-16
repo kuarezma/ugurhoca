@@ -244,10 +244,13 @@ export default function HomePage({
 
           {weeklyCurriculumSlot ?? <HomeWeeklyCurriculumSection />}
 
-          <HomeHowItWorksSection />
-
-          {/* 2. Duyurular */}
-          {announcementsSlot}
+          <details className="mx-auto my-6 max-w-6xl rounded-2xl border border-border-subtle bg-surface-1 px-4 py-3 sm:px-6">
+            <summary className="cursor-pointer py-2 font-display text-lg font-bold text-primary">
+              Duyurular ve kullanım rehberi
+            </summary>
+            <HomeHowItWorksSection />
+            {announcementsSlot}
+          </details>
 
           {/* 3. LGS ve YKS Sayacı */}
           <HomeExamCountdownSection

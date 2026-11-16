@@ -180,7 +180,7 @@ export function PrintReportSection({
                     0,
                     sub.questions - (inp.correct + inp.wrong),
                   );
-                  const net = Math.max(0, inp.correct - inp.wrong / 3);
+                  const net = inp.correct - inp.wrong / 3;
                   const rate = Math.round((net / sub.questions) * 100);
                   return (
                     <tr key={sub.key} className="border-b border-gray-300">
@@ -241,7 +241,7 @@ export function PrintReportSection({
                     0,
                     sub.questions - (inp.correct + inp.wrong),
                   );
-                  const net = Math.max(0, inp.correct - inp.wrong / 4);
+                  const net = inp.correct - inp.wrong / 4;
                   const rate = Math.round((net / sub.questions) * 100);
                   return (
                     <tr key={sub.key} className="border-b border-gray-300">

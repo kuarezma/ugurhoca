@@ -1,4 +1,10 @@
-import { act, fireEvent, render, screen, waitFor } from '@testing-library/react';
+import {
+  act,
+  fireEvent,
+  render,
+  screen,
+  waitFor,
+} from '@testing-library/react';
 import { renderToString } from 'react-dom/server';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import ContentsPage from './ContentsPage';
@@ -25,6 +31,7 @@ vi.mock('next/navigation', () => ({
 vi.mock('@/components/Toast', () => ({
   useToast: () => ({ showToast: vi.fn() }),
 }));
+vi.mock('@/components/ThemeToggle', () => ({ ThemeToggle: () => null }));
 vi.mock('@/features/content/queries', () => ({
   resolveContentUser: vi.fn(),
   loadContentDocuments: vi.fn(),
@@ -63,19 +70,52 @@ describe('ContentsPage static feed and client filters', () => {
   });
 
   it('applies a note topic q from the URL to the editable search and query', async () => {
-    navigation.params = new URLSearchParams({ type: 'ders-notlari', grade: '8', q: 'Kareköklü İfadeler' });
+    navigation.params = new URLSearchParams({
+      type: 'ders-notlari',
+      grade: '8',
+      q: 'Kareköklü İfadeler',
+    });
     window.history.replaceState({}, '', `/icerikler?${navigation.params}`);
     render(<ContentsPage />);
-    await waitFor(() => expect(screen.getByPlaceholderText('İçerik ara...')).toHaveValue('Kareköklü İfadeler'));
-    await waitFor(() => expect(loadContentDocuments).toHaveBeenCalledWith(1, 5, 8, 'ders-notlari', expect.objectContaining({ searchTerm: 'Kareköklü İfadeler' })));
+    await waitFor(() =>
+      expect(screen.getByPlaceholderText('İçerik ara...')).toHaveValue(
+        'Kareköklü İfadeler',
+      ),
+    );
+    await waitFor(() =>
+      expect(loadContentDocuments).toHaveBeenCalledWith(
+        1,
+        5,
+        8,
+        'ders-notlari',
+        expect.objectContaining({ searchTerm: 'Kareköklü İfadeler' }),
+      ),
+    );
   });
 
   it('uses topic metadata for worksheet q and keeps matching tests visible inside outcomes', async () => {
-    navigation.params = new URLSearchParams({ type: 'yaprak-test', grade: '8', q: 'Kareköklü İfadeler' });
+    navigation.params = new URLSearchParams({
+      type: 'yaprak-test',
+      grade: '8',
+      q: 'Kareköklü İfadeler',
+    });
     window.history.replaceState({}, '', `/icerikler?${navigation.params}`);
     vi.mocked(loadWorksheetDocumentsByGrade).mockResolvedValue([
-      { id: 'root', title: 'Test - 1', type: 'yaprak-test', grade: [8], description: '__WS_META__{"outcome":"Kareköklü İfadeler","order":1}\nAlıştırmalar' },
-      { id: 'other', title: 'Test - 2', type: 'yaprak-test', grade: [8], description: 'Üslü İfadeler' },
+      {
+        id: 'root',
+        title: 'Test - 1',
+        type: 'yaprak-test',
+        grade: [8],
+        description:
+          '__WS_META__{"outcome":"Kareköklü İfadeler","order":1}\nAlıştırmalar',
+      },
+      {
+        id: 'other',
+        title: 'Test - 2',
+        type: 'yaprak-test',
+        grade: [8],
+        description: 'Üslü İfadeler',
+      },
     ]);
     render(<ContentsPage />);
     const outcome = await screen.findByRole(
@@ -83,7 +123,9 @@ describe('ContentsPage static feed and client filters', () => {
       { name: /Kareköklü İfadeler/ },
       { timeout: 10000 },
     );
-    expect(screen.queryByRole('button', { name: /Üslü İfadeler/ })).not.toBeInTheDocument();
+    expect(
+      screen.queryByRole('button', { name: /Üslü İfadeler/ }),
+    ).not.toBeInTheDocument();
     fireEvent.click(outcome);
     expect(await screen.findByText('Test - 1')).toBeInTheDocument();
   });
@@ -105,6 +147,55 @@ describe('ContentsPage static feed and client filters', () => {
     );
     expect(html).toContain('Anonim içerik');
     expect(html).toContain('Tüm sınıflar için içerikler');
+  });
+
+  it('seçili yaprak test sınıfını sunucu HTML çıktısında korur', () => {
+    navigation.suspend = true;
+    const html = renderToString(
+      <ContentsPage
+        initialType="yaprak-test"
+        initialGrade={5}
+        initialSearchParams="type=yaprak-test&grade=5"
+        initialWorksheetDocuments={[
+          {
+            id: 'seed',
+            title: 'Sunucudan gelen yaprak test',
+            type: 'yaprak-test',
+            grade: [5],
+          },
+        ]}
+        initialWorksheetLoadSucceeded
+      />,
+    );
+    expect(html).toContain('Sunucudan gelen yaprak test');
+    expect(html).toContain('5. Sınıf');
+  });
+
+  it('başarılı yaprak test sınıf seedini hidrasyonda tekrar istemez', async () => {
+    navigation.params = new URLSearchParams('type=yaprak-test&grade=5');
+    window.history.replaceState({}, '', `/icerikler?${navigation.params}`);
+    render(
+      <ContentsPage
+        initialType="yaprak-test"
+        initialGrade={5}
+        initialSearchParams={navigation.params.toString()}
+        initialWorksheetDocuments={[
+          {
+            id: 'seed',
+            title: 'Hazır yaprak test',
+            type: 'yaprak-test',
+            grade: [5],
+          },
+        ]}
+        initialWorksheetLoadSucceeded
+      />,
+    );
+    expect(
+      await screen.findByRole('heading', { name: 'Hazır yaprak test' }),
+    ).toBeInTheDocument();
+    await waitFor(() => expect(resolveContentUser).toHaveBeenCalledOnce());
+    expect(loadWorksheetDocumentsByGrade).not.toHaveBeenCalled();
+    expect(loadContentDocuments).not.toHaveBeenCalled();
   });
 
   it.each([
@@ -206,7 +297,13 @@ describe('ContentsPage static feed and client filters', () => {
     render(
       <ContentsPage
         initialDocuments={[
-          { id: 'doc-1', title: 'Beğenilen içerik', type: 'kitaplar', grade: [7], likes: 2 },
+          {
+            id: 'doc-1',
+            title: 'Beğenilen içerik',
+            type: 'kitaplar',
+            grade: [7],
+            likes: 2,
+          },
         ]}
         initialTotalCount={1}
       />,
@@ -246,6 +343,32 @@ describe('ContentsPage static feed and client filters', () => {
       'all',
       expect.any(Object),
     );
+  });
+
+  it('clears the grade when type and grade disappear together from the URL', async () => {
+    navigation.params = new URLSearchParams('type=kitaplar&grade=8');
+    window.history.replaceState({}, '', `/icerikler?${navigation.params}`);
+    const { rerender } = render(<ContentsPage />);
+    await waitFor(() =>
+      expect(loadContentDocuments).toHaveBeenCalledWith(
+        1,
+        expect.any(Number),
+        8,
+        'kitaplar',
+        expect.any(Object),
+      ),
+    );
+    navigation.params = new URLSearchParams();
+    window.history.replaceState({}, '', '/icerikler');
+    rerender(<ContentsPage />);
+    await waitFor(() =>
+      expect(
+        screen.getByText('Tüm sınıflar için içerikler'),
+      ).toBeInTheDocument(),
+    );
+    expect(
+      screen.queryByText('8. sınıf için tüm içerikler'),
+    ).not.toBeInTheDocument();
   });
 
   it('kaynak hatasında beklemeyi bitirir ve yeniden deneme sunar', async () => {

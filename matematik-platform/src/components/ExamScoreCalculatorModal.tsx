@@ -94,14 +94,11 @@ export function ExamScoreCalculatorModal({
   const lgsResult: LgsResultData = useMemo(() => {
     const lgsCalc = calculateLgsScore(lgsInputs);
     const score = lgsCalc.estimatedScore;
-    let totalNet = 0;
     let totalCorrect = 0;
     let totalWrong = 0;
 
     for (const sub of lgsSubjects) {
       const input = lgsInputs[sub.key] || { correct: 0, wrong: 0 };
-      const net = Math.max(0, input.correct - input.wrong / 3);
-      totalNet += net;
       totalCorrect += input.correct;
       totalWrong += input.wrong;
     }
@@ -127,7 +124,7 @@ export function ExamScoreCalculatorModal({
 
     return {
       score,
-      totalNet: Number(totalNet.toFixed(2)),
+      totalNet: lgsCalc.totalNet,
       totalCorrect,
       totalWrong,
       estimatedPercentile,
@@ -147,23 +144,15 @@ export function ExamScoreCalculatorModal({
         placementRank: 0,
       };
 
-    const tytMat = Math.max(
-      0,
-      (yksInputs.tytMatematik?.correct || 0) -
-        (yksInputs.tytMatematik?.wrong || 0) / 4,
-    );
-    const aytMat = Math.max(
-      0,
-      (yksInputs.aytMatematik?.correct || 0) -
-        (yksInputs.aytMatematik?.wrong || 0) / 4,
-    );
+    const tytMat = table.tytNets.tytMatematik;
+    const aytMat = table.aytNets.aytMatematik;
 
     let tytNet = 0;
     let aytNet = 0;
     for (const key of Object.keys(yksInputs) as YksSubjectKey[]) {
       const inp = yksInputs[key];
       if (!inp) continue;
-      const net = Math.max(0, inp.correct - inp.wrong / 4);
+      const net = inp.correct - inp.wrong / 4;
       if (key.startsWith('tyt')) {
         tytNet += net;
       } else {
@@ -190,11 +179,11 @@ export function ExamScoreCalculatorModal({
     const isReached = diff <= 0;
 
     const mathInput = lgsInputs.matematik || { correct: 0, wrong: 0 };
-    const currentMathNet = Math.max(0, mathInput.correct - mathInput.wrong / 3);
+    const currentMathNet = mathInput.correct - mathInput.wrong / 3;
     const mathHeadroom = Math.max(0, 20 - currentMathNet);
 
     const fenInput = lgsInputs.fen || { correct: 0, wrong: 0 };
-    const currentFenNet = Math.max(0, fenInput.correct - fenInput.wrong / 3);
+    const currentFenNet = fenInput.correct - fenInput.wrong / 3;
     const fenHeadroom = Math.max(0, 20 - currentFenNet);
 
     const neededNet = isReached ? 0 : Math.ceil(diff / 4.34);
@@ -255,7 +244,7 @@ export function ExamScoreCalculatorModal({
   // Deneme Kaydetme Handlers
   const handleSaveLgsTrial = () => {
     const mathInput = lgsInputs.matematik || { correct: 0, wrong: 0 };
-    const mathNet = Math.max(0, mathInput.correct - mathInput.wrong / 3);
+    const mathNet = mathInput.correct - mathInput.wrong / 3;
     const trialCount = savedTrials.length + 1;
     saveExamTrial({
       examType: 'lgs',

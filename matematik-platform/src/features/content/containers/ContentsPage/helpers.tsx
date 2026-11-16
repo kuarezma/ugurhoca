@@ -142,6 +142,9 @@ export type ContentsPageProps = {
   initialGrade?: ContentGradeFilter;
   initialTotalCount?: number;
   initialType?: string;
+  initialSearchParams?: string;
+  initialWorksheetDocuments?: ContentDocument[];
+  initialWorksheetLoadSucceeded?: boolean;
 };
 
 export const EMPTY_CONTENT_DOCUMENTS: ContentDocument[] = [];

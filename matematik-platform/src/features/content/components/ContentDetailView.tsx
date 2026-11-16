@@ -1,4 +1,5 @@
-import Link from 'next/link';
+import { SafeLink as Link } from '@/components/SafeLink';
+import { SitePageNavigation } from '@/components/SitePageNavigation';
 import { ContentScratchpadButton } from './ContentScratchpadButton';
 import {
   ArrowLeft,
@@ -76,7 +77,8 @@ export function ContentDetailView({
   };
 
   return (
-    <div className="min-h-screen bg-canvas text-primary">
+    <div className="min-h-screen bg-canvas text-primary pt-[calc(5.25rem+env(safe-area-inset-top))] sm:pt-24">
+      <SitePageNavigation />
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}

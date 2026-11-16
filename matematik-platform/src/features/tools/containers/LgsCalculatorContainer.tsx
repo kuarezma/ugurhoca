@@ -3,7 +3,7 @@
 import { useState } from 'react';
 import { applyAnswerChange } from '@/lib/examInputs';
 import { serializeLgsInputs } from '@/lib/lgsInputTransfer';
-import Link from 'next/link';
+import { SafeLink as Link } from '@/components/SafeLink';
 import {
   School,
   ArrowLeft,
@@ -20,26 +20,8 @@ import {
   type LgsSubjectKey,
 } from '@/lib/examCalculators';
 import { LGS_TARGET_PRESETS } from '@/components/ExamScoreCalculatorModal';
-import { FaqAccordion, type FaqItem } from '../components/FaqAccordion';
-
-const LGS_FAQS: FaqItem[] = [
-  {
-    q: 'LGS puanı nasıl hesaplanır?',
-    a: "MEB LGS'de öğrencilerin her derse ait net sayısı (Doğru - Yanlış / 3) hesaplanır. Bu araç ders ağırlıklarına göre yaklaşık puan üretir. Resmî puan, sınavın ortalama ve standart sapmalarına da bağlıdır.",
-  },
-  {
-    q: "LGS'de 3 yanlış 1 doğruyu götürür mü?",
-    a: 'Evet. MEB LGS sınavında her ders için yapılan 3 yanlış cevap, o dersteki 1 doğru cevabı eksiltir. Bu nedenle emin olunmayan sorularda rastgele tahmin yapmak yerine boş bırakmak net kaybını önler.',
-  },
-  {
-    q: 'Lise tercihlerinde puan mı yoksa yüzdelik dilim mi önemlidir?',
-    a: 'Tercihlerde geçmiş yılların yüzdelik dilimleri yararlı bir karşılaştırma sağlar. Kontenjanlar ve sonuçlar değişebileceğinden güncel MEB tercih kılavuzunu incele.',
-  },
-  {
-    q: 'Tüm soruları doğru yapan öğrenci kaç puan alır?',
-    a: "LGS'de toplam 90 soru (50 sözel + 40 sayısal) bulunur. Bu araç tüm doğru için 500 tahmini puan gösterir; resmî sonuç sınav istatistikleriyle hesaplanır.",
-  },
-];
+import { FaqAccordion } from '../components/FaqAccordion';
+import { LGS_CALCULATOR_TITLE, LGS_FAQS } from '../lgs-content';
 
 export function LgsCalculatorContainer() {
   const [inputs, setInputs] = useState<LgsInputs>(createInitialLgsInputs());
@@ -62,26 +44,8 @@ export function LgsCalculatorContainer() {
 
   const result = calculateLgsScore(inputs);
 
-  const jsonLd = {
-    '@context': 'https://schema.org',
-    '@type': 'FAQPage',
-    mainEntity: LGS_FAQS.map((f) => ({
-      '@type': 'Question',
-      name: f.q,
-      acceptedAnswer: {
-        '@type': 'Answer',
-        text: f.a,
-      },
-    })),
-  };
-
   return (
     <main className="page-surface min-h-screen gradient-bg px-4 pb-16 pt-20 sm:px-6 sm:pt-24">
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
-      />
-
       <div className="mx-auto max-w-4xl">
         {/* Navigation Breadcrumb */}
         <div className="mb-6 flex items-center gap-2 text-xs font-semibold text-secondary">
@@ -107,7 +71,7 @@ export function LgsCalculatorContainer() {
               </div>
               <div>
                 <h1 className="text-xl sm:text-3xl font-black text-primary font-display">
-                  2026/2027 MEB LGS Puan & Yüzdelik Dilim Robotu
+                  {LGS_CALCULATOR_TITLE}
                 </h1>
                 <p className="text-xs sm:text-sm text-secondary mt-1">
                   Netlerine ve ders ağırlıklarına göre tahmini puan hesaplanır.
@@ -132,7 +96,7 @@ export function LgsCalculatorContainer() {
           {/* Subject Inputs (7 Cols) */}
           <div className="lg:col-span-7 space-y-3">
             <div className="rounded-3xl border border-default bg-surface-1 p-5 shadow-xl backdrop-blur-md">
-              <div className="flex items-center justify-between border-b border-default pb-3 mb-4 text-xs font-bold text-secondary">
+              <div className="hidden items-center justify-between border-b border-default pb-3 mb-4 text-xs font-bold text-secondary min-[400px]:flex">
                 <span>Ders Adı (Soru Sayısı)</span>
                 <div className="flex items-center gap-6 pr-2">
                   <span className="text-emerald-800 dark:text-emerald-300">
@@ -148,15 +112,18 @@ export function LgsCalculatorContainer() {
               <div className="space-y-3">
                 {lgsSubjects.map((sub) => {
                   const item = inputs[sub.key];
-                  const netVal = Math.max(0, item.correct - item.wrong / 3);
+                  const netVal =
+                    result.subjectNets.find(
+                      (subject) => subject.key === sub.key,
+                    )?.net ?? 0;
 
                   return (
                     <div
                       key={sub.key}
-                      className="flex items-center justify-between gap-2 rounded-2xl border border-default bg-surface-2 p-3 text-xs"
+                      className="flex flex-col items-stretch gap-3 rounded-2xl border border-default bg-surface-2 p-3 text-xs min-[400px]:flex-row min-[400px]:items-center min-[400px]:justify-between"
                     >
                       <div className="flex-1 min-w-0">
-                        <span className="font-bold text-primary block break-words">
+                        <span className="font-bold text-primary block">
                           {sub.label}
                         </span>
                         <span className="text-[10px] text-secondary">
@@ -164,39 +131,60 @@ export function LgsCalculatorContainer() {
                         </span>
                       </div>
 
-                      <div className="flex shrink-0 items-center gap-1.5 sm:gap-3">
-                        <input
-                          type="number"
-                          min={0}
-                          max={sub.questions}
-                          value={item.correct || ''}
-                          placeholder="0"
-                          onChange={(e) =>
-                            handleInputChange(
-                              sub.key,
-                              'correct',
-                              e.target.value,
-                            )
-                          }
-                          aria-label={`${sub.label} doğru`}
-                          className="h-9 w-12 rounded-xl border border-emerald-500/40 bg-surface-1 text-center font-mono font-bold text-accent-success-ink dark:text-emerald-300 focus:outline-none focus:ring-2 focus:ring-emerald-500"
-                        />
+                      <div className="grid grid-cols-3 gap-2 min-[400px]:flex min-[400px]:shrink-0 sm:gap-3">
+                        <label className="block min-w-0">
+                          <span className="mb-1 block text-xs font-semibold text-secondary min-[400px]:hidden">
+                            Doğru
+                          </span>
+                          <input
+                            type="number"
+                            min={0}
+                            max={sub.questions}
+                            value={item.correct || ''}
+                            placeholder="0"
+                            onChange={(e) =>
+                              handleInputChange(
+                                sub.key,
+                                'correct',
+                                e.target.value,
+                              )
+                            }
+                            aria-label={`${sub.label} doğru`}
+                            inputMode="numeric"
+                            className="h-11 w-full min-[400px]:w-12 rounded-xl border border-emerald-500/40 bg-surface-1 text-center font-mono font-bold text-accent-success-ink dark:text-emerald-300 focus:outline-none focus:ring-2 focus:ring-emerald-500"
+                          />
+                        </label>
 
-                        <input
-                          type="number"
-                          min={0}
-                          max={sub.questions}
-                          value={item.wrong || ''}
-                          placeholder="0"
-                          onChange={(e) =>
-                            handleInputChange(sub.key, 'wrong', e.target.value)
-                          }
-                          aria-label={`${sub.label} yanlış`}
-                          className="h-9 w-12 rounded-xl border border-rose-500/40 bg-surface-1 text-center font-mono font-bold text-rose-600 dark:text-rose-300 focus:outline-none focus:ring-2 focus:ring-rose-500"
-                        />
+                        <label className="block min-w-0">
+                          <span className="mb-1 block text-xs font-semibold text-secondary min-[400px]:hidden">
+                            Yanlış
+                          </span>
+                          <input
+                            type="number"
+                            min={0}
+                            max={sub.questions}
+                            value={item.wrong || ''}
+                            placeholder="0"
+                            onChange={(e) =>
+                              handleInputChange(
+                                sub.key,
+                                'wrong',
+                                e.target.value,
+                              )
+                            }
+                            aria-label={`${sub.label} yanlış`}
+                            inputMode="numeric"
+                            className="h-11 w-full min-[400px]:w-12 rounded-xl border border-rose-500/40 bg-surface-1 text-center font-mono font-bold text-rose-600 dark:text-rose-300 focus:outline-none focus:ring-2 focus:ring-rose-500"
+                          />
+                        </label>
 
-                        <div className="h-9 w-14 rounded-xl border border-cyan-500/40 bg-surface-1 flex items-center justify-center font-mono font-black text-accent-fg">
-                          {netVal.toFixed(2)}
+                        <div className="min-w-0">
+                          <span className="mb-1 block text-xs font-semibold text-secondary min-[400px]:hidden">
+                            Net
+                          </span>
+                          <div className="h-11 w-full min-[400px]:w-14 rounded-xl border border-cyan-500/40 bg-surface-1 flex items-center justify-center font-mono font-black text-accent-fg">
+                            {netVal.toFixed(2)}
+                          </div>
                         </div>
                       </div>
                     </div>

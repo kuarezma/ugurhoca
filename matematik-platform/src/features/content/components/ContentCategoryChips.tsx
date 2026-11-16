@@ -1,6 +1,7 @@
 'use client';
 
 type ContentCategoryChipsProps = {
+  showGrades?: boolean;
   selectedGrade: string;
   selectedType: string;
   onSelectGrade: (grade: string) => void;
@@ -30,6 +31,7 @@ const TYPE_OPTIONS: { id: string; label: string; emoji?: string }[] = [
 ];
 
 export function ContentCategoryChips({
+  showGrades = true,
   selectedGrade,
   selectedType,
   onSelectGrade,
@@ -38,43 +40,46 @@ export function ContentCategoryChips({
 }: ContentCategoryChipsProps) {
   return (
     <div className="space-y-4">
-      {/* Sınıf Çipleri */}
-      <div>
-        <div className="mb-2 flex items-center justify-between">
-          <span className="flex items-center gap-1.5 text-[11px] font-bold uppercase tracking-widest text-secondary">
-            <span className="h-1.5 w-1.5 rounded-full bg-purple-500 shadow-[0_0_8px_rgba(168,85,247,0.8)]" />
-            Sınıf Seviyesi
-          </span>
+      {/* Yaprak test tarayıcısı kendi sınıf kartlarını kullanır. */}
+      {showGrades && (
+        <div>
+          <div className="mb-2 flex items-center justify-between">
+            <span className="flex items-center gap-1.5 text-[11px] font-bold uppercase tracking-widest text-secondary">
+              <span className="h-1.5 w-1.5 rounded-full bg-purple-500 shadow-[0_0_8px_rgba(168,85,247,0.8)]" />
+              Sınıf Seviyesi
+            </span>
+          </div>
+          <div className="flex flex-wrap items-center gap-2">
+            {GRADE_OPTIONS.map((g) => {
+              const isSelected = selectedGrade === g.id;
+              return (
+                <button
+                  key={g.id}
+                  type="button"
+                  onClick={() => onSelectGrade(g.id)}
+                  aria-pressed={isSelected}
+                  className={`group shrink-0 inline-flex items-center gap-2 rounded-full px-3.5 py-1.5 text-xs font-bold transition-all duration-200 active:scale-95 ${
+                    isSelected
+                      ? 'bg-slate-900 text-white dark:bg-white dark:text-slate-900 shadow-md scale-[1.02]'
+                      : 'border border-default dark:border-slate-600 bg-white/90 dark:bg-slate-900/70 text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 hover:text-slate-900 dark:hover:text-white hover:-translate-y-0.5 shadow-xs'
+                  }`}
+                >
+                  {g.dot && (
+                    <span
+                      className={`h-2 w-2 rounded-full ${g.dot} ${
+                        isSelected
+                          ? 'ring-2 ring-white/50 dark:ring-slate-900/50'
+                          : 'opacity-80 group-hover:opacity-100'
+                      }`}
+                    />
+                  )}
+                  <span>{g.label}</span>
+                </button>
+              );
+            })}
+          </div>
         </div>
-        <div className="flex flex-wrap items-center gap-2">
-          {GRADE_OPTIONS.map((g) => {
-            const isSelected = selectedGrade === g.id;
-            return (
-              <button
-                key={g.id}
-                type="button"
-                onClick={() => onSelectGrade(g.id)}
-                className={`group shrink-0 inline-flex items-center gap-2 rounded-full px-3.5 py-1.5 text-xs font-bold transition-all duration-200 active:scale-95 ${
-                  isSelected
-                    ? 'bg-slate-900 text-white dark:bg-white dark:text-slate-900 shadow-md scale-[1.02]'
-                    : 'border border-default dark:border-slate-600 bg-white/90 dark:bg-slate-900/70 text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 hover:text-slate-900 dark:hover:text-white hover:-translate-y-0.5 shadow-xs'
-                }`}
-              >
-                {g.dot && (
-                  <span
-                    className={`h-2 w-2 rounded-full ${g.dot} ${
-                      isSelected
-                        ? 'ring-2 ring-white/50 dark:ring-slate-900/50'
-                        : 'opacity-80 group-hover:opacity-100'
-                    }`}
-                  />
-                )}
-                <span>{g.label}</span>
-              </button>
-            );
-          })}
-        </div>
-      </div>
+      )}
 
       {/* Tür Çipleri */}
       <div>
@@ -92,6 +97,7 @@ export function ContentCategoryChips({
                 key={t.id}
                 type="button"
                 onClick={() => onSelectType(t.id)}
+                aria-pressed={isSelected}
                 className={`group shrink-0 inline-flex items-center gap-1.5 rounded-full px-3.5 py-1.5 text-xs font-bold transition-all duration-200 active:scale-95 ${
                   isSelected
                     ? 'bg-slate-900 text-white dark:bg-white dark:text-slate-900 shadow-md scale-[1.02]'

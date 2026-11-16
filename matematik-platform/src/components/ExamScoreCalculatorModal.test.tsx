@@ -1,18 +1,45 @@
 import { describe, it, expect, vi } from 'vitest';
 import { render, screen, fireEvent, within } from '@testing-library/react';
 import { ExamScoreCalculatorModal } from './ExamScoreCalculatorModal';
+import { getSavedExamTrials } from '@/lib/examHistoryStorage';
 
 describe('ExamScoreCalculatorModal', () => {
+  it('keeps negative subject and total nets consistent in the LGS summary', () => {
+    localStorage.clear();
+    render(
+      <ExamScoreCalculatorModal isOpen onClose={vi.fn()} initialTab="lgs" />,
+    );
+    fireEvent.change(screen.getByLabelText('Matematik yanlış sayısı'), {
+      target: { value: '3' },
+    });
+    expect(screen.getAllByText('-1.00').length).toBeGreaterThan(0);
+    expect(screen.getAllByText('-1').length).toBeGreaterThan(0);
+    fireEvent.click(
+      screen.getByRole('button', { name: /Bu Denemeyi Kaydet/i }),
+    );
+    expect(getSavedExamTrials('lgs')[0]).toMatchObject({
+      mathNet: -1,
+      totalNet: -1,
+    });
+  });
   it('girdi değişirken pencereyi açık tutar ve neti günceller', () => {
     const onClose = vi.fn();
-    render(<ExamScoreCalculatorModal isOpen={true} onClose={onClose} initialTab="lgs" />);
+    render(
+      <ExamScoreCalculatorModal
+        isOpen={true}
+        onClose={onClose}
+        initialTab="lgs"
+      />,
+    );
 
     expect(screen.getByRole('dialog')).toHaveClass('relative', 'z-10');
     const correct = screen.getByLabelText('Türkçe doğru sayısı');
     const row = correct.parentElement?.parentElement;
     expect(row).not.toBeNull();
     fireEvent.change(correct, { target: { value: '15' } });
-    fireEvent.change(screen.getByLabelText('Türkçe yanlış sayısı'), { target: { value: '3' } });
+    fireEvent.change(screen.getByLabelText('Türkçe yanlış sayısı'), {
+      target: { value: '3' },
+    });
 
     expect(within(row as HTMLElement).getByText('14.00')).toBeInTheDocument();
     expect(onClose).not.toHaveBeenCalled();
@@ -59,16 +86,34 @@ describe('ExamScoreCalculatorModal', () => {
 
   it('renders A4 printable diagnostic report card layout and allows printing', () => {
     const printSpy = vi.spyOn(window, 'print').mockImplementation(() => {});
-    render(<ExamScoreCalculatorModal isOpen={true} onClose={vi.fn()} initialTab="lgs" />);
+    render(
+      <ExamScoreCalculatorModal
+        isOpen={true}
+        onClose={vi.fn()}
+        initialTab="lgs"
+      />,
+    );
 
     expect(
-      screen.getByText(/Uğur Hoca Matematik — Deneme Sınavı Sonuç Karnesi & Stratejik Eylem Planı/i),
+      screen.getByText(
+        /Uğur Hoca Matematik — Deneme Sınavı Sonuç Karnesi & Stratejik Eylem Planı/i,
+      ),
     ).toBeInTheDocument();
-    expect(screen.getByText(/Ders Bazlı Doğru, Yanlış ve Net Tablosu/i)).toBeInTheDocument();
-    expect(screen.getByText(/Bu Denemede Hata Yaptığım veya Zorlandığım Konular/i)).toBeInTheDocument();
-    expect(screen.getByText(/Gelecek Hafta Çözeceğim Telafi Soruları ve Odak Planım/i)).toBeInTheDocument();
+    expect(
+      screen.getByText(/Ders Bazlı Doğru, Yanlış ve Net Tablosu/i),
+    ).toBeInTheDocument();
+    expect(
+      screen.getByText(/Bu Denemede Hata Yaptığım veya Zorlandığım Konular/i),
+    ).toBeInTheDocument();
+    expect(
+      screen.getByText(
+        /Gelecek Hafta Çözeceğim Telafi Soruları ve Odak Planım/i,
+      ),
+    ).toBeInTheDocument();
 
-    const printBtns = screen.getAllByRole('button', { name: /A4 Karne Yazdır|Karnemi Yazdır \(A4\)/i });
+    const printBtns = screen.getAllByRole('button', {
+      name: /A4 Karne Yazdır|Karnemi Yazdır \(A4\)/i,
+    });
     expect(printBtns.length).toBeGreaterThan(0);
     fireEvent.click(printBtns[0]);
 
@@ -78,7 +123,13 @@ describe('ExamScoreCalculatorModal', () => {
 
   it('saves current trial and renders trial progression in history timeline', () => {
     localStorage.clear();
-    render(<ExamScoreCalculatorModal isOpen={true} onClose={vi.fn()} initialTab="lgs" />);
+    render(
+      <ExamScoreCalculatorModal
+        isOpen={true}
+        onClose={vi.fn()}
+        initialTab="lgs"
+      />,
+    );
 
     // Bu Denemeyi Kaydet
     const saveBtn = screen.getByRole('button', { name: /Bu Denemeyi Kaydet/i });
@@ -87,16 +138,26 @@ describe('ExamScoreCalculatorModal', () => {
     expect(screen.getByText('Deneme Kaydedildi!')).toBeInTheDocument();
 
     // Çizelgeyi aç
-    const historyBtn = screen.getByRole('button', { name: /Deneme Gelişim Çizelgesi/i });
+    const historyBtn = screen.getByRole('button', {
+      name: /Deneme Gelişim Çizelgesi/i,
+    });
     fireEvent.click(historyBtn);
 
     expect(screen.getByText('LGS Deneme #1')).toBeInTheDocument();
   });
 
   it('renders target school simulator and calculates reverse net recipe', () => {
-    render(<ExamScoreCalculatorModal isOpen={true} onClose={vi.fn()} initialTab="lgs" />);
+    render(
+      <ExamScoreCalculatorModal
+        isOpen={true}
+        onClose={vi.fn()}
+        initialTab="lgs"
+      />,
+    );
 
-    expect(screen.getByText('Hedef Lise & Tersine Net Simülatörü')).toBeInTheDocument();
+    expect(
+      screen.getByText('Hedef Lise & Tersine Net Simülatörü'),
+    ).toBeInTheDocument();
     expect(screen.getByText(/Aksiyon Reçetesi/i)).toBeInTheDocument();
     expect(screen.getByText(/Matematikten \+/i)).toBeInTheDocument();
   });

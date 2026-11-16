@@ -120,13 +120,7 @@ export function ThemeProvider({ children }: { children: ReactNode }) {
       window.localStorage.setItem(THEME_STORAGE_KEY, nextTheme);
     };
 
-    if (typeof document !== 'undefined' && 'startViewTransition' in document) {
-      (
-        document as unknown as { startViewTransition: (cb: () => void) => void }
-      ).startViewTransition(update);
-    } else {
-      update();
-    }
+    update();
   }, []);
 
   const setPalette = useCallback((nextPalette: ThemePalette) => {
@@ -135,13 +129,7 @@ export function ThemeProvider({ children }: { children: ReactNode }) {
       window.localStorage.setItem(PALETTE_STORAGE_KEY, nextPalette);
     };
 
-    if (typeof document !== 'undefined' && 'startViewTransition' in document) {
-      (
-        document as unknown as { startViewTransition: (cb: () => void) => void }
-      ).startViewTransition(update);
-    } else {
-      update();
-    }
+    update();
   }, []);
 
   const setDesignMode = useCallback((nextMode: DesignMode) => {
@@ -150,13 +138,7 @@ export function ThemeProvider({ children }: { children: ReactNode }) {
       window.localStorage.setItem(DESIGN_MODE_STORAGE_KEY, nextMode);
     };
 
-    if (typeof document !== 'undefined' && 'startViewTransition' in document) {
-      (
-        document as unknown as { startViewTransition: (cb: () => void) => void }
-      ).startViewTransition(update);
-    } else {
-      update();
-    }
+    update();
   }, []);
 
   const toggleTheme = useCallback(() => {

@@ -2,9 +2,10 @@ import type { Metadata } from 'next';
 import { LgsCalculatorContainer } from '@/features/tools/containers/LgsCalculatorContainer';
 import { createPageMetadata } from '@/lib/site-metadata';
 import { buildFaqJsonLd, buildToolJsonLd } from '@/lib/schema-org';
+import { LGS_CALCULATOR_TITLE, LGS_FAQS } from '@/features/tools/lgs-content';
 
 export const metadata: Metadata = createPageMetadata({
-  title: '2026 MEB LGS Puan & Yüzdelik Dilim Hesaplama',
+  title: LGS_CALCULATOR_TITLE,
   description:
     'LGS netlerine ve ders ağırlıklarına göre tahmini puanını ve yüzdelik dilimini hesapla.',
   path: '/araclar/lgs-puan-hesaplama',
@@ -16,18 +17,9 @@ const toolJsonLd = buildToolJsonLd({
   path: '/araclar/lgs-puan-hesaplama',
 });
 
-const faqJsonLd = buildFaqJsonLd([
-  {
-    question: 'LGS puanı nasıl hesaplanır?',
-    answer:
-      'Her alt testin neti doğru sayısından yanlış sayısının üçte biri çıkarılarak hesaplanır. Araç ders ağırlıklarıyla tahmini puan üretir; resmî sonuç sınav istatistiklerine bağlıdır.',
-  },
-  {
-    question: 'LGS yüzdelik dilim tahmini nasıl yapılır?',
-    answer:
-      'Araç tahmini puandan yaklaşık bir yüzdelik üretir; gerçek yüzdelik sınava katılanların sonuçlarına göre değişir.',
-  },
-]);
+const faqJsonLd = buildFaqJsonLd(
+  LGS_FAQS.map(({ q, a }) => ({ question: q, answer: a })),
+);
 
 export default function LgsCalculatorRoute() {
   return (

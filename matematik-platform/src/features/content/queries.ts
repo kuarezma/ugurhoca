@@ -1,7 +1,10 @@
 import { isAdminEmail } from '@/lib/admin';
 import { getClientSession, getCurrentUserProfile } from '@/lib/auth-client';
 import { supabase } from '@/lib/supabase/client';
-import { isCurriculumTopic, matchesCurriculumDocument } from './curriculum-coverage';
+import {
+  isCurriculumTopic,
+  matchesCurriculumDocument,
+} from './curriculum-coverage';
 import { loadCurriculumGradeDocuments } from './curriculum-queries';
 import { runContentRead } from './read-timeout';
 import type { ApiSuccessResponse } from '@/lib/api-response';
@@ -28,7 +31,10 @@ import {
   sortWorksheetDocuments,
 } from '@/features/content/worksheet-display';
 import { buildContentDocumentPersistPayload } from '@/features/content/persistence';
-import { sortContentDocumentsByNewest } from '@/features/content/utils';
+import {
+  getContentDatabaseGrade,
+  sortContentDocumentsByNewest,
+} from '@/features/content/utils';
 
 const CONTENT_DOCUMENT_CACHE_TTL_MS = 60_000;
 
@@ -96,7 +102,9 @@ export const seedContentDocumentCache = (
 
 export const prefetchContentDocuments = async (typeFilter: string) => {
   const normalizedType =
-    typeof typeFilter === 'string' && typeFilter.length > 0 ? typeFilter : 'all';
+    typeof typeFilter === 'string' && typeFilter.length > 0
+      ? typeFilter
+      : 'all';
   const prefetched = contentPrefetchCache.get(normalizedType);
 
   if (prefetched) {
@@ -108,7 +116,10 @@ export const prefetchContentDocuments = async (typeFilter: string) => {
     );
     const cached = contentDocumentCache.get(cacheKey);
 
-    if (cached && Date.now() - cached.timestamp < CONTENT_DOCUMENT_CACHE_TTL_MS) {
+    if (
+      cached &&
+      Date.now() - cached.timestamp < CONTENT_DOCUMENT_CACHE_TTL_MS
+    ) {
       return {
         ...cached.payload,
         grade: prefetched.grade,
@@ -133,9 +144,10 @@ export const prefetchContentDocuments = async (typeFilter: string) => {
         },
       ),
     );
-    const payload = (await response.json().catch(() => null)) as
-      | { data?: ContentPrefetchPayload; error?: { message?: string } }
-      | null;
+    const payload = (await response.json().catch(() => null)) as {
+      data?: ContentPrefetchPayload;
+      error?: { message?: string };
+    } | null;
 
     if (!response.ok || !payload?.data) {
       throw new Error(
@@ -264,7 +276,9 @@ export const loadContentDocuments = async (
       .select('*', { count: 'exact', head: true });
 
     if (gradeFilter !== 'all') {
-      countQuery = countQuery.contains('grade', [gradeFilter]);
+      countQuery = countQuery.contains('grade', [
+        getContentDatabaseGrade(gradeFilter),
+      ]);
     }
 
     if (typeFilter !== 'all') {
@@ -289,7 +303,9 @@ export const loadContentDocuments = async (
     let dataQuery = supabase.from('documents').select('*');
 
     if (gradeFilter !== 'all') {
-      dataQuery = dataQuery.contains('grade', [gradeFilter]);
+      dataQuery = dataQuery.contains('grade', [
+        getContentDatabaseGrade(gradeFilter),
+      ]);
     }
 
     if (typeFilter !== 'all') {
@@ -391,7 +407,6 @@ export const loadDocumentById = async (
   }
 };
 
-
 export const resolveContentUser = async () => {
   const localUser = localStorage.getItem('matematiklab_user');
 
@@ -449,9 +464,7 @@ export const createContentDocument = async (payload: ContentFormState) => {
 
   if (!response.ok || !result) {
     const errorResult = result as { error?: { message?: string } } | null;
-    throw new Error(
-      errorResult?.error?.message || 'İçerik kaydedilemedi.',
-    );
+    throw new Error(errorResult?.error?.message || 'İçerik kaydedilemedi.');
   }
 
   clearContentDocumentCache();
@@ -484,9 +497,8 @@ export const updateContentDocument = async (
   const nextPayload = { ...payload };
 
   if (isWorksheetType(payload.type)) {
-    const { buildWorksheetDescription } = await import(
-      '@/features/content/worksheet'
-    );
+    const { buildWorksheetDescription } =
+      await import('@/features/content/worksheet');
     nextPayload.description = buildWorksheetDescription({
       description: payload.description,
       order: getWorksheetOrder({
@@ -496,8 +508,11 @@ export const updateContentDocument = async (
       outcome: payload.learning_outcome?.trim() || DEFAULT_WORKSHEET_OUTCOME,
     });
   }
-  const { learning_outcome: _learning_outcome, worksheet_order: _worksheet_order, ...persistedPayload } =
-    nextPayload as ContentFormState;
+  const {
+    learning_outcome: _learning_outcome,
+    worksheet_order: _worksheet_order,
+    ...persistedPayload
+  } = nextPayload as ContentFormState;
   const { data, error } = await supabase
     .from('documents')
     .update(persistedPayload)
@@ -514,7 +529,10 @@ export const updateContentDocument = async (
 };
 
 export const deleteContentDocument = async (documentId: string) => {
-  const { error } = await supabase.from('documents').delete().eq('id', documentId);
+  const { error } = await supabase
+    .from('documents')
+    .delete()
+    .eq('id', documentId);
 
   if (error) {
     throw error;
@@ -525,7 +543,9 @@ export const deleteContentDocument = async (documentId: string) => {
 
 export const updateDocumentMetric = async (
   documentId: string,
-  payload: Partial<Pick<ContentDocument, 'comments_count' | 'downloads' | 'likes' | 'views'>>,
+  payload: Partial<
+    Pick<ContentDocument, 'comments_count' | 'downloads' | 'likes' | 'views'>
+  >,
 ) => {
   const metricKey = Object.keys(payload)[0] as keyof typeof payload | undefined;
 
@@ -538,7 +558,9 @@ export const updateDocumentMetric = async (
     // bu yüzden öğrenci sayaçları hiç artmıyordu. Rota +1 artırır; gönderilen
     // değer yalnız yerel iyimser gösterim içindir.
     try {
-      const headers: Record<string, string> = { 'Content-Type': 'application/json' };
+      const headers: Record<string, string> = {
+        'Content-Type': 'application/json',
+      };
       if (metricKey === 'likes') {
         const session = await getClientSession();
         if (session?.access_token) {
@@ -562,35 +584,16 @@ export const updateDocumentMetric = async (
 export const loadWorksheetDocumentsByGrade = async (
   grade: ContentGradeFilter,
 ) => {
-  if (grade === 'all') {
-    return [] as ContentDocument[];
-  }
-
-  if (typeof grade === 'number') {
-    const documents = await loadCurriculumGradeDocuments(grade);
-    return sortWorksheetDocuments(
-      documents.filter(
-        (document) =>
-          (CONTENT_TYPE_MAPPING[document.type] || document.type) ===
-          'yaprak-test',
-      ),
-    );
-  }
-
-  const { data, error } = await runContentRead((signal) =>
-    supabase
-      .from('documents')
-      .select('*')
-      .abortSignal(signal)
-      .eq('type', 'yaprak-test')
-      .contains('grade', [grade]),
+  const databaseGrade = getContentDatabaseGrade(grade);
+  if (databaseGrade === 'all') return [] as ContentDocument[];
+  const documents = await loadCurriculumGradeDocuments(databaseGrade);
+  return sortWorksheetDocuments(
+    documents.filter(
+      (document) =>
+        (CONTENT_TYPE_MAPPING[document.type] || document.type) ===
+        'yaprak-test',
+    ),
   );
-
-  if (error) {
-    throw error;
-  }
-
-  return sortWorksheetDocuments((data || []) as ContentDocument[]);
 };
 
 export const loadDocumentComments = async (documentId: string) => {

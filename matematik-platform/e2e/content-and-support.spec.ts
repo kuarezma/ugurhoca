@@ -153,7 +153,7 @@ test.describe('4. İçerik Arama/Filtreleme, Destek Sohbeti ve Yasal Sayfalar', 
 
     if ((page.viewportSize()?.width ?? 1280) < 768) {
       const mobileFilterToggle = page.getByRole('button', {
-        name: /Filtre ve Arama Seçenekleri/i,
+        name: /Filtre ve Sıralama Seçenekleri/i,
       });
       await expect(mobileFilterToggle).toBeVisible();
       await mobileFilterToggle.click();
@@ -179,8 +179,9 @@ test.describe('4. İçerik Arama/Filtreleme, Destek Sohbeti ve Yasal Sayfalar', 
       await acceptCookiesButton.click();
     }
 
-    const chatButton = page.getByRole('button', {
-      name: /Uğur Hoca'ya mesaj yaz/i,
+    const chatButton = page.getByRole('contentinfo').getByRole('button', {
+      name: "Uğur Hoca'ya yaz",
+      exact: true,
     });
     await expect(chatButton).toBeVisible();
     await chatButton.click();
@@ -189,6 +190,16 @@ test.describe('4. İçerik Arama/Filtreleme, Destek Sohbeti ve Yasal Sayfalar', 
       name: /Uğur Hoca ile Sohbet/i,
     });
     await expect(chatDialog).toBeVisible();
+
+    if ((page.viewportSize()?.width ?? 1280) < 768) {
+      const supportToggle = page
+        .getByRole('navigation', { name: 'Mobil alt menü' })
+        .getByRole('button', { name: /Uğur Hoca'ya yaz/ });
+      await supportToggle.click();
+      await expect(chatDialog).toBeHidden();
+      await supportToggle.click();
+      await expect(chatDialog).toBeVisible();
+    }
 
     const fileInput = chatDialog.locator('input[type="file"]');
     await fileInput.setInputFiles({
@@ -218,6 +229,9 @@ test.describe('4. İçerik Arama/Filtreleme, Destek Sohbeti ve Yasal Sayfalar', 
     page,
   }) => {
     await page.goto('/');
+    await page
+      .getByText('Duyurular ve kullanım rehberi', { exact: true })
+      .click();
     await expect(
       page.getByRole('heading', { name: /Nasıl çalışır/i }),
     ).toBeVisible();
@@ -231,5 +245,29 @@ test.describe('4. İçerik Arama/Filtreleme, Destek Sohbeti ve Yasal Sayfalar', 
     await expect(
       page.getByRole('heading', { name: 'İletişim', level: 1 }),
     ).toBeVisible();
+  });
+
+  test('LGS formunda negatif net korunur ve dersler dar ekranda okunur', async ({
+    page,
+  }) => {
+    await page.goto('/araclar/lgs-puan-hesaplama');
+    await page
+      .getByRole('spinbutton', { name: 'Türkçe yanlış', exact: true })
+      .fill('3');
+    await expect(page.getByText('-1.00', { exact: true })).toBeVisible();
+    await expect(page.getByText('-1.00 / 90', { exact: true })).toBeVisible();
+    expect(
+      await page.evaluate(
+        () => document.documentElement.scrollWidth <= window.innerWidth,
+      ),
+    ).toBe(true);
+    if ((page.viewportSize()?.width ?? 1280) < 768) {
+      await expect(
+        page.getByRole('button', {
+          name: "Uğur Hoca'ya mesaj yaz",
+          exact: true,
+        }),
+      ).toBeHidden();
+    }
   });
 });

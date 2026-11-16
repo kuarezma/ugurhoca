@@ -11,7 +11,7 @@ type HomeFooterProps = {
 
 export function HomeFooter(_props: HomeFooterProps) {
   return (
-    <footer className="relative border-t border-sky-200/60 dark:border-sky-400/20 mt-12 px-4 pt-12 pb-[calc(6.25rem+env(safe-area-inset-bottom,0px))] md:pb-12 bg-surface-1/80 backdrop-blur-2xl font-sans">
+    <footer className="relative border-t border-sky-200/60 dark:border-sky-400/20 mt-12 px-4 pt-12 pb-[calc(6.25rem+env(safe-area-inset-bottom,0px))] md:pb-12 bg-surface-1/80 font-sans">
       {/* Üst Prizmatik Işık Kırılım Çizgisi */}
       <div className="absolute inset-x-0 top-0 h-[1.5px] bg-gradient-to-r from-sky-400/50 via-indigo-400/50 to-emerald-400/50" />
 
@@ -39,6 +39,16 @@ export function HomeFooter(_props: HomeFooterProps) {
               nitelikli ders notları, yaprak testler ve interaktif çalışma
               ortamı sunar.
             </p>
+
+            <button
+              type="button"
+              onClick={() =>
+                window.dispatchEvent(new Event('open-chat-bubble'))
+              }
+              className="inline-flex min-h-11 items-center rounded-xl border border-border-default px-4 text-sm font-semibold text-primary hover:bg-surface-2"
+            >
+              Uğur Hoca'ya yaz
+            </button>
 
             <div className="inline-flex items-center gap-1.5 rounded-full bg-accent-bg border border-sky-300/40 dark:border-sky-400/20 px-3.5 py-1 text-xs font-black text-accent-fg shadow-xs">
               <Shield className="h-3.5 w-3.5" />

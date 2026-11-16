@@ -1,5 +1,5 @@
 import { describe, expect, it, vi } from 'vitest';
-import { act, render, screen } from '@testing-library/react';
+import { act, fireEvent, render, screen } from '@testing-library/react';
 import { renderToString } from 'react-dom/server';
 import { hydrateRoot } from 'react-dom/client';
 import { MobileBottomNav } from './MobileBottomNav';
@@ -58,6 +58,31 @@ describe('MobileBottomNav', () => {
 
     const odakLink = screen.getByRole('link', { name: /Odak/i });
     expect(odakLink).toHaveAttribute('aria-current', 'page');
+  });
+
+  it('opens support from the navigation without covering the page with a floating trigger', () => {
+    currentPath = '/araclar/lgs-puan-hesaplama';
+    const listener = vi.fn();
+    window.addEventListener('open-chat-bubble', listener);
+    try {
+      render(<MobileBottomNav />);
+      fireEvent.click(screen.getByRole('button', { name: "Uğur Hoca'ya yaz" }));
+      expect(listener).toHaveBeenCalledOnce();
+      act(() => {
+        window.dispatchEvent(
+          new CustomEvent('ugurhoca:chat-state', {
+            detail: { unreadCount: 3, open: true },
+          }),
+        );
+      });
+      expect(
+        screen.getByRole('button', {
+          name: "Uğur Hoca'ya yaz, 3 okunmamış mesaj",
+        }),
+      ).toBeInTheDocument();
+    } finally {
+      window.removeEventListener('open-chat-bubble', listener);
+    }
   });
 
   it('hides in live lesson classroom', () => {

@@ -59,7 +59,12 @@ export const lgsSubjects: LgsSubjectMeta[] = [
   { key: 'turkce', label: 'Türkçe', questions: 20, coefficient: 4 },
   { key: 'matematik', label: 'Matematik', questions: 20, coefficient: 4 },
   { key: 'fen', label: 'Fen Bilimleri', questions: 20, coefficient: 4 },
-  { key: 'inkilap', label: 'T.C. İnkılap Tarihi', questions: 10, coefficient: 1 },
+  {
+    key: 'inkilap',
+    label: 'T.C. İnkılap Tarihi',
+    questions: 10,
+    coefficient: 1,
+  },
   { key: 'din', label: 'Din Kültürü', questions: 10, coefficient: 1 },
   { key: 'ingilizce', label: 'İngilizce', questions: 10, coefficient: 1 },
 ];
@@ -152,7 +157,7 @@ function clamp(value: number, min: number, max: number) {
 }
 
 function net(correct: number, wrong: number, wrongDivisor: number) {
-  return Number(clamp(correct - wrong / wrongDivisor, 0, 100).toFixed(2));
+  return Number(clamp(correct - wrong / wrongDivisor, -100, 100).toFixed(2));
 }
 
 function interpolateRank(score: number, anchors: ScoreAnchor[]) {

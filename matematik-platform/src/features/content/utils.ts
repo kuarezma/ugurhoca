@@ -10,6 +10,10 @@ export const normalizeContentGrade = (
   return Number.isFinite(nextValue) && nextValue > 0 ? nextValue : 'all';
 };
 
+/** Mezun öğrenciler YKS/12. sınıf materyallerini kullanır; documents.grade bir integer[] sütunudur. */
+export const getContentDatabaseGrade = (grade: ContentGradeFilter) =>
+  grade === 'Mezun' ? 12 : grade;
+
 export const getYouTubeId = (url: string) => {
   const pattern =
     /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|&v=)([^#&?]*).*/;

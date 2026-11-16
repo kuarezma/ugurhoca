@@ -193,7 +193,7 @@ export function useContentFeed({
     prevGradeFromUrlRef.current = worksheetGradeFromUrl;
     if (worksheetGradeFromUrl) {
       setSelectedGrade(normalizeContentGrade(worksheetGradeFromUrl));
-    } else if (!typeChanged) {
+    } else {
       setSelectedGrade('all');
     }
   }, [setSelectedGrade, setSelectedType, typeFromUrl, worksheetGradeFromUrl]);

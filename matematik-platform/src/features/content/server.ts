@@ -8,8 +8,13 @@ import {
   CONTENT_TYPE_MAPPING,
   getContentTypeQueryTypes,
 } from '@/features/content/constants';
-import { sortContentDocumentsByNewest } from '@/features/content/utils';
+import { sortWorksheetDocuments } from '@/features/content/worksheet-display';
+import {
+  getContentDatabaseGrade,
+  sortContentDocumentsByNewest,
+} from '@/features/content/utils';
 import { createLogger } from '@/lib/logger';
+import { runContentRead } from './read-timeout';
 
 const log = createLogger('content:server');
 
@@ -40,7 +45,9 @@ export const loadInitialContentDocuments = async (
       .select('*', { count: 'exact', head: true });
 
     if (gradeFilter !== 'all') {
-      countQuery = countQuery.contains('grade', [gradeFilter]);
+      countQuery = countQuery.contains('grade', [
+        getContentDatabaseGrade(gradeFilter),
+      ]);
     }
 
     if (typeFilter !== 'all') {
@@ -56,7 +63,9 @@ export const loadInitialContentDocuments = async (
       .order('created_at', { ascending: false });
 
     if (gradeFilter !== 'all') {
-      dataQuery = dataQuery.contains('grade', [gradeFilter]);
+      dataQuery = dataQuery.contains('grade', [
+        getContentDatabaseGrade(gradeFilter),
+      ]);
     }
 
     if (typeFilter !== 'all') {
@@ -84,7 +93,52 @@ export const loadInitialContentDocuments = async (
 
     return payload;
   } catch (err) {
-    log.warn('Unexpected error loading initial content documents', { error: err });
+    log.warn('Unexpected error loading initial content documents', {
+      error: err,
+    });
     return { count: 0, documents: [], isHydrated: false };
   }
 };
+
+// Kazanım grupları tam sınıf listesini gerektirir; istekler ortak süre sınırını paylaşır.
+export async function loadInitialWorksheetDocuments(grade: ContentGradeFilter) {
+  const empty = {
+    count: 0,
+    documents: [] as ContentDocument[],
+    isHydrated: false,
+  };
+  if (grade === 'all' || !hasSupabasePublicEnv()) return empty;
+  const client = createCachedPublicSupabaseClient('content-documents');
+  const pageSize = 250;
+  try {
+    const documents = await runContentRead(async (signal) => {
+      const result: ContentDocument[] = [];
+      for (let from = 0; ; from += pageSize) {
+        const { data, error } = await client
+          .from('documents')
+          .select('*')
+          .abortSignal(signal)
+          .contains('grade', [getContentDatabaseGrade(grade)])
+          .in(
+            'type',
+            Object.keys(CONTENT_TYPE_MAPPING).filter(
+              (type) => CONTENT_TYPE_MAPPING[type] === 'yaprak-test',
+            ),
+          )
+          .order('id', { ascending: true })
+          .range(from, from + pageSize - 1);
+        if (error || !data) throw new Error('Yaprak testler yüklenemedi.');
+        result.push(...(data as ContentDocument[]));
+        if (data.length < pageSize) return result;
+      }
+    });
+    return {
+      count: documents.length,
+      documents: sortWorksheetDocuments(documents),
+      isHydrated: true,
+    };
+  } catch (error) {
+    log.warn('Initial worksheet query failed', { error });
+    return empty;
+  }
+}

@@ -4,7 +4,10 @@ import {
   CONTENT_PAGE_SIZE,
   CONTENT_TYPE_MAPPING,
 } from '@/features/content/constants';
-import { loadInitialContentDocuments } from '@/features/content/server';
+import {
+  loadInitialContentDocuments,
+  loadInitialWorksheetDocuments,
+} from '@/features/content/server';
 import { normalizeContentGrade } from '@/features/content/utils';
 import { isWorksheetType } from '@/features/content/worksheet-display';
 import { createPageMetadata } from '@/lib/site-metadata';
@@ -38,7 +41,18 @@ export default async function IceriklerPage({
   const rawGrade = getSingleParam(resolvedSearchParams.grade);
   const initialGrade = rawGrade ? normalizeContentGrade(rawGrade) : 'all';
 
-  const initialData = isWorksheetType(initialType)
+  const worksheetBrowser = isWorksheetType(initialType);
+  const initialWorksheetData =
+    worksheetBrowser && initialGrade !== 'all'
+      ? await loadInitialWorksheetDocuments(initialGrade)
+      : { count: 0, documents: [], isHydrated: false };
+  const initialSearchParams = new URLSearchParams();
+  for (const [key, value] of Object.entries(resolvedSearchParams)) {
+    const single = getSingleParam(value);
+    if (single !== undefined) initialSearchParams.set(key, single);
+  }
+
+  const initialData = worksheetBrowser
     ? { count: 0, documents: [], isHydrated: false }
     : await loadInitialContentDocuments(
         1,
@@ -54,6 +68,9 @@ export default async function IceriklerPage({
       initialGrade={initialGrade}
       initialTotalCount={initialData.count}
       initialType={initialType}
+      initialSearchParams={initialSearchParams.toString()}
+      initialWorksheetDocuments={initialWorksheetData.documents}
+      initialWorksheetLoadSucceeded={initialWorksheetData.isHydrated}
     />
   );
 }

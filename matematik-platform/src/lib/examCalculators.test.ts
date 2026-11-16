@@ -54,6 +54,31 @@ describe('examCalculators', () => {
     expect(result.tytNets.tytTurkce).toBe(19);
   });
 
+  it('keeps negative subject nets while bounding the estimated LGS score', () => {
+    const inputs = createInitialLgsInputs();
+    inputs.turkce = { correct: 0, wrong: 3 };
+    inputs.matematik = { correct: 1, wrong: 6 };
+    const result = calculateLgsScore(inputs);
+    expect(
+      result.subjectNets.find((subject) => subject.key === 'turkce')?.net,
+    ).toBe(-1);
+    expect(
+      result.subjectNets.find((subject) => subject.key === 'matematik')?.net,
+    ).toBe(-1);
+    expect(result.totalNet).toBe(-2);
+    expect(result.estimatedScore).toBe(100);
+  });
+
+  it('keeps negative YKS nets independent from the score floor', () => {
+    const inputs = createInitialYksInputs();
+    inputs.tytTurkce = { correct: 0, wrong: 4 };
+    inputs.aytMatematik = { correct: 1, wrong: 8 };
+    const result = calculateYksScore(inputs, 'SAY', 85);
+    expect(result.tytNets.tytTurkce).toBe(-1);
+    expect(result.aytNets.aytMatematik).toBe(-1);
+    expect(result.estimatedScore).toBeGreaterThanOrEqual(100);
+  });
+
   it('halves OBP contribution when the student placed last year', () => {
     const inputs = createInitialYksInputs();
 
@@ -87,28 +112,31 @@ describe('examCalculators', () => {
   it('classifies YKS targets by rank ratio or score delta', () => {
     // Rank ratio
     expect(
-      classifyYksTarget({ userScore: 400, userRank: 12000, baseRank: 10000 }).level,
+      classifyYksTarget({ userScore: 400, userRank: 12000, baseRank: 10000 })
+        .level,
     ).toBe('iddiali');
     expect(
-      classifyYksTarget({ userScore: 400, userRank: 10000, baseRank: 10000 }).level,
+      classifyYksTarget({ userScore: 400, userRank: 10000, baseRank: 10000 })
+        .level,
     ).toBe('dengeli');
     expect(
-      classifyYksTarget({ userScore: 400, userRank: 8000, baseRank: 10000 }).level,
+      classifyYksTarget({ userScore: 400, userRank: 8000, baseRank: 10000 })
+        .level,
     ).toBe('guvenli');
 
     // Missing baseScore
     expect(classifyYksTarget({ userScore: 400 }).level).toBe('dengeli');
 
     // Score delta
-    expect(
-      classifyYksTarget({ userScore: 380, baseScore: 400 }).level,
-    ).toBe('iddiali');
-    expect(
-      classifyYksTarget({ userScore: 405, baseScore: 400 }).level,
-    ).toBe('dengeli');
-    expect(
-      classifyYksTarget({ userScore: 425, baseScore: 400 }).level,
-    ).toBe('guvenli');
+    expect(classifyYksTarget({ userScore: 380, baseScore: 400 }).level).toBe(
+      'iddiali',
+    );
+    expect(classifyYksTarget({ userScore: 405, baseScore: 400 }).level).toBe(
+      'dengeli',
+    );
+    expect(classifyYksTarget({ userScore: 425, baseScore: 400 }).level).toBe(
+      'guvenli',
+    );
   });
 
   it('formats rank numbers in Turkish locale with fallback', () => {

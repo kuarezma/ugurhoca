@@ -1,6 +1,6 @@
 'use client';
 
-import Link from 'next/link';
+import { SafeLink as Link } from '@/components/SafeLink';
 import {
   Compass,
   Sparkles,
@@ -14,17 +14,18 @@ import {
   Shield,
 } from 'lucide-react';
 import { SITE_URL } from '@/lib/site-metadata';
+import { LGS_CALCULATOR_TITLE, LGS_EXAM_SEASON } from '../lgs-content';
 
 export const PUBLIC_TOOLS = [
   {
     id: 'lgs',
-    title: '2026/2027 MEB LGS Puan & Yüzdelik Dilim Robotu',
+    title: LGS_CALCULATOR_TITLE,
     description:
       'Netlerine ve ders ağırlıklarına göre tahmini LGS puanını ve yüzdelik dilimini hesapla.',
     href: '/araclar/lgs-puan-hesaplama',
     icon: School,
     gradient: 'from-cyan-500 to-blue-600',
-    tag: 'LGS 2026/2027',
+    tag: `LGS ${LGS_EXAM_SEASON}`,
     badgeColor:
       'bg-cyan-500/15 text-cyan-800 dark:text-cyan-300 border-cyan-500/30',
   },
@@ -84,7 +85,7 @@ export function ToolsHubContainer() {
   };
 
   return (
-    <main className="page-surface min-h-screen gradient-bg px-4 pb-[max(4rem,calc(env(safe-area-inset-bottom)+2rem))] pt-[calc(4.5rem+env(safe-area-inset-top))] sm:px-6 sm:pt-20 relative">
+    <main className="page-surface min-h-screen gradient-bg px-4 pb-[max(4rem,calc(env(safe-area-inset-bottom)+2rem))] pt-[calc(5.25rem+env(safe-area-inset-top))] sm:px-6 sm:pt-24 relative">
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}

@@ -8,7 +8,7 @@ En önemli doğrulanmış işlev hatası, yaprak testlerde **geri tuşunun URL i
 
 Parlamanın tek bir kesin nedeni henüz belirlenmedi. Kodda rota geometrisiyle eşleşmeyen yükleme iskeletleri, sonradan gelen matematik metni ve istemci verisi gibi adaylar var. Bunlar aşağıda canlıda doğrulanmış kusurlardan ayrı işaretlendi.
 
-**Bu teslim rapor ve plandır. Uygulama koduna, şemaya veya içeriğe düzeltme uygulanmadı.**
+**Bu belge ilk denetimin tarihsel kaydıdır.** 19 bulgu için uygulanan değişiklikler ve güncel doğrulama sonuçları: [Düzeltme teslim raporu](site-kalite-duzeltmeleri-2026-11-16.md).
 
 ## Kapsam ve yöntem
 

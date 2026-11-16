@@ -85,6 +85,7 @@ export type ContentsViewProps = {
   handleOpenEdit: (content: ContentDocument) => void;
   handleOpenComments: (content: ContentDocument) => Promise<void>;
   handleOpenPreview: (content: ContentDocument) => void;
+  retryPreview?: () => void;
   toggleCompleted: ReturnType<typeof useContentCompletion>['toggleCompleted'];
   toggleFavorite: ReturnType<typeof useCloudFavorites>['toggleFavorite'];
   handleToggleLike: (content: ContentDocument) => Promise<void>;

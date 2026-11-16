@@ -47,7 +47,9 @@ describe('SafeLink', () => {
       expect(mockPush).toHaveBeenCalledWith('/testler');
     } finally {
       delete (
-        document as unknown as { startViewTransition?: (cb: () => void) => void }
+        document as unknown as {
+          startViewTransition?: (cb: () => void) => void;
+        }
       ).startViewTransition;
     }
   });
@@ -56,7 +58,11 @@ describe('SafeLink', () => {
     mockPush.mockClear();
     render(<SafeLink href="/icerikler">İçerikler</SafeLink>);
     const link = screen.getByRole('link', { name: 'İçerikler' });
-    const event = new MouseEvent('click', { bubbles: true, cancelable: true, metaKey: true });
+    const event = new MouseEvent('click', {
+      bubbles: true,
+      cancelable: true,
+      metaKey: true,
+    });
     link.dispatchEvent(event);
     expect(mockPush).not.toHaveBeenCalled();
   });
@@ -77,10 +83,27 @@ describe('SafeLink', () => {
 
   it('does not prefetch external or relative-protocol links', () => {
     mockPrefetch.mockClear();
-    render(<SafeLink href="https://example.com" target="_blank">Dış Bağlantı</SafeLink>);
+    render(
+      <SafeLink href="https://example.com" target="_blank">
+        Dış Bağlantı
+      </SafeLink>,
+    );
     const link = screen.getByRole('link', { name: 'Dış Bağlantı' });
 
     fireEvent.pointerEnter(link);
     expect(mockPrefetch).not.toHaveBeenCalled();
+  });
+
+  it('does not navigate again when the exact content URL is already open', () => {
+    const previousUrl = window.location.href;
+    window.history.replaceState({}, '', '/icerikler?grade=5');
+    mockPush.mockClear();
+    try {
+      render(<SafeLink href="/icerikler?grade=5">Açık sınıf</SafeLink>);
+      fireEvent.click(screen.getByRole('link', { name: 'Açık sınıf' }));
+      expect(mockPush).not.toHaveBeenCalled();
+    } finally {
+      window.history.replaceState({}, '', previousUrl);
+    }
   });
 });

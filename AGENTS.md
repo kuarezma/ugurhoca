@@ -6,7 +6,7 @@ Uygulama kodu `matematik-platform/` altındadır. Kural önceliği:
 
 1. `matematik-platform/CLAUDE.md` — tema token sözlüğü (`text-white` yasağı vb.)
 2. `matematik-platform/AGENTS.md` — Next.js agent kuralları
-3. `docs/web-kalite-ve-profesyonellik-plan.md` — teknik optimizasyon ve 2026-11-03 Sıcak Kağıt (Warm Paper: Fraunces / Plus Jakarta Sans / JetBrains Mono, #FAF8F5 açık yüzey, #065F46 zümrüt vurgu) tasarım sistemi karar kaydı
+3. `docs/web-kalite-ve-profesyonellik-plan.md` — teknik optimizasyon ve 2026-11-16 güncel tasarım kaydı (Outfit / Baloo_2, #F2F7FE açık yüzey; surface/text/border/accent/tone tokenları)
 4. `matematik-platform/site.md` — ürün kısıtları: ücretli paket/abonelik yok, öğrenci izolasyonu
 5. `task.md` — görev günlüğü (sayılar için diske bak: `find matematik-platform/src -name "*.test.*"`)
 

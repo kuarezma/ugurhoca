@@ -1,7 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import Link from 'next/link';
+import { SafeLink as Link } from '@/components/SafeLink';
 import {
   Sparkles,
   GraduationCap,
@@ -32,8 +32,8 @@ export function GuestTrialLobby() {
         </h1>
         <p className="text-sm sm:text-base text-secondary leading-relaxed">
           Giriş yapmadan sınıf düzeyini seç, MEB Türkiye Yüzyılı Maarif Modeli
-          ve Ortak Yazılı uyumlu özgün soruları anında çöz. LaTeX çözümlerini ve
-          puanlama anahtarlarını incele!
+          ve Ortak Yazılı uyumlu özgün soruları anında çöz. Adım adım çözümleri
+          ve puanlama anahtarlarını incele!
         </p>
       </section>
 
@@ -47,6 +47,7 @@ export function GuestTrialLobby() {
                 key={grade}
                 type="button"
                 onClick={() => setSelectedGrade(grade)}
+                aria-pressed={isSelected}
                 className={`justify-center whitespace-nowrap px-3 sm:px-5 py-2.5 rounded-2xl font-bold text-xs sm:text-sm transition-all shadow-xs flex items-center gap-2 ${
                   isSelected
                     ? 'bg-accent-bg text-accent-fg ring-2 ring-accent-fg/30 scale-105'

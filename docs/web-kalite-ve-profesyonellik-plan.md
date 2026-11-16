@@ -5,7 +5,7 @@ Bu dosya, depo kökünde saklanan kalite yol haritasının kaynağıdır. Uygula
 ## Sizin kriterleriniz (bağlayıcı)
 
 1. **Hız**: Sayfaların hızlı açılması, etkileşimlerin gecikmeden tepki vermesi (Core Web Vitals ve algılanan performans).
-2. **Görsel tutarlılık**: **3 Kasım 2026 Sıcak Kağıt (Warm Paper) tasarım sistemi yürürlüktedir** (`CLAUDE.md` ve sayfa sonundaki karar kaydı uyarınca tipografi ve renk sistemi Fraunces + Plus Jakarta Sans + JetBrains Mono, `#FAF8F5` açık zemin, `#065F46` zümrüt vurgu ve semantik tokenlarla güncellenmiştir). Bu semantik tasarım dili korunarak teknik optimizasyon sürdürülür.
+2. **Görsel tutarlılık**: **16 Kasım 2026 güncel uygulama kaydı yürürlüktedir**: gövde/UI `Outfit`, başlık `Baloo_2`; CSS değişkenleri `--font-poppins` ve `--font-display` adlarını korur. Açık tema ana yüzeyi `#F2F7FE` (`242 247 254`), koyu tema ana yüzeyi `#060B19` (`6 11 25`) olur. Palet seçenekleri ve semantik surface/text/border/accent/tone tokenları korunur. Yeni bir yazı tipi veya Sıcak Kağıt paletine geçiş bu kalite düzeltmesinin kapsamı değildir.
 3. **Profesyonellik**: Ziyaretçinin ve öğrencinin güven duyacağı, hatasız ve öngörülebilir deneyim; arama motorları ve erişilebilirlikte “tamamlanmış ürün” hissi.
 
 ## Profesyonelliğin ölçülebilir karşılığı
@@ -22,7 +22,7 @@ Bu dosya, depo kökünde saklanan kalite yol haritasının kaynağıdır. Uygula
 ## Teknik temel (repo)
 
 - Next.js **16**, React **19**, Tailwind, Supabase: `matematik-platform/package.json`.
-- Kök layout ve meta: `matematik-platform/src/app/layout.tsx`; fontlar **`next/font`** (Poppins + Baloo_2) + `globals.css` içinde `--font-poppins` / `--font-display`.
+- Kök layout ve meta: `matematik-platform/src/app/layout.tsx`; fontlar **`next/font`** (Outfit + Baloo_2) + `globals.css` içinde `--font-poppins` / `--font-display`.
 - PWA: `matematik-platform/src/app/manifest.ts` (tek kaynak; eski `public/manifest.json` 2026-09-10'da silindi), `public/sw.js`.
 - SEO: `matematik-platform/src/app/robots.ts`, `sitemap.ts`.
 
@@ -113,7 +113,9 @@ Sonraki adımlar: Lighthouse / gerçek cihaz ölçümü, diğer sayfalarda `img`
 - **Contrast workflow konumu**: kök `.github/workflows/contrast.yml` (app altındaki ölü kopya taşındı).
 - **Tailwind v4 yükseltmesi ertelendi**: v3 çalışıyor; ayrı görevde ele alınacak.
 
-## Karar kaydı (3 Kasım 2026 — Sıcak Kağıt & Mürekkep Akademik Tasarım + Baloo 2 / Outfit)
+## Tarihsel karar kaydı (3 Kasım 2026 — Sıcak Kağıt önerisi)
+
+Aşağıdaki bölüm tarihsel kayıttır; uygulanmış tasarımın güncel tarifi değildir. 16 Kasım 2026 kaydı ve kaynak tokenlar esas alınır.
 
 - **Tasarım dondurması kaldırıldı**: Kullanıcı açık talebiyle §2'deki "font/renk/tema/düzen değişmez" kısıtı kaldırıldı ve aşağıdaki yeni tasarım sistemi onaylandı:
   - **Tipografi**: Başlıklar (`--font-display`) `Baloo_2` olarak korunurken, gövde/UI/soru/rakam fontu (`--font-poppins` değişken adı korunarak) `Quicksand` yerine **`Outfit`** (`400`, `500`, `600`, `700`, `latin` + `latin-ext`) olarak güncellendi.

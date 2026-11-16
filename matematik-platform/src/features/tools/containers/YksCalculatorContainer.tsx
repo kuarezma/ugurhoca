@@ -25,20 +25,20 @@ import { FaqAccordion, type FaqItem } from '../components/FaqAccordion';
 const YKS_FAQS: FaqItem[] = [
   {
     q: "YKS'de 4 yanlış 1 doğruyu götürür mü?",
-    a: "Evet. ÖSYM YKS sınavında (TYT ve AYT oturumlarının tamamında) her 4 yanlış cevap, 1 doğru cevabı eksiltir (Net = Doğru - Yanlış / 4)."
+    a: 'Evet. ÖSYM YKS sınavında (TYT ve AYT oturumlarının tamamında) her 4 yanlış cevap, 1 doğru cevabı eksiltir (Net = Doğru - Yanlış / 4).',
   },
   {
-    q: "OBP (Ortaöğretim Başarı Puanı) nasıl hesaplanır?",
-    a: "Lise mezuniyet diploma notu (50-100 aralığında) 5 ile çarpılarak 250-500 aralığına getirilir. Bu puan 0.12 katsayısı ile çarpılarak (en fazla 60 puan) ham puana eklenir."
+    q: 'OBP (Ortaöğretim Başarı Puanı) nasıl hesaplanır?',
+    a: 'Lise mezuniyet diploma notu (50-100 aralığında) 5 ile çarpılarak 250-500 aralığına getirilir. Bu puan 0.12 katsayısı ile çarpılarak (en fazla 60 puan) ham puana eklenir.',
   },
   {
     q: "Önceki yıl bir bölüme yerleşenlerin OBP'si kırılır mı?",
-    a: "Evet. Önceki yıl merkezi yerleştirmeyle bir lisans veya önlisans programına yerleşen adayların OBP katsayısı bir sonraki yıl yarı yarıya (0.12 yerine 0.06) düşer."
+    a: 'Evet. Önceki yıl merkezi yerleştirmeyle bir lisans veya önlisans programına yerleşen adayların OBP katsayısı bir sonraki yıl yarı yarıya (0.12 yerine 0.06) düşer.',
   },
   {
-    q: "AYT puanının hesaplanması için TYT barajı var mıdır?",
-    a: "YKS'de baraj puanı uygulaması kaldırılmıştır. Ancak adayın Sayısal, Eşit Ağırlık veya Sözel puanının hesaplanabilmesi için ilgili testlerden en az 0.5 net yapması gerekir."
-  }
+    q: 'AYT puanının hesaplanması için TYT barajı var mıdır?',
+    a: "YKS'de baraj puanı uygulaması kaldırılmıştır. Ancak adayın Sayısal, Eşit Ağırlık veya Sözel puanının hesaplanabilmesi için ilgili testlerden en az 0.5 net yapması gerekir.",
+  },
 ];
 
 export function YksCalculatorContainer() {
@@ -50,7 +50,7 @@ export function YksCalculatorContainer() {
   const handleInputChange = (
     key: YksSubjectKey,
     field: 'correct' | 'wrong',
-    rawValue: string | number
+    rawValue: string | number,
   ) => {
     const meta = yksSubjects.find((s) => s.key === key);
     const maxQ = meta?.questions || 40;
@@ -94,12 +94,17 @@ export function YksCalculatorContainer() {
 
       <div className="mx-auto max-w-4xl">
         <div className="mb-6 flex items-center gap-2 text-xs font-semibold text-secondary">
-          <Link href="/araclar" className="hover:text-primary transition flex items-center gap-1">
+          <Link
+            href="/araclar"
+            className="hover:text-primary transition flex items-center gap-1"
+          >
             <ArrowLeft className="h-3.5 w-3.5" />
             Tüm Araçlar
           </Link>
           <span>/</span>
-          <span className="text-accent-fg font-bold">YKS Puan & Sıralama Hesaplayıcı</span>
+          <span className="text-accent-fg font-bold">
+            YKS Puan & Sıralama Hesaplayıcı
+          </span>
         </div>
 
         <div className="rounded-3xl border border-default bg-surface-1 dark:bg-slate-900/80 p-6 sm:p-8 backdrop-blur-md shadow-2xl mb-8">
@@ -113,7 +118,8 @@ export function YksCalculatorContainer() {
                   2026/2027 ÖSYM YKS (TYT-AYT) Puan & Sıralama Hesaplayıcı
                 </h1>
                 <p className="text-xs sm:text-sm text-secondary mt-1">
-                  ÖSYM standart sapma verileri ve güncel yerleştirme katsayılarıyla puan ve başarı sıranı hesapla.
+                  ÖSYM standart sapma verileri ve güncel yerleştirme
+                  katsayılarıyla puan ve başarı sıranı hesapla.
                 </p>
               </div>
             </div>
@@ -134,7 +140,9 @@ export function YksCalculatorContainer() {
             <div className="sm:col-span-8 space-y-1">
               <div className="flex justify-between text-xs font-bold">
                 <span className="text-primary">Diploma Notu (OBP)</span>
-                <span className="text-accent-fg font-mono text-sm">{obp.toFixed(1)} / 100</span>
+                <span className="text-accent-fg font-mono text-sm">
+                  {obp.toFixed(1)} / 100
+                </span>
               </div>
               <input
                 type="range"
@@ -147,7 +155,8 @@ export function YksCalculatorContainer() {
                 aria-label="Diploma Notu"
               />
               <span className="text-[10px] text-secondary">
-                Yerleştirmeye eklenen net katkı: +{(obp * 5 * (prevYearPlaced ? 0.06 : 0.12)).toFixed(2)} puan
+                Yerleştirmeye eklenen net katkı: +
+                {(obp * 5 * (prevYearPlaced ? 0.06 : 0.12)).toFixed(2)} puan
               </span>
             </div>
 
@@ -196,63 +205,73 @@ export function YksCalculatorContainer() {
               <div className="flex items-center justify-between border-b border-default pb-3 mb-4 text-xs font-bold text-secondary">
                 <span>Ders Adı</span>
                 <div className="flex items-center gap-6 pr-2">
-                  <span className="text-emerald-800 dark:text-emerald-300">Doğru</span>
-                  <span className="text-rose-800 dark:text-rose-300">Yanlış</span>
+                  <span className="text-emerald-800 dark:text-emerald-300">
+                    Doğru
+                  </span>
+                  <span className="text-rose-800 dark:text-rose-300">
+                    Yanlış
+                  </span>
                   <span className="text-accent-fg">Net</span>
                 </div>
               </div>
 
               <div className="space-y-3">
-                {(activeTab === 'tyt' ? tytSubjectKeys : aytSubjectKeys).map((key) => {
-                  const meta = yksSubjects.find((s) => s.key === key);
-                  if (!meta) return null;
-                  const item = inputs[key];
-                  const netVal = Math.max(0, item.correct - item.wrong / 4);
+                {(activeTab === 'tyt' ? tytSubjectKeys : aytSubjectKeys).map(
+                  (key) => {
+                    const meta = yksSubjects.find((s) => s.key === key);
+                    if (!meta) return null;
+                    const item = inputs[key];
+                    const netVal = item.correct - item.wrong / 4;
 
-                  return (
-                    <div
-                      key={key}
-                      className="flex items-center justify-between gap-2 rounded-2xl border border-default bg-surface-2 p-3 text-xs"
-                    >
-                      <div className="flex-1 min-w-0">
-                        <span className="font-bold text-primary block">{meta.label}</span>
-                        <span className="text-[10px] text-secondary">{meta.questions} Soru</span>
-                      </div>
+                    return (
+                      <div
+                        key={key}
+                        className="flex items-center justify-between gap-2 rounded-2xl border border-default bg-surface-2 p-3 text-xs"
+                      >
+                        <div className="flex-1 min-w-0">
+                          <span className="font-bold text-primary block">
+                            {meta.label}
+                          </span>
+                          <span className="text-[10px] text-secondary">
+                            {meta.questions} Soru
+                          </span>
+                        </div>
 
-                      <div className="flex shrink-0 items-center gap-1.5 sm:gap-3">
-                        <input
-                          type="number"
-                          min={0}
-                          max={meta.questions}
-                          value={item.correct || ''}
-                          placeholder="0"
-                          onChange={(e) =>
-                            handleInputChange(key, 'correct', e.target.value)
-                          }
-                          aria-label={`${meta.label} doğru`}
-                          className="h-9 w-12 rounded-xl border border-emerald-500/40 bg-surface-1 text-center font-mono font-bold text-accent-success-ink dark:text-emerald-300 focus:outline-none focus:ring-2 focus:ring-emerald-500"
-                        />
+                        <div className="flex shrink-0 items-center gap-1.5 sm:gap-3">
+                          <input
+                            type="number"
+                            min={0}
+                            max={meta.questions}
+                            value={item.correct || ''}
+                            placeholder="0"
+                            onChange={(e) =>
+                              handleInputChange(key, 'correct', e.target.value)
+                            }
+                            aria-label={`${meta.label} doğru`}
+                            className="h-9 w-12 rounded-xl border border-emerald-500/40 bg-surface-1 text-center font-mono font-bold text-accent-success-ink dark:text-emerald-300 focus:outline-none focus:ring-2 focus:ring-emerald-500"
+                          />
 
-                        <input
-                          type="number"
-                          min={0}
-                          max={meta.questions}
-                          value={item.wrong || ''}
-                          placeholder="0"
-                          onChange={(e) =>
-                            handleInputChange(key, 'wrong', e.target.value)
-                          }
-                          aria-label={`${meta.label} yanlış`}
-                          className="h-9 w-12 rounded-xl border border-rose-500/40 bg-surface-1 text-center font-mono font-bold text-rose-600 dark:text-rose-300 focus:outline-none focus:ring-2 focus:ring-rose-500"
-                        />
+                          <input
+                            type="number"
+                            min={0}
+                            max={meta.questions}
+                            value={item.wrong || ''}
+                            placeholder="0"
+                            onChange={(e) =>
+                              handleInputChange(key, 'wrong', e.target.value)
+                            }
+                            aria-label={`${meta.label} yanlış`}
+                            className="h-9 w-12 rounded-xl border border-rose-500/40 bg-surface-1 text-center font-mono font-bold text-rose-600 dark:text-rose-300 focus:outline-none focus:ring-2 focus:ring-rose-500"
+                          />
 
-                        <div className="h-9 w-14 rounded-xl border border-purple-500/40 bg-surface-1 flex items-center justify-center font-mono font-black text-accent-fg">
-                          {netVal.toFixed(2)}
+                          <div className="h-9 w-14 rounded-xl border border-purple-500/40 bg-surface-1 flex items-center justify-center font-mono font-black text-accent-fg">
+                            {netVal.toFixed(2)}
+                          </div>
                         </div>
                       </div>
-                    </div>
-                  );
-                })}
+                    );
+                  },
+                )}
               </div>
             </div>
           </div>
@@ -275,7 +294,9 @@ export function YksCalculatorContainer() {
                   >
                     <div className="flex items-center justify-between text-xs">
                       <span className="font-bold text-accent-fg">
-                        {type === 'TYT' ? 'Temel Yeterlilik (TYT)' : `${type} Puanı`}
+                        {type === 'TYT'
+                          ? 'Temel Yeterlilik (TYT)'
+                          : `${type} Puanı`}
                       </span>
                       <span className="text-[11px] text-secondary">
                         Ham: {row.rawScore.toFixed(2)}
@@ -287,7 +308,9 @@ export function YksCalculatorContainer() {
                         {row.placementScore.toFixed(2)}
                       </span>
                       <div className="text-right">
-                        <span className="text-[10px] text-secondary block">Tahmini Sıra:</span>
+                        <span className="text-[10px] text-secondary block">
+                          Tahmini Sıra:
+                        </span>
                         <span className="text-sm font-bold font-mono text-emerald-800 dark:text-emerald-300">
                           ~{row.placementRank.toLocaleString('tr-TR')}
                         </span>

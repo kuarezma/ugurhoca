@@ -126,49 +126,7 @@ export const viewport: Viewport = {
   ],
 };
 
-// Speculation Rules: prefetch mobilde ve masaüstünde bağlantılar için ağ önbelleğini
-// ısıtır; SPA yönlendirmesini bozmadan 0ms gezinme sağlar.
-const speculationRulesConfig = {
-  prefetch: [
-    {
-      source: 'document',
-      where: {
-        and: [
-          { href_matches: '/*' },
-          {
-            not: {
-              href_matches: [
-                '/api/*',
-                '/admin*',
-                '/giris*',
-                '/kayit*',
-                '/cikis*',
-                '/canli-ders*',
-                '/profil*',
-                '/testler*',
-                '/odevler*',
-                '/ilerleme*',
-                '/oyunlar*',
-                '/meydan-okuma*',
-                '/odak-pomodoro*',
-                '/*\\?*logout*',
-                '/*\\?*auth*',
-              ],
-            },
-          },
-          {
-            not: {
-              selector_matches:
-                '[rel~=nofollow], [data-no-prefetch], [target=_blank]',
-            },
-          },
-        ],
-      },
-      eagerness: 'moderate',
-    },
-  ],
-};
-
+// SPA bağlantılarının ön yüklemesini SafeLink yönetir; aynı hedef için HTML ön yüklemesi yapılmaz.
 // Service worker kaydı: Sayfa yükleme süresini (FCP/LCP) etkilememesi için load sonrasında çalışır
 const serviceWorkerRegistrationScript = `if('serviceWorker' in navigator && (location.protocol === 'https:' || location.hostname === 'localhost')){window.addEventListener('load',function(){navigator.serviceWorker.register('/sw.js').catch(function(){});});}`;
 
@@ -192,14 +150,6 @@ export default function RootLayout({
         {/* Güvenlik & Referrer Politikaları */}
         <meta name="referrer" content="strict-origin-when-cross-origin" />
         <meta httpEquiv="X-Content-Type-Options" content="nosniff" />
-
-        {/* Speculation Rules API (Chrome 109+, Edge 109+) */}
-        <script
-          type="speculationrules"
-          dangerouslySetInnerHTML={{
-            __html: JSON.stringify(speculationRulesConfig),
-          }}
-        />
 
         <script
           type="application/ld+json"

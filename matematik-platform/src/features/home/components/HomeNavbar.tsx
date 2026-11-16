@@ -267,11 +267,21 @@ export function HomeNavbar({ onLogout, user }: HomeNavbarProps) {
             >
               <span className="flex items-center gap-2.5">
                 <Search className="h-4 w-4 text-accent-fg" aria-hidden="true" />
-                <span>Hızlı Arama & Komut Paleti</span>
+                <span>Hızlı Arama</span>
               </span>
               <kbd className="rounded border border-subtle bg-surface-1 px-1.5 py-0.5 text-xs font-semibold text-tertiary">
                 ⌘K
               </kbd>
+            </button>
+            <button
+              type="button"
+              onClick={() => {
+                setIsOpen(false);
+                window.dispatchEvent(new Event('open-chat-bubble'));
+              }}
+              className="flex w-full items-center rounded-2xl px-3.5 py-2.5 text-sm font-bold text-primary hover:bg-surface-2"
+            >
+              Uğur Hoca'ya yaz
             </button>
             <SafeLink
               href="/icerikler?type=yaprak-test"

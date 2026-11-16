@@ -1,7 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import dynamic from 'next/dynamic';
+import MathText from '@/components/MathText';
 import {
   CheckCircle2,
   XCircle,
@@ -14,11 +14,6 @@ import {
 import type { GuestQuestion } from '../data/guestQuestions';
 import { evaluateShortAnswer } from '@/features/quizzes/utils/answerEvaluation';
 
-const MathText = dynamic(() => import('@/components/MathText'), {
-  ssr: false,
-  loading: () => <span className="inline-block animate-pulse">...</span>,
-});
-
 interface GuestQuestionCardProps {
   question: GuestQuestion;
   index: number;
@@ -27,6 +22,7 @@ interface GuestQuestionCardProps {
 export function GuestQuestionCard({ question, index }: GuestQuestionCardProps) {
   const [selectedOption, setSelectedOption] = useState<number | null>(null);
   const [shortAnswerInput, setShortAnswerInput] = useState('');
+  const [answerError, setAnswerError] = useState('');
   const [hasEvaluatedShort, setHasEvaluatedShort] = useState(false);
   const [isShortCorrect, setIsShortCorrect] = useState(false);
   const [showSolution, setShowSolution] = useState(false);
@@ -35,12 +31,17 @@ export function GuestQuestionCard({ question, index }: GuestQuestionCardProps) {
   const isMultiple = question.question_type === 'multiple_choice';
 
   const handleSelectOption = (optIndex: number) => {
+    if (selectedOption !== null) return;
     setSelectedOption(optIndex);
     setShowSolution(true);
   };
 
   const handleEvaluateShort = () => {
-    if (!shortAnswerInput.trim()) return;
+    if (!shortAnswerInput.trim()) {
+      setAnswerError('Önce cevabını yaz.');
+      return;
+    }
+    setAnswerError('');
     const correct = evaluateShortAnswer(
       shortAnswerInput,
       question.expected_answer || '',
@@ -112,6 +113,8 @@ export function GuestQuestionCard({ question, index }: GuestQuestionCardProps) {
                 key={optIdx}
                 type="button"
                 onClick={() => handleSelectOption(optIdx)}
+                aria-pressed={isSelected}
+                disabled={selectedOption !== null}
                 className={`p-3 rounded-2xl border text-left flex items-center gap-3 transition-all ${btnStyle}`}
               >
                 <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-lg bg-surface-2 text-xs font-bold">
@@ -126,14 +129,37 @@ export function GuestQuestionCard({ question, index }: GuestQuestionCardProps) {
         </div>
       )}
 
+      {isMultiple && selectedOption !== null && (
+        <p role="status" className="text-sm font-semibold text-primary">
+          {selectedOption === question.correct_index
+            ? 'Doğru cevap! Çözüm adımlarını aşağıda inceleyebilirsin.'
+            : `Bu cevap doğru değil. Doğru seçenek: ${String.fromCharCode(65 + (question.correct_index ?? 0))}. Çözüm adımlarını inceleyebilirsin.`}
+        </p>
+      )}
+
       {/* Kısa Cevap / MEB Açık Uçlu Girişi */}
       {!isMultiple && (
         <div className="space-y-3 pt-2">
+          <label
+            htmlFor={`guest-answer-${question.id}`}
+            className="block text-sm font-semibold text-primary"
+          >
+            Cevabın
+          </label>
           <div className="flex flex-col sm:flex-row gap-2">
             <input
+              id={`guest-answer-${question.id}`}
               type="text"
+              aria-invalid={Boolean(answerError)}
+              aria-describedby={
+                answerError ? `guest-error-${question.id}` : undefined
+              }
               value={shortAnswerInput}
-              onChange={(e) => setShortAnswerInput(e.target.value)}
+              onChange={(e) => {
+                setShortAnswerInput(e.target.value);
+                setAnswerError('');
+                setHasEvaluatedShort(false);
+              }}
               placeholder="Cevabınızı girin (örn. 36 veya 2/3)"
               className="flex-1 px-4 py-2.5 rounded-2xl bg-surface-0 border border-border-default text-primary placeholder:text-tertiary text-sm focus:outline-none focus:ring-2 focus:ring-accent-fg"
               onKeyDown={(e) => {
@@ -149,8 +175,18 @@ export function GuestQuestionCard({ question, index }: GuestQuestionCardProps) {
             </button>
           </div>
 
+          {answerError && (
+            <p
+              id={`guest-error-${question.id}`}
+              role="alert"
+              className="text-sm text-tone-danger-fg"
+            >
+              {answerError}
+            </p>
+          )}
           {hasEvaluatedShort && (
             <div
+              role="status"
               className={`p-3 rounded-2xl text-xs flex items-center gap-2 border ${
                 isShortCorrect
                   ? 'bg-tone-success-bg border-tone-success-border text-tone-success-fg font-semibold'

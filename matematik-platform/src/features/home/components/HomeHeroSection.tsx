@@ -142,7 +142,7 @@ const portals = [
     icon: FileSignature,
     prismBar: 'from-sky-400 via-cyan-400 to-indigo-500',
     accent:
-      'border border-sky-200/80 dark:border-sky-400/20 bg-surface-1/80 backdrop-blur-2xl shadow-[inset_0_1px_0_rgba(255,255,255,0.9),0_16px_36px_-12px_rgba(14,165,233,0.16)] dark:shadow-[inset_0_1px_0_rgba(255,255,255,0.1),0_20px_45px_-15px_rgba(2,6,23,0.65)] hover:border-sky-400/80 hover:-translate-y-1 transition-all duration-300',
+      'border border-sky-200/80 dark:border-sky-400/20 bg-surface-1/80 shadow-[inset_0_1px_0_rgba(255,255,255,0.9),0_16px_36px_-12px_rgba(14,165,233,0.16)] dark:shadow-[inset_0_1px_0_rgba(255,255,255,0.1),0_20px_45px_-15px_rgba(2,6,23,0.65)] hover:border-sky-400/80 hover:-translate-y-1 transition-all duration-300',
     iconStyle:
       'bg-gradient-to-br from-sky-700 to-indigo-700 text-[var(--on-brand)] dark:from-sky-400 dark:to-indigo-400 dark:text-slate-950 shadow-lg shadow-sky-500/25',
     chipStyle:
@@ -161,7 +161,7 @@ const portals = [
     icon: Gamepad2,
     prismBar: 'from-emerald-400 via-teal-400 to-cyan-500',
     accent:
-      'border border-emerald-200/80 dark:border-emerald-400/20 bg-surface-1/80 backdrop-blur-2xl shadow-[inset_0_1px_0_rgba(255,255,255,0.9),0_16px_36px_-12px_rgba(16,185,129,0.16)] dark:shadow-[inset_0_1px_0_rgba(255,255,255,0.1),0_20px_45px_-15px_rgba(2,6,23,0.65)] hover:border-emerald-400/80 hover:-translate-y-1 transition-all duration-300',
+      'border border-emerald-200/80 dark:border-emerald-400/20 bg-surface-1/80 shadow-[inset_0_1px_0_rgba(255,255,255,0.9),0_16px_36px_-12px_rgba(16,185,129,0.16)] dark:shadow-[inset_0_1px_0_rgba(255,255,255,0.1),0_20px_45px_-15px_rgba(2,6,23,0.65)] hover:border-emerald-400/80 hover:-translate-y-1 transition-all duration-300',
     iconStyle:
       'bg-gradient-to-br from-emerald-700 to-teal-800 text-[var(--on-brand)] dark:from-emerald-400 dark:to-teal-400 dark:text-slate-950 shadow-lg shadow-emerald-600/25',
     chipStyle:
@@ -295,7 +295,7 @@ export function HomeHeroSection({
     >
       <div className="mx-auto max-w-6xl space-y-8 sm:space-y-10">
         <div className="grid gap-6 lg:grid-cols-12 lg:items-center lg:gap-8">
-          <div className="relative overflow-hidden rounded-3xl border border-sky-200/75 dark:border-sky-400/20 bg-surface-1/75 backdrop-blur-2xl p-6 sm:p-8 shadow-[inset_0_1px_0_rgba(255,255,255,0.9),0_18px_45px_-15px_rgba(14,165,233,0.14)] dark:shadow-[inset_0_1px_0_rgba(255,255,255,0.12),0_20px_50px_-15px_rgba(2,6,23,0.65)] space-y-5 lg:col-span-7">
+          <div className="relative overflow-hidden rounded-3xl border border-sky-200/75 dark:border-sky-400/20 bg-surface-1/75 p-6 sm:p-8 shadow-[inset_0_1px_0_rgba(255,255,255,0.9),0_18px_45px_-15px_rgba(14,165,233,0.14)] dark:shadow-[inset_0_1px_0_rgba(255,255,255,0.12),0_20px_50px_-15px_rgba(2,6,23,0.65)] space-y-5 lg:col-span-7">
             {/* Üst Prizmatik Işık Kırılım Çizgisi */}
             <div className="absolute inset-x-0 top-0 h-[2px] bg-gradient-to-r from-sky-400 via-indigo-400 to-emerald-400" />
             <div
@@ -303,7 +303,7 @@ export function HomeHeroSection({
               className="pointer-events-none absolute -right-24 -top-24 h-64 w-64 rounded-full bg-gradient-to-br from-sky-400/15 via-indigo-400/10 to-transparent blur-3xl"
             />
 
-            <div className="inline-flex items-center gap-2 rounded-full border border-emerald-300/80 bg-emerald-50/80 dark:border-emerald-700/60 dark:bg-emerald-950/50 px-3.5 py-1.5 text-xs font-semibold text-emerald-900 dark:text-emerald-200 backdrop-blur-md shadow-xs">
+            <div className="inline-flex items-center gap-2 rounded-full border border-emerald-300/80 bg-emerald-50/80 dark:border-emerald-700/60 dark:bg-emerald-950/50 px-3.5 py-1.5 text-xs font-semibold text-emerald-900 dark:text-emerald-200 shadow-xs">
               <GraduationCap
                 aria-hidden="true"
                 className="h-4 w-4 shrink-0 text-emerald-700 dark:text-emerald-300"
@@ -321,7 +321,7 @@ export function HomeHeroSection({
 
             {/* Mini Kristal İstatistik Kapsülleri */}
             <div className="grid grid-cols-3 gap-2 sm:gap-2.5 pt-1">
-              <div className="rounded-2xl border border-sky-200/70 dark:border-sky-400/20 bg-surface-2/60 backdrop-blur-md px-2 sm:px-3 py-2 text-center shadow-xs">
+              <div className="rounded-2xl border border-sky-200/70 dark:border-sky-400/20 bg-surface-2/60 px-2 sm:px-3 py-2 text-center shadow-xs">
                 <div className="text-sm sm:text-base font-black text-primary">
                   Ücretsiz
                 </div>
@@ -329,7 +329,7 @@ export function HomeHeroSection({
                   PDF Föy
                 </div>
               </div>
-              <div className="rounded-2xl border border-emerald-200/70 dark:border-emerald-400/20 bg-surface-2/60 backdrop-blur-md px-2 sm:px-3 py-2 text-center shadow-xs">
+              <div className="rounded-2xl border border-emerald-200/70 dark:border-emerald-400/20 bg-surface-2/60 px-2 sm:px-3 py-2 text-center shadow-xs">
                 <div className="text-sm sm:text-base font-black text-primary">
                   20+
                 </div>
@@ -337,7 +337,7 @@ export function HomeHeroSection({
                   Zihin Oyunu
                 </div>
               </div>
-              <div className="rounded-2xl border border-indigo-200/70 dark:border-indigo-400/20 bg-surface-2/60 backdrop-blur-md px-2 sm:px-3 py-2 text-center shadow-xs">
+              <div className="rounded-2xl border border-indigo-200/70 dark:border-indigo-400/20 bg-surface-2/60 px-2 sm:px-3 py-2 text-center shadow-xs">
                 <div className="text-sm sm:text-base font-black text-primary">
                   12
                 </div>
@@ -434,7 +434,7 @@ export function HomeHeroSection({
                 key={href}
                 href={href}
                 aria-label={label}
-                className={`${cardClassName} ${accent} flex flex-col justify-between gap-5 p-6 sm:p-8 relative overflow-hidden`}
+                className={`${cardClassName} ${accent} flex flex-col justify-between gap-5 p-4 sm:p-8 relative overflow-hidden`}
               >
                 <div
                   className={`absolute inset-x-0 top-0 h-1 bg-gradient-to-r ${prismBar}`}
@@ -449,11 +449,11 @@ export function HomeHeroSection({
                     <h2 className="font-display text-2xl font-extrabold text-primary sm:text-3xl">
                       {title}
                     </h2>
-                    <p className="text-sm leading-relaxed text-secondary sm:text-base">
+                    <p className="hidden text-sm leading-relaxed text-secondary sm:block sm:text-base">
                       {description}
                     </p>
                   </div>
-                  <div className="flex flex-wrap gap-2 pt-1">
+                  <div className="hidden flex-wrap gap-2 pt-1 sm:flex">
                     {topics.map((topic) => (
                       <span
                         key={topic}
@@ -497,7 +497,7 @@ export function HomeHeroSection({
                 <SafeLink
                   key={href}
                   href={href}
-                  className={`rounded-2xl border ${borderStyle} bg-surface-1/80 backdrop-blur-xl hover:bg-surface-2/90 flex items-start gap-3.5 p-4 shadow-[inset_0_1px_0_rgba(255,255,255,0.85)] dark:shadow-[inset_0_1px_0_rgba(255,255,255,0.08)] hover:-translate-y-1 transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent-info`}
+                  className={`rounded-2xl border ${borderStyle} bg-surface-1/80 hover:bg-surface-2/90 flex items-start gap-3.5 p-4 shadow-[inset_0_1px_0_rgba(255,255,255,0.85)] dark:shadow-[inset_0_1px_0_rgba(255,255,255,0.08)] hover:-translate-y-1 transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent-info`}
                 >
                   <span
                     className={`flex h-11 w-11 shrink-0 items-center justify-center rounded-xl ${iconStyle}`}
@@ -516,13 +516,15 @@ export function HomeHeroSection({
           </div>
         </section>
 
-        <section aria-labelledby="academic-study-tools" className="space-y-4">
-          <h2
-            id="academic-study-tools"
-            className="font-display text-2xl font-extrabold text-primary"
-          >
-            Akademik Çalışma & Hesaplama Araçları
-          </h2>
+        <details className="rounded-2xl border border-border-subtle bg-surface-1 p-4 sm:p-5">
+          <summary className="cursor-pointer rounded-xl py-2 text-primary">
+            <h2
+              id="academic-study-tools"
+              className="font-display text-2xl font-extrabold text-primary"
+            >
+              Çalışma ve Hesaplama Araçları
+            </h2>
+          </summary>
           <div className="grid grid-cols-1 gap-3.5 sm:grid-cols-2 lg:grid-cols-3">
             {tools.map(({ title, icon: Icon, onOpen }, index) => (
               <button
@@ -530,7 +532,7 @@ export function HomeHeroSection({
                 type="button"
                 onClick={onOpen}
                 disabled={!onOpen}
-                className="rounded-2xl border border-default bg-surface-1/80 backdrop-blur-xl shadow-[inset_0_1px_0_rgba(255,255,255,0.85)] dark:shadow-[inset_0_1px_0_rgba(255,255,255,0.08)] font-sans transition-all duration-200 hover:border-sky-500 dark:hover:border-sky-400 hover:bg-surface-2/90 hover:-translate-y-0.5 flex min-h-20 items-center gap-3.5 p-4 text-left disabled:cursor-not-allowed disabled:opacity-50"
+                className="rounded-2xl border border-default bg-surface-1/80 shadow-[inset_0_1px_0_rgba(255,255,255,0.85)] dark:shadow-[inset_0_1px_0_rgba(255,255,255,0.08)] font-sans transition-all duration-200 hover:border-sky-500 dark:hover:border-sky-400 hover:bg-surface-2/90 hover:-translate-y-0.5 flex min-h-20 items-center gap-3.5 p-4 text-left disabled:cursor-not-allowed disabled:opacity-50"
               >
                 <span
                   className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-xl ${toolIconStyles[index % toolIconStyles.length]}`}
@@ -543,7 +545,7 @@ export function HomeHeroSection({
               </button>
             ))}
           </div>
-        </section>
+        </details>
       </div>
     </section>
   );

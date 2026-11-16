@@ -2,6 +2,7 @@
 
 import React from 'react';
 import { useRouter } from 'next/navigation';
+import { isDataSaverOrSlowConnection } from '@/lib/performance-runtime';
 
 export type SafeLinkProps = React.AnchorHTMLAttributes<HTMLAnchorElement> & {
   href: string;
@@ -39,8 +40,8 @@ function shouldPrefetch(url: string): boolean {
  * and client-side SPA navigation.
  *
  * It prevents viewport IntersectionObserver prefetch storms (which would trigger
- * 60+ simultaneous requests on the home page) while ensuring 0ms navigation latency
- * by prefetching the exact link the user hovers or touches 100-200ms before click.
+ * simultaneous requests on the home page). Only the link the user focuses,
+ * hovers or touches is prefetched; actual navigation still depends on the network.
  */
 export function SafeLink({
   href,
@@ -65,7 +66,7 @@ export function SafeLink({
   const [isPending, startTransition] = React.useTransition();
 
   const prefetchRoute = (targetHref: string) => {
-    if (!shouldPrefetch(targetHref)) {
+    if (isDataSaverOrSlowConnection() || !shouldPrefetch(targetHref)) {
       return;
     }
     try {
@@ -107,11 +108,20 @@ export function SafeLink({
       !event.ctrlKey &&
       !event.altKey &&
       !event.shiftKey &&
+      !event.currentTarget.hasAttribute('download') &&
       href.startsWith('/') &&
       !href.startsWith('//')
     ) {
       if (router) {
         event.preventDefault();
+        if (
+          isPending ||
+          href ===
+            window.location.pathname +
+              window.location.search +
+              window.location.hash
+        )
+          return;
 
         // React 19 startTransition: gezinme geçişini arka planda eşzamanlı
         // yürütür ve ana thread'i dondurmadan sayfa geçişini başlatır.

@@ -38,6 +38,7 @@ export function ContentsView({ loadMoreRef, ...props }: ContentsViewProps) {
           />
 
           <ContentFilters
+            retryPreview={props.retryPreview}
             contentLoadError={props.contentLoadError}
             isWorksheetBrowser={props.isWorksheetBrowser}
             selectedWorksheetGrade={props.selectedWorksheetGrade}

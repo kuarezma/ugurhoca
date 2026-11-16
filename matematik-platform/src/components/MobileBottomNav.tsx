@@ -3,7 +3,14 @@
 import { useEffect, useState } from 'react';
 import { SafeLink } from '@/components/SafeLink';
 import { usePathname } from 'next/navigation';
-import { Home, FileCheck, Timer, Gamepad2, User } from 'lucide-react';
+import {
+  Home,
+  FileCheck,
+  Timer,
+  Gamepad2,
+  User,
+  MessageCircle,
+} from 'lucide-react';
 import { useHydrated } from '@/hooks/useClientPathname';
 
 const NAV_ITEMS = [
@@ -21,6 +28,27 @@ export function MobileBottomNav() {
   const pathname = hydrated ? routerPathname : null;
 
   const [pendingHref, setPendingHref] = useState<string | null>(null);
+  const [unreadCount, setUnreadCount] = useState(0);
+  const [chatOpen, setChatOpen] = useState(false);
+
+  useEffect(() => {
+    const updateChatState = (event: Event) => {
+      const state = (
+        event as CustomEvent<{ unreadCount?: unknown; open?: unknown }>
+      ).detail;
+      if (!state) return;
+      if (
+        typeof state.unreadCount === 'number' &&
+        Number.isFinite(state.unreadCount)
+      ) {
+        setUnreadCount(Math.max(0, state.unreadCount));
+      }
+      if (typeof state.open === 'boolean') setChatOpen(state.open);
+    };
+    window.addEventListener('ugurhoca:chat-state', updateChatState);
+    return () =>
+      window.removeEventListener('ugurhoca:chat-state', updateChatState);
+  }, []);
 
   // Rota değiştiğinde bekleyen seçimi temizle
   useEffect(() => {
@@ -38,7 +66,7 @@ export function MobileBottomNav() {
       className="fixed bottom-0 left-0 right-0 z-40 block md:hidden pointer-events-none"
     >
       <div className="mx-auto max-w-md px-3 pb-[max(0.75rem,env(safe-area-inset-bottom))] pt-2 pointer-events-auto">
-        <div className="flex items-center justify-around rounded-full border border-subtle crystal-nav-pill px-3 py-1.5 transition-all duration-300">
+        <div className="flex items-center justify-around rounded-full border border-subtle crystal-nav-pill px-2 py-1.5 transition-all duration-300">
           {NAV_ITEMS.map((item) => {
             const isRouteActive =
               item.href === '/'
@@ -62,7 +90,7 @@ export function MobileBottomNav() {
                   }
                   setPendingHref(item.href);
                 }}
-                className={`relative flex min-h-[46px] min-w-[54px] flex-col items-center justify-center rounded-2xl px-2 py-1.5 font-display text-[11px] font-bold transition-all duration-150 active:scale-95 select-none ${
+                className={`relative flex min-h-[46px] min-w-11 flex-1 flex-col items-center justify-center rounded-2xl px-1 py-1.5 font-display text-[11px] font-bold transition-all duration-150 active:scale-95 select-none ${
                   isActive
                     ? 'text-sky-700 dark:text-sky-400 font-extrabold'
                     : 'text-secondary hover:text-primary'
@@ -84,6 +112,34 @@ export function MobileBottomNav() {
               </SafeLink>
             );
           })}
+          <button
+            type="button"
+            onClick={() =>
+              window.dispatchEvent(
+                new Event(chatOpen ? 'close-chat-bubble' : 'open-chat-bubble'),
+              )
+            }
+            data-chat-toggle
+            aria-haspopup="dialog"
+            aria-expanded={chatOpen}
+            aria-label={
+              unreadCount > 0
+                ? `Uğur Hoca'ya yaz, ${unreadCount} okunmamış mesaj`
+                : "Uğur Hoca'ya yaz"
+            }
+            className="relative flex min-h-[46px] min-w-11 flex-1 flex-col items-center justify-center rounded-2xl px-1 py-1.5 font-display text-[11px] font-bold text-secondary hover:text-primary"
+          >
+            <MessageCircle className="h-5 w-5" aria-hidden="true" />
+            <span className="mt-1 leading-none">Destek</span>
+            {unreadCount > 0 && (
+              <span
+                aria-hidden="true"
+                className="absolute right-0 top-0 rounded-full bg-tone-danger-bg px-1.5 text-[10px] font-bold text-tone-danger-fg"
+              >
+                {unreadCount > 9 ? '9+' : unreadCount}
+              </span>
+            )}
+          </button>
         </div>
       </div>
     </nav>

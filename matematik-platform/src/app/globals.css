@@ -661,7 +661,7 @@ body {
 }
 
 html[data-theme='light'] body {
-  background-color: #fafafc;
+  background-color: var(--surface-0);
 }
 
 html[data-theme='light'] body::before {
@@ -2360,4 +2360,24 @@ html[data-theme='light']
 :root:not([data-theme='light']) .border-slate-700,
 :root:not([data-theme='light']) .dark\:border-slate-700 {
   border-color: var(--border-default);
+}
+
+/* Mobilde içerik ve son eylemler sabit alt menünün arkasında kalmaz. */
+@media (max-width: 767px) {
+  #ana-icerik {
+    padding-bottom: calc(6.5rem + env(safe-area-inset-bottom, 0px));
+  }
+  body.in-lesson-mode #ana-icerik {
+    padding-bottom: 0;
+  }
+  .site-background-container .aurora-orb,
+  .site-background-container .light-gradient-mesh,
+  .site-background-container .grid-shimmer-beam {
+    animation: none;
+    will-change: auto;
+  }
+  .site-background-container .aurora-orb {
+    filter: blur(40px);
+    -webkit-filter: blur(40px);
+  }
 }

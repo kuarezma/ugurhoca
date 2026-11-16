@@ -30,6 +30,16 @@ describe('ContentFilterBar', () => {
     const searchInput = screen.getByPlaceholderText('İçerik ara...');
     expect(searchInput).toHaveValue('üslü');
 
+    const toggle = screen.getByRole('button', {
+      name: /Filtre ve Sıralama Seçenekleri/,
+    });
+    expect(toggle).toHaveAttribute('aria-expanded', 'false');
+    expect(
+      document.getElementById(toggle.getAttribute('aria-controls')!),
+    ).toBeInTheDocument();
+    fireEvent.click(toggle);
+    expect(toggle).toHaveAttribute('aria-expanded', 'true');
+
     // Clear search button
     const clearBtn = screen.getByTitle('Aramayı Temizle');
     fireEvent.click(clearBtn);

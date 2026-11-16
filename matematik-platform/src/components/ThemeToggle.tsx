@@ -45,7 +45,14 @@ export function ThemeToggle({
 
 export function FloatingThemeToggle() {
   const pathname = useClientPathname();
-  if (!pathname || pathname === '/') return null;
+  if (
+    !pathname ||
+    pathname === '/' ||
+    pathname.startsWith('/icerikler') ||
+    pathname.startsWith('/araclar') ||
+    pathname === '/deneme-salonu'
+  )
+    return null;
 
   return (
     <div className="hidden md:block fixed bottom-5 left-5 z-[90]">
