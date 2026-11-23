@@ -1,11 +1,9 @@
 'use client';
 
 import { useState, useMemo } from 'react';
-import Image from 'next/image';
 
 import { motion } from 'framer-motion';
 import {
-  ArrowLeft,
   Trophy,
   Volume2,
   VolumeX,
@@ -14,7 +12,7 @@ import {
   GraduationCap,
   RotateCcw,
 } from 'lucide-react';
-import { SafeLink as Link } from '@/components/SafeLink';
+import { SitePageNavigation } from '@/components/SitePageNavigation';
 import { useGameSoundMute } from '@/features/games/hooks/useGameSoundMute';
 import type { AppUser } from '@/types';
 import {
@@ -73,7 +71,7 @@ export function GamesLandingView({
   }, [selectedGrade, searchQuery]);
 
   return (
-    <main className="oyunlar-page page-surface min-h-screen pb-20 relative">
+    <main className="oyunlar-page page-surface min-h-screen pb-24 relative">
       {/* Ambient Glow Mesh */}
       <div
         className="pointer-events-none fixed inset-0 -z-10 overflow-hidden"
@@ -86,65 +84,41 @@ export function GamesLandingView({
 
       <FloatingParticles />
 
-      <nav className="fixed top-0 left-0 right-0 z-50 border-b border-default bg-surface-1/90 backdrop-blur-xl py-3 sm:py-4 px-4 sm:px-6 pt-[max(0.75rem,env(safe-area-inset-top))] pl-[max(1rem,env(safe-area-inset-left))] pr-[max(1rem,env(safe-area-inset-right))]">
-        <div className="container mx-auto flex justify-between items-center gap-3">
-          <Link href="/" className="flex items-center gap-2.5 min-w-0">
-            <div className="h-10 w-10 shrink-0 overflow-hidden rounded-2xl border-2 border-[#58cc02] bg-[#d7ffb8] p-0.5 shadow-[0_3px_0_#46a302]">
-              <Image
-                src="/ugur.jpeg"
-                alt="Uğur Hoca"
-                width={44}
-                height={44}
-                priority
-                className="h-full w-full rounded-xl object-cover"
-              />
-            </div>
-            <span className="font-display text-base sm:text-xl font-bold text-primary truncate">
-              Uğur Hoca Matematik
-            </span>
-          </Link>
+      <SitePageNavigation
+        accountHref={profileHref}
+        accountLabel={user.isAdmin ? 'Admin Panel' : 'Profil'}
+        rightSlot={
+          <button
+            type="button"
+            onClick={toggleMute}
+            className="flex h-10 items-center gap-1.5 px-2.5 sm:px-3 rounded-xl border border-default bg-surface-2 hover:bg-overlay-2 text-primary transition-colors text-xs"
+            aria-label={isMuted ? 'Oyun sesini aç' : 'Oyun sesini kapat'}
+            title={
+              isMuted
+                ? 'Ses Kapalı (Açmak için tıkla)'
+                : 'Ses Açık (Kapatmak için tıkla)'
+            }
+          >
+            {isMuted ? (
+              <>
+                <VolumeX className="w-4 h-4 text-accent-danger-ink shrink-0" />
+                <span className="hidden sm:inline text-accent-danger-ink font-semibold">
+                  Sessiz
+                </span>
+              </>
+            ) : (
+              <>
+                <Volume2 className="w-4 h-4 text-accent-success-ink shrink-0" />
+                <span className="hidden sm:inline text-accent-success-ink font-semibold">
+                  Ses Açık
+                </span>
+              </>
+            )}
+          </button>
+        }
+      />
 
-          <div className="flex items-center gap-2 sm:gap-3 shrink-0">
-            <button
-              type="button"
-              onClick={toggleMute}
-              className="flex items-center gap-1.5 px-2.5 sm:px-3 py-1.5 rounded-xl border border-default bg-surface-2 hover:bg-overlay-2 text-primary transition-colors text-xs"
-              aria-label={isMuted ? 'Oyun sesini aç' : 'Oyun sesini kapat'}
-              title={
-                isMuted
-                  ? 'Ses Kapalı (Açmak için tıkla)'
-                  : 'Ses Açık (Kapatmak için tıkla)'
-              }
-            >
-              {isMuted ? (
-                <>
-                  <VolumeX className="w-4 h-4 text-accent-danger-ink shrink-0" />
-                  <span className="hidden sm:inline text-accent-danger-ink font-semibold">
-                    Sessiz
-                  </span>
-                </>
-              ) : (
-                <>
-                  <Volume2 className="w-4 h-4 text-accent-success-ink shrink-0" />
-                  <span className="hidden sm:inline text-accent-success-ink font-semibold">
-                    Ses Açık
-                  </span>
-                </>
-              )}
-            </button>
-
-            <Link
-              href={profileHref}
-              className="text-secondary hover:text-primary flex items-center gap-1.5 text-xs sm:text-base shrink-0 font-medium"
-            >
-              <ArrowLeft className="w-4 h-4 sm:w-5 sm:h-5" />
-              <span>{user.isAdmin ? 'Admin Panel' : 'Profil'}</span>
-            </Link>
-          </div>
-        </div>
-      </nav>
-
-      <div className="pt-[calc(4.5rem+env(safe-area-inset-top))] sm:pt-24 px-4 sm:px-6">
+      <div className="pt-[calc(5.25rem+env(safe-area-inset-top))] sm:pt-24 px-4 sm:px-6 pb-8">
         <div className="container mx-auto">
           <motion.div
             initial={{ opacity: 0, y: 20 }}

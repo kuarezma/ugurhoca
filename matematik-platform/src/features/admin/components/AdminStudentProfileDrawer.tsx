@@ -241,12 +241,15 @@ export default function AdminStudentProfileDrawer({
         student={
           effectiveStudent
             ? {
-                averageScore: summary?.latestQuizScore ?? 85,
+                adminNotes: data?.adminNotes ?? [],
+                averageScore: summary?.averageQuizPercent ?? null,
                 completedAssignments: data?.submissions?.length || 0,
                 completedQuizzes: data?.quizResults?.length || 0,
                 email: effectiveStudent.email,
+                focusTopic: summary?.focusTopic ?? null,
                 grade:
-                  typeof effectiveStudent.grade === 'number'
+                  typeof effectiveStudent.grade === 'number' ||
+                  typeof effectiveStudent.grade === 'string'
                     ? effectiveStudent.grade
                     : undefined,
                 id: effectiveStudent.id,
@@ -255,7 +258,11 @@ export default function AdminStudentProfileDrawer({
                   typeof effectiveStudent.status === 'string'
                     ? effectiveStudent.status
                     : undefined,
-                totalMinutes: summary?.goalSnapshot.targetMinutes,
+                strongTopic: summary?.strongTopic ?? null,
+                totalMinutes: summary?.totalStudyMinutes ?? 0,
+                weeklyCompletedMinutes:
+                  summary?.goalSnapshot.completedMinutes ?? 0,
+                weeklyTargetMinutes: summary?.goalSnapshot.targetMinutes ?? 0,
               }
             : null
         }

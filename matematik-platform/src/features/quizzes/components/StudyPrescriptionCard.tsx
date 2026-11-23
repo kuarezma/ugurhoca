@@ -1,7 +1,13 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { Sparkles, Target, Clock, ArrowRight, CheckCircle2 } from 'lucide-react';
+import {
+  Sparkles,
+  Target,
+  Clock,
+  ArrowRight,
+  CheckCircle2,
+} from 'lucide-react';
 import {
   generateStudyPrescription,
   type StudyPrescription,
@@ -43,9 +49,12 @@ export function StudyPrescriptionCard({
             <CheckCircle2 className="h-5 w-5" />
           </div>
           <div>
-            <h3 className="font-bold text-sm">Haftalık Reçete: Eksik Konun Yok!</h3>
-            <p className="text-xs text-slate-500 dark:text-slate-400 mt-0.5">
-              Hata defterindeki tüm soruları başarıyla temizledin. Yeni testler çözerek formunu koru.
+            <h3 className="font-bold text-sm">
+              Haftalık Reçete: Eksik Konun Yok!
+            </h3>
+            <p className="text-xs text-slate-700 dark:text-slate-300 mt-0.5">
+              Hata defterindeki tüm soruları başarıyla temizledin. Yeni testler
+              çözerek formunu koru.
             </p>
           </div>
         </div>
@@ -77,9 +86,7 @@ export function StudyPrescriptionCard({
           <div>
             <h3 className="text-base sm:text-lg font-bold">
               Hedef Konu:{' '}
-              <span className="text-primary">
-                {prescription.focusTopic}
-              </span>
+              <span className="text-primary">{prescription.focusTopic}</span>
             </h3>
             <p className="mt-1 text-xs sm:text-sm text-slate-600 dark:text-slate-300 leading-relaxed">
               💡 {prescription.actionTip}
@@ -93,8 +100,8 @@ export function StudyPrescriptionCard({
             </span>
             <span>•</span>
             <span className="flex items-center gap-1 font-medium">
-              <Clock className="h-3.5 w-3.5 text-indigo-500" />
-              ~{prescription.estimatedMinutes} Dakika
+              <Clock className="h-3.5 w-3.5 text-indigo-500" />~
+              {prescription.estimatedMinutes} Dakika
             </span>
           </div>
         </div>

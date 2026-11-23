@@ -37,7 +37,7 @@ vi.mock('@/lib/auth-client', () => ({
 }));
 
 describe('ChallengePageContainer', () => {
-  it('renders Meydan Okuma page with all 4 challenge sections', () => {
+  it('renders Meydan Okuma page with all 4 challenge sections', async () => {
     render(<ChallengePageContainer />);
 
     // Başlık ve geri dön bağlantısı
@@ -51,18 +51,34 @@ describe('ChallengePageContainer', () => {
     expect(screen.getByText('🗺️ Yol Haritası')).toBeInTheDocument();
 
     // 4 Ana Bölüm
-    expect(screen.getByText('Günün Matematik Meydan Okuması')).toBeInTheDocument();
-    expect(screen.getByText('LGS Matematik Taktik Köşesi')).toBeInTheDocument();
-    expect(screen.getByText('Yeni nesil sorularda hız ve net kazandıran stratejiler')).toBeInTheDocument();
-    expect(screen.getByText(/Başarı Yol Haritası/i)).toBeInTheDocument();
+    expect(
+      screen.getByText('Günün Matematik Meydan Okuması'),
+    ).toBeInTheDocument();
+    expect(
+      await screen.findByText('LGS Matematik Taktik Köşesi'),
+    ).toBeInTheDocument();
+    expect(
+      await screen.findByText(
+        'Yeni nesil sorularda hız ve net kazandıran stratejiler',
+      ),
+    ).toBeInTheDocument();
+    expect(await screen.findByText(/Başarı Yol Haritası/i)).toBeInTheDocument();
   });
 
   it('renders anchor links with correct href attributes', () => {
     render(<ChallengePageContainer />);
 
-    expect(screen.getByRole('link', { name: /⚡ Günün Sorusu/i })).toHaveAttribute('href', '#gunun-sorusu');
-    expect(screen.getByRole('link', { name: /🎯 Soru Hedefim/i })).toHaveAttribute('href', '#soru-hedefi');
-    expect(screen.getByRole('link', { name: /💡 LGS Taktikleri/i })).toHaveAttribute('href', '#lgs-taktikleri');
-    expect(screen.getByRole('link', { name: /🗺️ Yol Haritası/i })).toHaveAttribute('href', '#yol-haritasi');
+    expect(
+      screen.getByRole('link', { name: /⚡ Günün Sorusu/i }),
+    ).toHaveAttribute('href', '#gunun-sorusu');
+    expect(
+      screen.getByRole('link', { name: /🎯 Soru Hedefim/i }),
+    ).toHaveAttribute('href', '#soru-hedefi');
+    expect(
+      screen.getByRole('link', { name: /💡 LGS Taktikleri/i }),
+    ).toHaveAttribute('href', '#lgs-taktikleri');
+    expect(
+      screen.getByRole('link', { name: /🗺️ Yol Haritası/i }),
+    ).toHaveAttribute('href', '#yol-haritasi');
   });
 });

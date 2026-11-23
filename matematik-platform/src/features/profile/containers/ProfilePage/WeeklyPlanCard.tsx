@@ -1,7 +1,8 @@
 'use client';
 
 import { motion } from 'framer-motion';
-import { CalendarClock, CheckCircle2 } from 'lucide-react';
+import { CalendarClock, CheckCircle2, ExternalLink } from 'lucide-react';
+import { SafeLink } from '@/components/SafeLink';
 import type {
   ProfileWeeklyPlan,
   ProfileWeeklyPlanItem,
@@ -10,6 +11,28 @@ import type {
 export type WeeklyPlanCardProps = {
   plan: ProfileWeeklyPlan | null;
   onToggleItem: (item: ProfileWeeklyPlanItem) => Promise<void> | void;
+};
+
+const getSafeInternalHref = (href?: string | null): string | null => {
+  if (typeof href !== 'string') return null;
+  const trimmed = href.trim();
+  if (!trimmed.startsWith('/') || trimmed.startsWith('//')) {
+    return null;
+  }
+  return trimmed;
+};
+
+const getWeeklyPlanKindLabel = (kind?: string | null): string | null => {
+  switch (kind) {
+    case 'quiz':
+      return 'Test';
+    case 'assignment':
+      return 'Ödev';
+    case 'content':
+      return 'İçerik';
+    default:
+      return null;
+  }
 };
 
 export function WeeklyPlanCard({ plan, onToggleItem }: WeeklyPlanCardProps) {
@@ -58,32 +81,57 @@ export function WeeklyPlanCard({ plan, onToggleItem }: WeeklyPlanCardProps) {
         <div className="grid gap-3 md:grid-cols-2">
           {items.map((item) => {
             const completed = Boolean(item.completed_at);
+            const safeHref = getSafeInternalHref(item.href);
+            const kindLabel = getWeeklyPlanKindLabel(item.kind);
             return (
-              <button
+              <div
                 key={item.id}
-                type="button"
-                onClick={() => onToggleItem(item)}
-                className={`flex min-h-16 items-center gap-3 rounded-2xl border px-4 py-3 text-left transition ${
+                className={`flex min-h-16 items-center justify-between gap-3 rounded-2xl border px-4 py-3 transition ${
                   completed
                     ? 'border-tone-success-border bg-tone-success-bg'
                     : 'border-default bg-surface-2 hover:border-accent hover:bg-surface-3'
                 }`}
               >
-                <CheckCircle2
-                  className={`h-5 w-5 shrink-0 ${
-                    completed ? 'text-accent-success-ink' : 'text-secondary'
-                  }`}
-                />
-                <span
-                  className={`text-sm font-semibold ${
-                    completed
-                      ? 'text-accent-success-ink line-through'
-                      : 'text-primary'
-                  }`}
+                <button
+                  type="button"
+                  aria-pressed={completed}
+                  onClick={() => onToggleItem(item)}
+                  className="flex min-w-0 flex-1 items-center gap-3 text-left"
                 >
-                  {item.title}
-                </span>
-              </button>
+                  <CheckCircle2
+                    aria-hidden="true"
+                    className={`h-5 w-5 shrink-0 ${
+                      completed ? 'text-accent-success-ink' : 'text-secondary'
+                    }`}
+                  />
+                  <div className="min-w-0 flex-1">
+                    {kindLabel ? (
+                      <span className="mb-1 inline-block rounded-full border border-border-subtle bg-surface-1 px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider text-secondary">
+                        {kindLabel}
+                      </span>
+                    ) : null}
+                    <span
+                      className={`block text-sm font-semibold ${
+                        completed
+                          ? 'text-accent-success-ink line-through'
+                          : 'text-primary'
+                      }`}
+                    >
+                      {item.title}
+                    </span>
+                  </div>
+                </button>
+                {safeHref ? (
+                  <SafeLink
+                    href={safeHref}
+                    aria-label={`${item.title} bağlantısını aç`}
+                    className="inline-flex shrink-0 items-center gap-1 rounded-xl border border-border-default bg-surface-1 px-3 py-1.5 text-xs font-bold text-primary transition hover:bg-surface-3"
+                  >
+                    <span>Aç</span>
+                    <ExternalLink className="h-3.5 w-3.5" aria-hidden="true" />
+                  </SafeLink>
+                ) : null}
+              </div>
             );
           })}
         </div>

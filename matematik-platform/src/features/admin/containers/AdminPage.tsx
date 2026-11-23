@@ -8,7 +8,11 @@ import { useAdminListActions } from '@/features/admin/hooks/useAdminListActions'
 import { useAdminModalState } from '@/features/admin/hooks/useAdminModalState';
 import { useAdminModalSubmitHandlers } from '@/features/admin/hooks/useAdminModalSubmitHandlers';
 import { useAdminNotifications } from '@/features/admin/hooks/useAdminNotifications';
-import { refreshAdminUsers as refreshAdminUsersQuery } from '@/features/admin/queries';
+import {
+  createAdminWeeklyPlan,
+  createAdminWeeklyPlansBulk,
+  refreshAdminUsers as refreshAdminUsersQuery,
+} from '@/features/admin/queries';
 import type {
   AdminActiveTab,
   AdminAnnouncement as Announcement,
@@ -24,6 +28,7 @@ import type {
   AdminStudentProfileData,
   AdminSubmission as Submission,
   AdminUser,
+  AdminWeeklyPlanItemDraft,
   AnnualPlanItem,
   GoogleDriveConnectionStatus,
   StudentActivityEvent,
@@ -120,6 +125,9 @@ export default function AdminPage() {
   const [pdfStudentsLoading, setPdfStudentsLoading] = useState(false);
   const [isSpotlightOpen, setIsSpotlightOpen] = useState(false);
   const [isBroadcastOpen, setIsBroadcastOpen] = useState(false);
+  const [weeklyPlanTargets, setWeeklyPlanTargets] = useState<
+    AdminUser[] | null
+  >(null);
   const router = useRouter();
   const {
     activeAssignment,
@@ -381,7 +389,6 @@ export default function AdminPage() {
   });
 
   const {
-    handleCreateWeeklyPlan,
     handleUpdateStudentStatus,
     handleAddStudentAdminNote,
     handleEditQuiz,
@@ -395,6 +402,96 @@ export default function AdminPage() {
     openEditQuiz,
     getQuizFormState,
   });
+
+  const handleCreateWeeklyPlan = useCallback(async (student: AdminUser) => {
+    setWeeklyPlanTargets([student]);
+  }, []);
+
+  const handleBulkCreateWeeklyPlan = useCallback(
+    async (students: AdminUser[]) => {
+      if (students.length === 0) return;
+      setWeeklyPlanTargets(students);
+    },
+    [],
+  );
+
+  const handleCloseWeeklyPlanModal = useCallback(() => {
+    setWeeklyPlanTargets(null);
+  }, []);
+
+  const weeklyPlanExisting =
+    weeklyPlanTargets && weeklyPlanTargets.length === 1
+      ? ((activeStudentProfileId === weeklyPlanTargets[0].id
+          ? activeStudentProfileData?.weeklyPlans?.[0]
+          : undefined) ??
+        weeklyPlans.find(
+          (plan) => plan.student_id === weeklyPlanTargets[0].id,
+        ) ??
+        null)
+      : null;
+
+  const handleSaveWeeklyPlan = useCallback(
+    async (payload: {
+      title: string;
+      targetMinutes: number;
+      items: AdminWeeklyPlanItemDraft[];
+      studentIds: string[];
+    }) => {
+      if (!user) return;
+
+      if (payload.studentIds.length === 1) {
+        const targetId = payload.studentIds[0];
+        await createAdminWeeklyPlan({
+          authorId: user.id,
+          items: payload.items,
+          studentId: targetId,
+          targetMinutes: payload.targetMinutes,
+          title: payload.title,
+        });
+        showToast('success', 'Haftalık plan kaydedildi.');
+        await loadData(user.id);
+        if (activeStudentProfileId === targetId) {
+          await loadStudentProfile(targetId);
+        }
+        setWeeklyPlanTargets(null);
+        return;
+      }
+
+      const result = await createAdminWeeklyPlansBulk({
+        authorId: user.id,
+        items: payload.items,
+        studentIds: payload.studentIds,
+        targetMinutes: payload.targetMinutes,
+        title: payload.title,
+      });
+
+      if (result.succeeded.length > 0 && result.failed.length === 0) {
+        showToast(
+          'success',
+          `${result.succeeded.length} öğrenciye haftalık plan atandı.`,
+        );
+      } else if (result.succeeded.length > 0 && result.failed.length > 0) {
+        showToast(
+          'warning',
+          `${result.succeeded.length} öğrenciye atandı, ${result.failed.length} öğrencide hata oluştu.`,
+        );
+      } else {
+        throw new Error(
+          result.failed[0]?.message || 'Toplu haftalık plan kaydedilemedi.',
+        );
+      }
+
+      await loadData(user.id);
+      if (
+        activeStudentProfileId &&
+        result.succeeded.includes(activeStudentProfileId)
+      ) {
+        await loadStudentProfile(activeStudentProfileId);
+      }
+      setWeeklyPlanTargets(null);
+    },
+    [activeStudentProfileId, loadData, loadStudentProfile, showToast, user],
+  );
 
   if (!user) return null;
 
@@ -460,6 +557,11 @@ export default function AdminPage() {
       handleApproveWorksheetCandidate={handleApproveWorksheetCandidate}
       handleConnectGoogleDrive={handleConnectGoogleDrive}
       handleCreateWeeklyPlan={handleCreateWeeklyPlan}
+      handleBulkCreateWeeklyPlan={handleBulkCreateWeeklyPlan}
+      weeklyPlanTargets={weeklyPlanTargets}
+      weeklyPlanExisting={weeklyPlanExisting}
+      handleCloseWeeklyPlanModal={handleCloseWeeklyPlanModal}
+      handleSaveWeeklyPlan={handleSaveWeeklyPlan}
       handleDiscoverWorksheetCandidates={handleDiscoverWorksheetCandidates}
       deleteItem={deleteItem}
       handleDisconnectGoogleDrive={handleDisconnectGoogleDrive}

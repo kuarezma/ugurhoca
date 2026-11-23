@@ -37,7 +37,9 @@ export default function TodayPlanCard({
           <p className="text-xs uppercase tracking-[0.18em] text-slate-500 dark:text-slate-400">
             Görev
           </p>
-          <p className="text-xl font-black text-slate-900 dark:text-white">{tasks.length}</p>
+          <p className="text-xl font-black text-slate-900 dark:text-white">
+            {tasks.length}
+          </p>
         </div>
       </div>
 
@@ -58,33 +60,33 @@ export default function TodayPlanCard({
               key={task.id}
               type="button"
               onClick={() => onSelectTask(task)}
-              className={`group relative w-full overflow-hidden rounded-2xl border border-white/10 bg-gradient-to-br ${task.accentClass} p-5 text-left transition-all hover:border-white/20 hover:bg-white/10`}
+              className={`group relative w-full overflow-hidden rounded-2xl border border-border-default bg-gradient-to-br ${task.accentClass} p-5 text-left transition-all hover:border-border-strong`}
             >
               <div className="absolute inset-y-0 right-0 w-24 bg-gradient-to-l from-white/10 to-transparent opacity-70" />
               <div className="relative flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
                 <div className="flex items-start gap-4">
-                  <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-2xl bg-black/15 text-sm font-black text-white dark:text-white">
+                  <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-2xl bg-surface-1/90 dark:bg-black/30 text-sm font-black text-primary dark:text-white">
                     {index + 1}
                   </div>
                   <div className="min-w-0">
                     <div className="mb-2 flex flex-wrap items-center gap-2">
-                      <span className="rounded-full bg-white/10 px-2.5 py-1 text-[11px] font-bold uppercase tracking-[0.18em] text-white/90">
+                      <span className="rounded-full bg-surface-1/90 dark:bg-white/15 px-2.5 py-1 text-[11px] font-bold uppercase tracking-[0.18em] text-primary dark:text-white">
                         {task.badge}
                       </span>
-                      <span className="text-xs font-medium text-white/70">
+                      <span className="text-xs font-medium text-secondary dark:text-slate-200">
                         {task.meta}
                       </span>
                     </div>
-                    <h3 className="text-lg font-bold text-white dark:text-white">
+                    <h3 className="text-lg font-bold text-primary dark:text-white">
                       {task.title}
                     </h3>
-                    <p className="mt-1 text-sm leading-relaxed text-slate-200">
+                    <p className="mt-1 text-sm leading-relaxed text-secondary dark:text-slate-200">
                       {task.description}
                     </p>
                   </div>
                 </div>
 
-                <span className="inline-flex items-center gap-2 self-start rounded-xl bg-white/10 px-4 py-2 text-sm font-bold text-white dark:text-white transition-colors group-hover:bg-white/15 sm:self-center">
+                <span className="inline-flex items-center gap-2 self-start rounded-xl bg-surface-1/90 dark:bg-white/15 px-4 py-2 text-sm font-bold text-primary dark:text-white transition-colors group-hover:bg-surface-1 dark:group-hover:bg-white/25 sm:self-center">
                   {task.actionLabel}
                   <ChevronRight className="h-4 w-4 transition-transform group-hover:translate-x-1" />
                 </span>

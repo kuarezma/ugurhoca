@@ -8,8 +8,8 @@ export default function manifest(): MetadataRoute.Manifest {
       'LGS ve YKS için yeni nesil matematik testleri, canlı dersler, formül laboratuvarı ve etkileşimli araçlar.',
     start_url: '/',
     display: 'standalone',
-    background_color: '#FAF8F5',
-    theme_color: '#065F46',
+    background_color: '#F2F7FE',
+    theme_color: '#0284C7',
     orientation: 'portrait-primary',
     lang: 'tr',
     icons: [

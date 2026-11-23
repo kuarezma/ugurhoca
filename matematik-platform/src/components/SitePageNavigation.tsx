@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useRef, useState, type ReactNode } from 'react';
 import Image from 'next/image';
 import { Menu, MessageCircle, Search, X } from 'lucide-react';
 import { SafeLink } from './SafeLink';
@@ -19,9 +19,15 @@ const sections = [
 export function SitePageNavigation({
   accountHref = '/profil',
   accountLabel = 'Hesabım',
+  hideAccountLink = false,
+  rightSlot,
+  subtitle,
 }: {
   accountHref?: string;
   accountLabel?: string;
+  hideAccountLink?: boolean;
+  rightSlot?: ReactNode;
+  subtitle?: string;
 }) {
   const [open, setOpen] = useState(false);
   const pathname = useClientPathname();
@@ -61,7 +67,14 @@ export function SitePageNavigation({
             height={36}
             className="h-9 w-9 shrink-0 rounded-full object-cover"
           />
-          <span className="truncate">Uğur Hoca</span>
+          <span className="min-w-0">
+            <span className="block truncate">Uğur Hoca</span>
+            {subtitle ? (
+              <span className="block truncate font-sans text-[10px] font-semibold leading-tight text-secondary">
+                {subtitle}
+              </span>
+            ) : null}
+          </span>
         </SafeLink>
         <div className="hidden items-center gap-1 lg:flex">
           {sections.map(({ href, label }) => (
@@ -75,7 +88,8 @@ export function SitePageNavigation({
             </SafeLink>
           ))}
         </div>
-        <div className="flex shrink-0 items-center gap-1">
+        <div className="flex shrink-0 items-center gap-1 sm:gap-1.5">
+          {rightSlot}
           <button
             type="button"
             aria-label="Hızlı arama aç"
@@ -85,12 +99,14 @@ export function SitePageNavigation({
             <Search className="h-5 w-5" aria-hidden="true" />
           </button>
           <ThemeToggle compact />
-          <SafeLink
-            href={accountHref}
-            className="hidden rounded-xl px-3 py-2 text-sm font-semibold text-primary hover:bg-surface-2 lg:inline-flex"
-          >
-            {accountLabel}
-          </SafeLink>
+          {!hideAccountLink ? (
+            <SafeLink
+              href={accountHref}
+              className="hidden rounded-xl px-3 py-2 text-sm font-semibold text-primary hover:bg-surface-2 lg:inline-flex"
+            >
+              {accountLabel}
+            </SafeLink>
+          ) : null}
           <button
             type="button"
             aria-label={open ? 'Menüyü kapat' : 'Menüyü aç'}
@@ -138,13 +154,15 @@ export function SitePageNavigation({
             <MessageCircle className="h-4 w-4" aria-hidden="true" />
             Uğur Hoca'ya yaz
           </button>
-          <SafeLink
-            href={accountHref}
-            onClick={() => setOpen(false)}
-            className="block rounded-xl bg-accent-bg px-3 py-3 text-sm font-semibold text-accent-fg"
-          >
-            {accountLabel}
-          </SafeLink>
+          {!hideAccountLink ? (
+            <SafeLink
+              href={accountHref}
+              onClick={() => setOpen(false)}
+              className="block rounded-xl bg-accent-bg px-3 py-3 text-sm font-semibold text-accent-fg"
+            >
+              {accountLabel}
+            </SafeLink>
+          ) : null}
         </div>
       )}
     </nav>

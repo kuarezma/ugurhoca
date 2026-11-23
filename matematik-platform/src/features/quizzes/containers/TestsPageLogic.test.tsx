@@ -19,7 +19,11 @@ const mocks = vi.hoisted(() => ({
 }));
 vi.mock('next/navigation', () => ({
   useRouter: () => ({ push: vi.fn() }),
+  usePathname: () => '/testler',
   useSearchParams: () => new URLSearchParams(),
+}));
+vi.mock('@/components/ThemeProvider', () => ({
+  useTheme: () => ({ theme: 'light', toggleTheme: vi.fn() }),
 }));
 vi.mock('@/components/Toast', () => ({
   useToast: () => ({ showToast: mocks.showToast }),
@@ -126,7 +130,13 @@ describe('quiz completion and offline ownership', () => {
   });
 
   it('Mezun öğrenciye integer 0 hedefli testi gösterir', async () => {
-    render(<TestsPage initialUser={{ ...user, grade: 'Mezun' }} initialQuizzes={[{ ...quiz, grade: 0, title: 'Mezun denemesi' }]} isHydrated />);
+    render(
+      <TestsPage
+        initialUser={{ ...user, grade: 'Mezun' }}
+        initialQuizzes={[{ ...quiz, grade: 0, title: 'Mezun denemesi' }]}
+        isHydrated
+      />,
+    );
     expect(await screen.findByText('Mezun denemesi')).toBeInTheDocument();
   });
 

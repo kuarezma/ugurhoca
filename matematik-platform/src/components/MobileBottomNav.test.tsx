@@ -35,29 +35,29 @@ describe('MobileBottomNav', () => {
       await act(async () => root?.unmount());
     }
   });
-  it('renders all 5 navigation items including Testler and Odak', () => {
+  it('renders all 5 navigation items including İçerikler and Testler', () => {
     currentPath = '/';
     render(<MobileBottomNav />);
 
     expect(screen.getByText('Ana Sayfa')).toBeInTheDocument();
+    expect(screen.getByText('İçerikler')).toBeInTheDocument();
     expect(screen.getByText('Testler')).toBeInTheDocument();
-    expect(screen.getByText('Odak')).toBeInTheDocument();
     expect(screen.getByText('Oyunlar')).toBeInTheDocument();
     expect(screen.getByText('Profil')).toBeInTheDocument();
 
+    const iceriklerLink = screen.getByRole('link', { name: /İçerikler/i });
+    expect(iceriklerLink).toHaveAttribute('href', '/icerikler');
+
     const testlerLink = screen.getByRole('link', { name: /Testler/i });
     expect(testlerLink).toHaveAttribute('href', '/testler');
-
-    const odakLink = screen.getByRole('link', { name: /Odak/i });
-    expect(odakLink).toHaveAttribute('href', '/odak-pomodoro');
   });
 
-  it('sets active state on /odak-pomodoro', () => {
-    currentPath = '/odak-pomodoro';
+  it('sets active state on /icerikler', () => {
+    currentPath = '/icerikler';
     render(<MobileBottomNav />);
 
-    const odakLink = screen.getByRole('link', { name: /Odak/i });
-    expect(odakLink).toHaveAttribute('aria-current', 'page');
+    const iceriklerLink = screen.getByRole('link', { name: /İçerikler/i });
+    expect(iceriklerLink).toHaveAttribute('aria-current', 'page');
   });
 
   it('opens support from the navigation without covering the page with a floating trigger', () => {
@@ -85,10 +85,13 @@ describe('MobileBottomNav', () => {
     }
   });
 
-  it('hides in live lesson classroom', () => {
-    currentPath = '/canli-ders/d/room-123';
-    expect(renderToString(<MobileBottomNav />)).toBe('');
-    const { container } = render(<MobileBottomNav />);
-    expect(container.firstChild).toBeNull();
-  });
+  it.each(['/canli-ders/d/room-123', '/admin', '/giris', '/kayit'])(
+    'hides on %s',
+    (hiddenPath) => {
+      currentPath = hiddenPath;
+      expect(renderToString(<MobileBottomNav />)).toBe('');
+      const { container } = render(<MobileBottomNav />);
+      expect(container.firstChild).toBeNull();
+    },
+  );
 });

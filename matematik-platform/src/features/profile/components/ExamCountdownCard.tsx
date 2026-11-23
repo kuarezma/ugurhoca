@@ -17,7 +17,10 @@ type TimeLeft = {
   minutes: number;
 };
 
-export function getTimeRemaining(targetDate: string, referenceTime = Date.now()): TimeLeft {
+export function getTimeRemaining(
+  targetDate: string,
+  referenceTime = Date.now(),
+): TimeLeft {
   const total = new Date(targetDate).getTime() - referenceTime;
   if (total <= 0) {
     return { days: 0, hours: 0, isCompleted: true, minutes: 0 };
@@ -28,7 +31,11 @@ export function getTimeRemaining(targetDate: string, referenceTime = Date.now())
   return { days, hours, isCompleted: false, minutes };
 }
 
-export function getMotivationMotto(daysLeft: number, examTitle: string, isCompleted = false): string {
+export function getMotivationMotto(
+  daysLeft: number,
+  examTitle: string,
+  isCompleted = false,
+): string {
   if (isCompleted) {
     return `${examTitle} tamamlandı. Yeni dönem sınav takvimi açıklandığında buradan takip edebilirsin.`;
   }
@@ -47,8 +54,10 @@ export function ExamCountdownCard({
 }: ExamCountdownCardProps) {
   const defaultExamId = useMemo(() => {
     const gradeNum = Number(userGrade);
-    const lgsId = featuredExams.find((e) => e.id.includes('lgs'))?.id || 'lgs-2027';
-    const yksId = featuredExams.find((e) => e.id.includes('yks'))?.id || 'yks-2027';
+    const lgsId =
+      featuredExams.find((e) => e.id.includes('lgs'))?.id || 'lgs-2027';
+    const yksId =
+      featuredExams.find((e) => e.id.includes('yks'))?.id || 'yks-2027';
     if (gradeNum === 8) return lgsId;
     if (gradeNum >= 10) return yksId;
     return lgsId;
@@ -56,7 +65,8 @@ export function ExamCountdownCard({
 
   const [selectedExamId, setSelectedExamId] = useState<string>(defaultExamId);
   const currentExam = useMemo(
-    () => featuredExams.find((e) => e.id === selectedExamId) || featuredExams[0],
+    () =>
+      featuredExams.find((e) => e.id === selectedExamId) || featuredExams[0],
     [selectedExamId],
   );
 
@@ -77,7 +87,12 @@ export function ExamCountdownCard({
   }, [currentExam]);
 
   const motto = useMemo(
-    () => getMotivationMotto(timeLeft.days, currentExam.title.replace("'ye Kalan Süre", ""), timeLeft.isCompleted),
+    () =>
+      getMotivationMotto(
+        timeLeft.days,
+        currentExam.title.replace("'ye Kalan Süre", ''),
+        timeLeft.isCompleted,
+      ),
     [timeLeft.days, timeLeft.isCompleted, currentExam.title],
   );
 
@@ -121,13 +136,15 @@ export function ExamCountdownCard({
           <div>
             <div className="flex items-center gap-2">
               <h3 className="text-base sm:text-lg font-bold">
-                {timeLeft.isCompleted ? `${currentExam.title.replace("'ye Kalan Süre", "")} tamamlandı` : currentExam.title}
+                {timeLeft.isCompleted
+                  ? `${currentExam.title.replace("'ye Kalan Süre", '')} tamamlandı`
+                  : currentExam.title}
               </h3>
-              <span className="rounded-full bg-indigo-500/20 border border-indigo-500/30 px-2 py-0.5 text-[10px] font-bold text-indigo-300">
+              <span className="rounded-full bg-indigo-500/20 border border-indigo-500/30 px-2 py-0.5 text-[10px] font-bold text-sky-800 dark:text-sky-300">
                 {currentExam.provider}
               </span>
             </div>
-            <p className="text-xs text-slate-400 mt-0.5">
+            <p className="text-xs text-secondary mt-0.5">
               {currentExam.dateLabel}
             </p>
           </div>
@@ -154,35 +171,36 @@ export function ExamCountdownCard({
 
       {timeLeft.isCompleted ? (
         <div className="my-4 rounded-2xl border border-emerald-400/20 bg-emerald-500/10 p-4 text-sm text-emerald-900 dark:text-emerald-100">
-          Bu yılın sınavı tamamlandı. Yeni tarih duyurulduğunda geri sayım otomatik olarak burada başlayacak.
+          Bu yılın sınavı tamamlandı. Yeni tarih duyurulduğunda geri sayım
+          otomatik olarak burada başlayacak.
         </div>
       ) : (
-      <div className="grid grid-cols-3 gap-3 my-4">
-        <div className="rounded-2xl border border-default dark:border-white/10 bg-surface-2/60 dark:bg-white/5 p-3 text-center">
-          <div className="text-2xl sm:text-3xl font-black bg-gradient-to-br from-slate-900 to-indigo-700 dark:from-white dark:to-slate-300 bg-clip-text text-transparent">
-            {timeLeft.days}
+        <div className="grid grid-cols-3 gap-3 my-4">
+          <div className="rounded-2xl border border-default dark:border-white/10 bg-surface-2/60 dark:bg-white/5 p-3 text-center">
+            <div className="text-2xl sm:text-3xl font-black bg-gradient-to-br from-slate-900 to-indigo-700 dark:from-white dark:to-slate-300 bg-clip-text text-transparent">
+              {timeLeft.days}
+            </div>
+            <div className="text-[11px] font-semibold text-secondary uppercase tracking-wider mt-0.5">
+              Gün
+            </div>
           </div>
-          <div className="text-[11px] font-semibold text-slate-400 uppercase tracking-wider mt-0.5">
-            Gün
+          <div className="rounded-2xl border border-default dark:border-white/10 bg-surface-2/60 dark:bg-white/5 p-3 text-center">
+            <div className="text-2xl sm:text-3xl font-black bg-gradient-to-br from-slate-900 to-indigo-700 dark:from-white dark:to-slate-300 bg-clip-text text-transparent">
+              {timeLeft.hours}
+            </div>
+            <div className="text-[11px] font-semibold text-secondary uppercase tracking-wider mt-0.5">
+              Saat
+            </div>
+          </div>
+          <div className="rounded-2xl border border-default dark:border-white/10 bg-surface-2/60 dark:bg-white/5 p-3 text-center">
+            <div className="text-2xl sm:text-3xl font-black bg-gradient-to-br from-slate-900 to-indigo-700 dark:from-white dark:to-slate-300 bg-clip-text text-transparent">
+              {timeLeft.minutes}
+            </div>
+            <div className="text-[11px] font-semibold text-secondary uppercase tracking-wider mt-0.5">
+              Dakika
+            </div>
           </div>
         </div>
-        <div className="rounded-2xl border border-default dark:border-white/10 bg-surface-2/60 dark:bg-white/5 p-3 text-center">
-          <div className="text-2xl sm:text-3xl font-black bg-gradient-to-br from-slate-900 to-indigo-700 dark:from-white dark:to-slate-300 bg-clip-text text-transparent">
-            {timeLeft.hours}
-          </div>
-          <div className="text-[11px] font-semibold text-slate-400 uppercase tracking-wider mt-0.5">
-            Saat
-          </div>
-        </div>
-        <div className="rounded-2xl border border-default dark:border-white/10 bg-surface-2/60 dark:bg-white/5 p-3 text-center">
-          <div className="text-2xl sm:text-3xl font-black bg-gradient-to-br from-slate-900 to-indigo-700 dark:from-white dark:to-slate-300 bg-clip-text text-transparent">
-            {timeLeft.minutes}
-          </div>
-          <div className="text-[11px] font-semibold text-slate-400 uppercase tracking-wider mt-0.5">
-            Dakika
-          </div>
-        </div>
-      </div>
       )}
 
       {/* Motivational Motto & Target Net Footer */}

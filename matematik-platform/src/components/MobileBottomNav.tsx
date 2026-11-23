@@ -5,8 +5,8 @@ import { SafeLink } from '@/components/SafeLink';
 import { usePathname } from 'next/navigation';
 import {
   Home,
+  BookOpen,
   FileCheck,
-  Timer,
   Gamepad2,
   User,
   MessageCircle,
@@ -15,10 +15,19 @@ import { useHydrated } from '@/hooks/useClientPathname';
 
 const NAV_ITEMS = [
   { href: '/', label: 'Ana Sayfa', icon: Home },
+  { href: '/icerikler', label: 'İçerikler', icon: BookOpen },
   { href: '/testler', label: 'Testler', icon: FileCheck },
-  { href: '/odak-pomodoro', label: 'Odak', icon: Timer },
   { href: '/oyunlar', label: 'Oyunlar', icon: Gamepad2 },
   { href: '/profil', label: 'Profil', icon: User },
+];
+
+const HIDDEN_PREFIXES = [
+  '/canli-ders/d/',
+  '/admin',
+  '/giris',
+  '/kayit',
+  '/sifremi-unuttum',
+  '/sifre-sifirla',
 ];
 
 export function MobileBottomNav() {
@@ -55,8 +64,11 @@ export function MobileBottomNav() {
     setPendingHref(null);
   }, [pathname]);
 
-  // Canlı ders odasında tam ekran deneyimini bozmamak için gizle
-  if (routerPathname?.startsWith('/canli-ders/d/')) {
+  // Yönetici, giriş/kayıt ve canlı ders odası ekranlarında gizle
+  if (
+    routerPathname &&
+    HIDDEN_PREFIXES.some((prefix) => routerPathname.startsWith(prefix))
+  ) {
     return null;
   }
 

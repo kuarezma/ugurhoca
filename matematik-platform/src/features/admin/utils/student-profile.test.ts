@@ -6,7 +6,11 @@ import type {
   DashboardSubmission,
   StudentProfile,
 } from '@/types/dashboard';
-import type { ProgressRow, StudyGoal, StudySession } from '@/features/progress/types';
+import type {
+  ProgressRow,
+  StudyGoal,
+  StudySession,
+} from '@/features/progress/types';
 import type { AdminStudentProfileData } from '@/features/admin/types';
 import { buildAdminStudentProfileSummary } from '@/features/admin/utils/student-profile';
 
@@ -140,9 +144,9 @@ describe('buildAdminStudentProfileSummary', () => {
       'quiz-result-1',
       'quiz-result-2',
     ]);
-    expect(summary.reviewedSubmissions.map((submission) => submission.id)).toEqual([
-      'submission-1',
-    ]);
+    expect(
+      summary.reviewedSubmissions.map((submission) => submission.id),
+    ).toEqual(['submission-1']);
     expect(summary.currentStreak).toBe(6);
     expect(summary.totalAssignments).toBe(1);
   });
@@ -179,5 +183,61 @@ describe('buildAdminStudentProfileSummary', () => {
 
     expect(summary.currentStreak).toBe(0);
     expect(summary.goalSnapshot.completedMinutes).toBe(20);
+  });
+
+  it('computes averageQuizPercent including null and 0% edge cases and sums totalStudyMinutes', () => {
+    const emptySummary = buildAdminStudentProfileSummary(
+      createProfileData({
+        quizResults: [],
+        studySessions: [],
+      }),
+      referenceDate,
+    );
+    expect(emptySummary.averageQuizPercent).toBeNull();
+    expect(emptySummary.totalStudyMinutes).toBe(0);
+
+    const zeroScoreSummary = buildAdminStudentProfileSummary(
+      createProfileData({
+        quizResults: [
+          {
+            completed_at: '2026-04-14T12:00:00Z',
+            id: 'zero-1',
+            score: 0,
+            total_questions: 10,
+          },
+        ],
+        studySessions: [
+          { date: '2026-04-01', duration: 50, id: 's1' },
+          { date: '2026-04-14', duration: 40, id: 's2' },
+        ],
+      }),
+      referenceDate,
+    );
+    expect(zeroScoreSummary.averageQuizPercent).toBe(0);
+    expect(zeroScoreSummary.totalStudyMinutes).toBe(90);
+
+    // quizResults fixture: 78/20 (capped at 100%) & 66/20 (capped at 100%)
+    // Use realistic fraction scores to verify rounding: 15/20 = 75%, 16/20 = 80% -> avg 78%
+    const normalSummary = buildAdminStudentProfileSummary(
+      createProfileData({
+        quizResults: [
+          {
+            completed_at: '2026-04-14T12:00:00Z',
+            id: 'q1',
+            score: 15,
+            total_questions: 20,
+          },
+          {
+            completed_at: '2026-04-12T12:00:00Z',
+            id: 'q2',
+            score: 16,
+            total_questions: 20,
+          },
+        ],
+      }),
+      referenceDate,
+    );
+    expect(normalSummary.averageQuizPercent).toBe(78);
+    expect(normalSummary.totalStudyMinutes).toBe(75);
   });
 });

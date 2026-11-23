@@ -49,6 +49,8 @@ vi.mock('@/components/ThemeSelectorDropdown', () => ({
   ThemeSelectorDropdown: () => null,
 }));
 vi.mock('@/features/admin/queries', () => ({
+  createAdminWeeklyPlan: vi.fn(),
+  createAdminWeeklyPlansBulk: vi.fn(),
   loadAdminDashboardData: vi.fn(),
   loadAdminLearningActivity: vi.fn(),
   loadAdminLiveLessonActivity: vi.fn(),
@@ -185,18 +187,18 @@ describe('Admin initial data flow', () => {
     expect(loadAdminLearningActivity).not.toHaveBeenCalled();
     expect(loadAdminLiveLessonActivity).not.toHaveBeenCalled();
 
-    fireEvent.click(screen.getByRole('button', { name: /Takip Merkezi/ }));
+    fireEvent.click(screen.getByRole('tab', { name: /Takip Merkezi/ }));
     await waitFor(() =>
       expect(loadAdminLearningActivity).toHaveBeenCalledOnce(),
     );
     expect(loadAdminLiveLessonActivity).not.toHaveBeenCalled();
 
-    fireEvent.click(screen.getByRole('button', { name: /Canlı Dersler/ }));
+    fireEvent.click(screen.getByRole('tab', { name: /Canlı Dersler/ }));
     await waitFor(() =>
       expect(loadAdminLiveLessonActivity).toHaveBeenCalledOnce(),
     );
 
-    fireEvent.click(screen.getByRole('button', { name: /Sınıfım/ }));
+    fireEvent.click(screen.getByRole('tab', { name: /Sınıfım/ }));
     expect(loadAdminLearningActivity).toHaveBeenCalledOnce();
   });
 
@@ -209,11 +211,11 @@ describe('Admin initial data flow', () => {
     render(<AdminPage />);
     await waitFor(() => expect(loadAdminDashboardData).toHaveBeenCalledOnce());
 
-    fireEvent.click(screen.getByRole('button', { name: /Takip Merkezi/ }));
+    fireEvent.click(screen.getByRole('tab', { name: /Takip Merkezi/ }));
     await waitFor(() =>
       expect(loadAdminLearningActivity).toHaveBeenCalledOnce(),
     );
-    fireEvent.click(screen.getByRole('button', { name: /Sınıfım/ }));
+    fireEvent.click(screen.getByRole('tab', { name: /Sınıfım/ }));
     expect(loadAdminLearningActivity).toHaveBeenCalledOnce();
 
     await act(async () =>

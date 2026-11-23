@@ -11,11 +11,10 @@ import {
   Clock,
   CheckCircle2,
   ChevronRight,
-  ArrowLeft,
   Calendar,
   PenTool,
 } from 'lucide-react';
-import { ThemeToggle } from '@/components/ThemeToggle';
+import { SitePageNavigation } from '@/components/SitePageNavigation';
 import { useToast } from '@/components/Toast';
 import { useTheme } from '@/components/ThemeProvider';
 import { requireClientSession } from '@/lib/auth-client';
@@ -334,11 +333,10 @@ export default function OdevlerPage({
 
   if (loading) {
     return (
-      <main
-        className={`page-surface min-h-screen ${isLight ? 'bg-transparent' : 'dark:bg-slate-900'} pb-20`}
-      >
+      <main className="page-surface min-h-screen pb-24">
+        <SitePageNavigation />
         <div
-          className="max-w-5xl mx-auto px-4 py-10 space-y-6"
+          className="max-w-5xl mx-auto px-4 pt-[calc(5.25rem+env(safe-area-inset-top))] sm:pt-24 pb-10 space-y-6"
           aria-busy="true"
           aria-live="polite"
         >
@@ -348,11 +346,7 @@ export default function OdevlerPage({
             {Array.from({ length: 4 }).map((_, i) => (
               <div
                 key={i}
-                className={`rounded-3xl p-6 border space-y-4 ${
-                  isLight
-                    ? 'bg-white border-slate-200'
-                    : 'bg-slate-800 border-slate-700'
-                }`}
+                className="rounded-3xl p-6 border border-border-default bg-surface-1 space-y-4"
               >
                 <div className="flex justify-between">
                   <Skeleton className="h-6 w-24" rounded="full" />
@@ -400,45 +394,16 @@ export default function OdevlerPage({
     : undefined;
 
   return (
-    <main
-      className={`page-surface min-h-screen ${isLight ? 'bg-transparent' : 'dark:bg-slate-900'} pb-20`}
-    >
-      {/* Header */}
-      <header
-        className={`sticky top-0 z-40 backdrop-blur-lg border-b pt-[env(safe-area-inset-top)] pl-[max(1rem,env(safe-area-inset-left))] pr-[max(1rem,env(safe-area-inset-right))] ${
-          isLight
-            ? 'bg-white/85 border-slate-200/80 shadow-sm'
-            : 'bg-slate-900/80 border-slate-800'
-        }`}
-      >
-        <div className="max-w-5xl mx-auto px-4 h-16 flex items-center justify-between">
-          <Link
-            href="/"
-            className="flex items-center gap-2 text-slate-400 hover:text-indigo-400 transition-colors"
-          >
-            <ArrowLeft className="w-5 h-5" />
-            <span className="font-medium">Geri Dön</span>
-          </Link>
-          <div className="flex items-center gap-4">
-            <ThemeToggle compact />
-            <div
-              className={`w-8 h-8 rounded-lg bg-indigo-500 flex items-center justify-center text-white dark:text-white font-bold text-sm`}
-            >
-              {user?.name?.[0] || 'Ö'}
-            </div>
-          </div>
-        </div>
-      </header>
+    <main className="page-surface min-h-screen pb-24">
+      <SitePageNavigation />
 
-      <div className="max-w-5xl mx-auto px-4 py-8">
+      <div className="max-w-5xl mx-auto px-4 pt-[calc(5.25rem+env(safe-area-inset-top))] sm:pt-24 pb-8">
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-8">
           <div>
-            <h1
-              className={`text-3xl font-bold mb-2 ${isLight ? 'text-slate-900' : 'text-white'}`}
-            >
+            <h1 className="text-3xl font-bold mb-2 text-primary">
               Önemli Ödevlerin
             </h1>
-            <p className={isLight ? 'text-slate-600' : 'text-slate-400'}>
+            <p className="text-secondary">
               {isGraduateGrade(user?.grade) ? 'Mezun' : `${user?.grade}. Sınıf`}{' '}
               için atanan ödevlerini buradan takip edip teslim edebilirsin.
             </p>
@@ -446,7 +411,7 @@ export default function OdevlerPage({
           <button
             type="button"
             onClick={() => setIsCalendarOpen(true)}
-            className="inline-flex items-center gap-2 px-4 py-2.5 rounded-2xl bg-amber-500/10 dark:bg-amber-500/20 text-amber-800 dark:text-amber-300 border border-amber-500/30 hover:bg-amber-500/20 dark:hover:bg-amber-500/30 font-bold text-xs sm:text-sm transition shadow-sm self-start sm:self-auto"
+            className="inline-flex items-center gap-2 px-4 py-2.5 rounded-2xl bg-amber-500/10 dark:bg-amber-500/20 text-amber-800 dark:text-amber-300 border border-amber-700 dark:border-amber-400 hover:bg-amber-500/20 dark:hover:bg-amber-500/30 font-bold text-xs sm:text-sm transition shadow-sm self-start sm:self-auto"
           >
             <Calendar className="w-4 h-4 text-amber-600 dark:text-amber-400" />
             <span>Ödev Yükü Takvimi & Radar</span>
@@ -502,11 +467,7 @@ export default function OdevlerPage({
                   key={assignment.id}
                   layoutId={assignment.id}
                   whileHover={{ y: -2 }}
-                  className={`group relative rounded-3xl p-6 border transition-all focus-within:ring-2 focus-within:ring-brand-primary ${
-                    isLight
-                      ? 'bg-white border-slate-200 shadow-sm hover:shadow-lg'
-                      : 'bg-slate-800 border-slate-700 hover:border-brand-primary/40 hover:shadow-brand-glow/40'
-                  }`}
+                  className="group relative rounded-3xl p-6 border border-border-default bg-surface-1 shadow-sm hover:shadow-lg hover:border-accent transition-all focus-within:ring-2 focus-within:ring-brand-primary"
                 >
                   <div className="flex flex-wrap items-center gap-2 justify-between mb-4">
                     <Badge tone={statusTone}>{statusLabel}</Badge>
@@ -522,14 +483,10 @@ export default function OdevlerPage({
                     )}
                   </div>
 
-                  <h3
-                    className={`font-display text-xl font-bold mb-2 ${isLight ? 'text-slate-900' : 'text-white'}`}
-                  >
+                  <h3 className="font-display text-xl font-bold mb-2 text-primary">
                     {assignment.title}
                   </h3>
-                  <div
-                    className={`text-sm mb-5 line-clamp-2 ${isLight ? 'text-slate-600' : 'text-slate-400'}`}
-                  >
+                  <div className="text-sm mb-5 line-clamp-2 text-secondary">
                     {assignment.description ? (
                       assignment.description.includes('$') ? (
                         <MathText>{assignment.description}</MathText>
@@ -540,7 +497,7 @@ export default function OdevlerPage({
                   </div>
 
                   {assignment.due_date && (
-                    <p className="mb-4 text-xs font-medium text-slate-500 dark:text-slate-400">
+                    <p className="mb-4 text-xs font-medium text-tertiary">
                       Son teslim:{' '}
                       {formatIstanbulDate(assignment.due_date, {
                         day: 'numeric',
@@ -567,14 +524,14 @@ export default function OdevlerPage({
                           </span>
                         </div>
                         {submission.annotated_feedback_url && (
-                          <span className="inline-flex items-center gap-1 text-[11px] font-bold text-rose-700 dark:text-rose-300 bg-rose-500/10 border border-rose-500/30 rounded-lg px-2 py-0.5">
+                          <span className="inline-flex items-center gap-1 text-[11px] font-bold text-tone-danger-fg bg-tone-danger-bg border border-tone-danger-border rounded-lg px-2 py-0.5">
                             <PenTool className="w-3 h-3" />
                             <span>Çizimli Not</span>
                           </span>
                         )}
                       </div>
                     ) : (
-                      <div className="text-xs font-semibold uppercase tracking-wider text-slate-500 dark:text-slate-400">
+                      <div className="text-xs font-semibold uppercase tracking-wider text-tertiary">
                         Teslim bekliyor
                       </div>
                     )}
@@ -589,8 +546,8 @@ export default function OdevlerPage({
                       }
                       className={`inline-flex items-center gap-2 px-5 h-11 rounded-xl text-sm font-bold transition-all focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-primary focus-visible:ring-offset-2 ${
                         isSubmitted
-                          ? 'bg-slate-100 text-slate-700 hover:bg-slate-200 dark:bg-slate-700 dark:hover:bg-slate-600 dark:text-white'
-                          : 'hover:-translate-y-0.5 bg-brand-primary hover:bg-brand-primary-soft text-slate-950 dark:text-slate-950 shadow-btn-3d-green active:translate-y-1 active:shadow-none'
+                          ? 'border border-border-default bg-surface-2 text-primary hover:bg-surface-3'
+                          : 'btn-primary'
                       }`}
                     >
                       {isSubmitted ? 'Detayları gör' : 'Ödev teslim et'}

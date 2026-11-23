@@ -60,7 +60,7 @@ export default function QuickUpdatesPanel({
               key={item.id}
               type="button"
               onClick={() => onSelectUpdate(item)}
-              className="group flex h-full flex-col rounded-2xl border border-slate-200/80 dark:border-slate-800 bg-slate-50 dark:bg-slate-800/90 p-4 text-left transition-all hover:bg-slate-100 dark:hover:bg-slate-800"
+              className="group flex h-full flex-col rounded-2xl border border-border-default bg-slate-50 dark:bg-slate-800/90 p-4 text-left transition-all hover:bg-slate-100 dark:hover:bg-slate-800"
             >
               <div className="mb-4 flex items-start justify-between gap-3">
                 <div

@@ -1,6 +1,7 @@
 import {
   addStudentAdminNote,
   createAdminAssignment,
+  createAdminWeeklyPlansBulk,
   updateAdminUser,
   advanceAdminUserGrades,
   loadAdminDashboardData,
@@ -111,6 +112,178 @@ describe('admin tracking queries', () => {
         title: 'Kesirler',
       },
     ]);
+  });
+
+  it('persists rich linked items, strips unsafe hrefs, and clamps targetMinutes', async () => {
+    const plan = {
+      id: 'plan-2',
+      student_id: 'student-1',
+      title: 'Zengin Plan',
+      week_start: '2026-04-27',
+    };
+    const planSelect = mockSingleSelect(plan);
+    const planBuilder = {
+      upsert: vi.fn().mockReturnValue({ select: planSelect.select }),
+    };
+    const deleteEq = vi.fn().mockResolvedValue({ error: null });
+    const itemsDeleteBuilder = {
+      delete: vi.fn().mockReturnValue({ eq: deleteEq }),
+    };
+    const itemsInsertBuilder = {
+      insert: vi.fn().mockResolvedValue({ error: null }),
+    };
+
+    vi.mocked(supabase.from)
+      .mockReturnValueOnce(planBuilder as never)
+      .mockReturnValueOnce(itemsDeleteBuilder as never)
+      .mockReturnValueOnce(itemsInsertBuilder as never);
+
+    await createAdminWeeklyPlan({
+      authorId: 'admin-1',
+      studentId: 'student-1',
+      targetMinutes: 10,
+      title: 'Zengin Plan',
+      items: [
+        {
+          kind: 'quiz',
+          linked_id: 'quiz-1',
+          title: 'Üslü Test',
+          href: '/testler?quizId=quiz-1',
+        },
+        {
+          kind: 'assignment',
+          linked_id: 'assn-1',
+          title: 'Hafta Ödevi',
+          href: 'https://evil.test/phish',
+          due_at: '2026-05-02T12:00:00Z',
+        },
+        {
+          kind: 'content',
+          linked_id: 'doc-1',
+          title: 'Çalışma Kağıdı',
+          href: '//evil.test/cdn',
+        },
+        {
+          kind: 'custom',
+          title: 'Güvensiz JS Link',
+          href: 'javascript:alert(1)',
+        },
+      ],
+    });
+
+    expect(planBuilder.upsert).toHaveBeenCalledWith(
+      expect.objectContaining({
+        target_minutes: 30,
+      }),
+      { onConflict: 'student_id,week_start' },
+    );
+
+    expect(itemsInsertBuilder.insert).toHaveBeenCalledWith([
+      {
+        href: '/testler?quizId=quiz-1',
+        kind: 'quiz',
+        linked_id: 'quiz-1',
+        plan_id: 'plan-2',
+        sort_order: 0,
+        title: 'Üslü Test',
+      },
+      {
+        due_at: '2026-05-02T12:00:00Z',
+        kind: 'assignment',
+        linked_id: 'assn-1',
+        plan_id: 'plan-2',
+        sort_order: 1,
+        title: 'Hafta Ödevi',
+      },
+      {
+        kind: 'content',
+        linked_id: 'doc-1',
+        plan_id: 'plan-2',
+        sort_order: 2,
+        title: 'Çalışma Kağıdı',
+      },
+      {
+        kind: 'custom',
+        plan_id: 'plan-2',
+        sort_order: 3,
+        title: 'Güvensiz JS Link',
+      },
+    ]);
+
+    const highPlanSelect = mockSingleSelect(plan);
+    vi.mocked(supabase.from)
+      .mockReturnValueOnce({
+        upsert: vi.fn().mockReturnValue({ select: highPlanSelect.select }),
+      } as never)
+      .mockReturnValueOnce({
+        delete: vi
+          .fn()
+          .mockReturnValue({ eq: vi.fn().mockResolvedValue({ error: null }) }),
+      } as never)
+      .mockReturnValueOnce({
+        insert: vi.fn().mockResolvedValue({ error: null }),
+      } as never);
+
+    await createAdminWeeklyPlan({
+      authorId: 'admin-1',
+      studentId: 'student-1',
+      targetMinutes: 9999,
+      title: 'Üst Sınır Plan',
+      items: [{ kind: 'custom', title: 'Tekrar' }],
+    });
+
+    const secondUpsert = vi.mocked(supabase.from).mock.results[3]?.value
+      ?.upsert;
+    expect(secondUpsert).toHaveBeenCalledWith(
+      expect.objectContaining({ target_minutes: 4200 }),
+      { onConflict: 'student_id,week_start' },
+    );
+  });
+
+  it('deduplicates studentIds and reports partial failures in bulk weekly plan creation', async () => {
+    vi.mocked(supabase.from).mockImplementation((table) => {
+      if (table === 'student_weekly_plans') {
+        return {
+          upsert: vi
+            .fn()
+            .mockImplementation((payload: { student_id: string }) => ({
+              select: vi.fn().mockReturnValue({
+                single: vi.fn().mockResolvedValue(
+                  payload.student_id === 's2'
+                    ? { data: null, error: new Error('Veritabanı hatası') }
+                    : {
+                        data: {
+                          id: `plan-${payload.student_id}`,
+                          student_id: payload.student_id,
+                        },
+                        error: null,
+                      },
+                ),
+              }),
+            })),
+        } as never;
+      }
+
+      return {
+        delete: vi.fn().mockReturnValue({
+          eq: vi.fn().mockResolvedValue({ error: null }),
+        }),
+        insert: vi.fn().mockResolvedValue({ error: null }),
+      } as never;
+    });
+
+    const result = await createAdminWeeklyPlansBulk({
+      authorId: 'admin-1',
+      items: [{ kind: 'custom', title: 'Kazanım tekrarı' }],
+      studentIds: ['s1', ' s2 ', 's1', '', 's3'],
+      targetMinutes: 600,
+      title: 'Toplu Haftalık Plan',
+    });
+
+    expect(result).toEqual({
+      succeeded: ['s1', 's3'],
+      failed: [{ studentId: 's2', message: 'Veritabanı hatası' }],
+    });
   });
 
   it('upserts student admin status with labels and follow-up date', async () => {

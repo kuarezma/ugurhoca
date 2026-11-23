@@ -7,8 +7,8 @@ describe('Web App Manifest', () => {
     expect(config.name).toBe('Uğur Hoca Matematik Platformu');
     expect(config.short_name).toBe('Uğur Hoca');
     expect(config.display).toBe('standalone');
-    expect(config.background_color).toBe('#FAF8F5');
-    expect(config.theme_color).toBe('#065F46');
+    expect(config.background_color).toBe('#F2F7FE');
+    expect(config.theme_color).toBe('#0284C7');
     expect(config.start_url).toBe('/');
     expect(config.icons).toBeDefined();
     expect(config.icons?.length).toBeGreaterThanOrEqual(2);

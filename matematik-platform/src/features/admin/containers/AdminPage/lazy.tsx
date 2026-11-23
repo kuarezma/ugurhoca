@@ -46,6 +46,14 @@ export const AdminDiagnosticsCard = dynamic(
   { loading: () => null },
 );
 
+export const AdminWeeklyPlanModal = dynamic(
+  () =>
+    import('@/features/admin/components/AdminWeeklyPlanModal').then(
+      (mod) => mod.AdminWeeklyPlanModal,
+    ),
+  { loading: () => null },
+);
+
 export const AdminTabPanels = dynamic(
   () => import('@/features/admin/components/AdminTabPanels'),
   {

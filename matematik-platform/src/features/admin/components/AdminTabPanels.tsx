@@ -1,19 +1,19 @@
-"use client";
+'use client';
 
-import { Activity, useEffect, useState, type ReactNode } from "react";
-import AdminStatistics from "@/components/AdminStatistics";
-import AdminAnnouncementsTab from "@/features/admin/components/tabs/AdminAnnouncementsTab";
-import AdminAnnualPlanTab from "@/features/admin/components/tabs/AdminAnnualPlanTab";
-import AdminAssignmentsTab from "@/features/admin/components/tabs/AdminAssignmentsTab";
-import AdminClassroomTab from "@/features/admin/components/tabs/AdminClassroomTab";
-import AdminContentCoverageTab from "@/features/admin/components/tabs/AdminContentCoverageTab";
-import AdminDocumentsTab from "@/features/admin/components/tabs/AdminDocumentsTab";
-import AdminGradeUpdateTab from "@/features/admin/components/tabs/AdminGradeUpdateTab";
-import AdminQuizzesTab from "@/features/admin/components/tabs/AdminQuizzesTab";
-import AdminLiveLessonsTab from "@/features/admin/components/tabs/AdminLiveLessonsTab";
-import AdminTrackingTab from "@/features/admin/components/tabs/AdminTrackingTab";
-import AdminUsersTab from "@/features/admin/components/tabs/AdminUsersTab";
-import AdminWorksheetCandidatesTab from "@/features/admin/components/tabs/AdminWorksheetCandidatesTab";
+import { Activity, useEffect, useState, type ReactNode } from 'react';
+import AdminStatistics from '@/components/AdminStatistics';
+import AdminAnnouncementsTab from '@/features/admin/components/tabs/AdminAnnouncementsTab';
+import AdminAnnualPlanTab from '@/features/admin/components/tabs/AdminAnnualPlanTab';
+import AdminAssignmentsTab from '@/features/admin/components/tabs/AdminAssignmentsTab';
+import AdminClassroomTab from '@/features/admin/components/tabs/AdminClassroomTab';
+import AdminContentCoverageTab from '@/features/admin/components/tabs/AdminContentCoverageTab';
+import AdminDocumentsTab from '@/features/admin/components/tabs/AdminDocumentsTab';
+import AdminGradeUpdateTab from '@/features/admin/components/tabs/AdminGradeUpdateTab';
+import AdminQuizzesTab from '@/features/admin/components/tabs/AdminQuizzesTab';
+import AdminLiveLessonsTab from '@/features/admin/components/tabs/AdminLiveLessonsTab';
+import AdminTrackingTab from '@/features/admin/components/tabs/AdminTrackingTab';
+import AdminUsersTab from '@/features/admin/components/tabs/AdminUsersTab';
+import AdminWorksheetCandidatesTab from '@/features/admin/components/tabs/AdminWorksheetCandidatesTab';
 import type {
   AdminActiveTab,
   AdminAnnouncement,
@@ -37,9 +37,12 @@ import type {
   WorksheetCandidateSourceStatus,
   WorksheetCandidateStatus,
   WorksheetCandidateWeekScanResult,
-} from "@/features/admin/types";
-import type { AdminNotification, AdminSubmission } from "@/features/admin/types";
-import type { LiveLessonDashboardData } from "@/features/live-lessons/types";
+} from '@/features/admin/types';
+import type {
+  AdminNotification,
+  AdminSubmission,
+} from '@/features/admin/types';
+import type { LiveLessonDashboardData } from '@/features/live-lessons/types';
 
 type AdminTabPanelsProps = {
   activeTab: AdminActiveTab;
@@ -75,6 +78,7 @@ type AdminTabPanelsProps = {
   onCreateAnnouncement: () => void;
   onCreateAssignment: () => void;
   onCreateSendDocument: () => void;
+  onBulkCreateWeeklyPlan?: (users: AdminUser[]) => Promise<void> | void;
   onCreateWeeklyPlan: (user: AdminUser) => Promise<void> | void;
   onDiscoverWorksheetCandidates: (
     item: AnnualPlanItem,
@@ -96,9 +100,7 @@ type AdminTabPanelsProps = {
     nextFormData: AdminFormState,
   ) => void;
   onEditQuiz: (quiz: AdminQuiz) => void;
-  onEditSharedDocument: (
-    document: AdminSharedDocument,
-  ) => Promise<void> | void;
+  onEditSharedDocument: (document: AdminSharedDocument) => Promise<void> | void;
   onEditUser: (user: AdminUser) => void;
   onImportAnnualPlan: (file: File) => Promise<AnnualPlanImportResult>;
   onMigrateWorksheets: () => Promise<void> | void;
@@ -117,7 +119,7 @@ type AdminTabPanelsProps = {
   onUpdateGrades: () => Promise<void> | void;
   onUpdateWorksheetCandidateStatus: (
     candidate: WorksheetCandidate,
-    status: Extract<WorksheetCandidateStatus, "pending" | "rejected">,
+    status: Extract<WorksheetCandidateStatus, 'pending' | 'rejected'>,
     rejectionReason?: string | null,
   ) => Promise<void> | void;
   onViewStudentProfile: (user: AdminUser) => Promise<void> | void;
@@ -159,10 +161,10 @@ function AdminTabPanel({
       id={`admin-tabpanel-${tab}`}
       role="tabpanel"
       aria-labelledby={`admin-tab-${tab}`}
-      className={isActive ? "block" : "hidden"}
+      className={isActive ? 'block' : 'hidden'}
     >
       {visitedTabs.has(tab) ? (
-        <Activity mode={isActive ? "visible" : "hidden"}>{children}</Activity>
+        <Activity mode={isActive ? 'visible' : 'hidden'}>{children}</Activity>
       ) : null}
     </div>
   );
@@ -184,7 +186,11 @@ function ActivityDataBoundary({
       {status === 'error' ? (
         <div role="alert">
           <p>Veriler yüklenemedi.</p>
-          <button className="btn-secondary mt-3" onClick={() => void onRetry()} type="button">
+          <button
+            className="btn-secondary mt-3"
+            onClick={() => void onRetry()}
+            type="button"
+          >
             Yeniden dene
           </button>
         </div>
@@ -227,6 +233,7 @@ export default function AdminTabPanels({
   onCreateAnnouncement,
   onCreateAssignment,
   onCreateSendDocument,
+  onBulkCreateWeeklyPlan,
   onCreateWeeklyPlan,
   onDiscoverWorksheetCandidates,
   onDeleteAnnouncement,
@@ -278,18 +285,30 @@ export default function AdminTabPanels({
 
   return (
     <div className="w-full">
-      <AdminTabPanel activeTab={activeTab} tab="statistics" visitedTabs={visitedTabs}>
+      <AdminTabPanel
+        activeTab={activeTab}
+        tab="statistics"
+        visitedTabs={visitedTabs}
+      >
         <AdminStatistics />
       </AdminTabPanel>
 
-      <AdminTabPanel activeTab={activeTab} tab="tracking" visitedTabs={visitedTabs}>
-        <ActivityDataBoundary status={learningActivityStatus} onRetry={onRetryLearningActivity}>
+      <AdminTabPanel
+        activeTab={activeTab}
+        tab="tracking"
+        visitedTabs={visitedTabs}
+      >
+        <ActivityDataBoundary
+          status={learningActivityStatus}
+          onRetry={onRetryLearningActivity}
+        >
           <AdminTrackingTab
             activityEvents={activityEvents}
             adminStatuses={adminStatuses}
             assignments={assignments}
             documents={documents}
             notifications={notifications}
+            onBulkCreateWeeklyPlan={onBulkCreateWeeklyPlan}
             onCreateWeeklyPlan={onCreateWeeklyPlan}
             onSendMessage={onSendAdminMessage}
             onUpdateStatus={onUpdateStudentStatus}
@@ -304,8 +323,15 @@ export default function AdminTabPanels({
         </ActivityDataBoundary>
       </AdminTabPanel>
 
-      <AdminTabPanel activeTab={activeTab} tab="classroom" visitedTabs={visitedTabs}>
-        <ActivityDataBoundary status={learningActivityStatus} onRetry={onRetryLearningActivity}>
+      <AdminTabPanel
+        activeTab={activeTab}
+        tab="classroom"
+        visitedTabs={visitedTabs}
+      >
+        <ActivityDataBoundary
+          status={learningActivityStatus}
+          onRetry={onRetryLearningActivity}
+        >
           <AdminClassroomTab
             students={studentUsers}
             assignments={assignments}
@@ -319,7 +345,11 @@ export default function AdminTabPanels({
         </ActivityDataBoundary>
       </AdminTabPanel>
 
-      <AdminTabPanel activeTab={activeTab} tab="announcements" visitedTabs={visitedTabs}>
+      <AdminTabPanel
+        activeTab={activeTab}
+        tab="announcements"
+        visitedTabs={visitedTabs}
+      >
         <AdminAnnouncementsTab
           announcements={announcements}
           formatDate={formatDate}
@@ -329,7 +359,11 @@ export default function AdminTabPanels({
         />
       </AdminTabPanel>
 
-      <AdminTabPanel activeTab={activeTab} tab="documents" visitedTabs={visitedTabs}>
+      <AdminTabPanel
+        activeTab={activeTab}
+        tab="documents"
+        visitedTabs={visitedTabs}
+      >
         <AdminDocumentsTab
           documents={documents}
           formatDate={formatDate}
@@ -340,11 +374,19 @@ export default function AdminTabPanels({
         />
       </AdminTabPanel>
 
-      <AdminTabPanel activeTab={activeTab} tab="contentCoverage" visitedTabs={visitedTabs}>
+      <AdminTabPanel
+        activeTab={activeTab}
+        tab="contentCoverage"
+        visitedTabs={visitedTabs}
+      >
         <AdminContentCoverageTab />
       </AdminTabPanel>
 
-      <AdminTabPanel activeTab={activeTab} tab="annualPlan" visitedTabs={visitedTabs}>
+      <AdminTabPanel
+        activeTab={activeTab}
+        tab="annualPlan"
+        visitedTabs={visitedTabs}
+      >
         <AdminAnnualPlanTab
           items={annualPlanItems}
           onDiscoverCandidates={onDiscoverWorksheetCandidates}
@@ -353,7 +395,11 @@ export default function AdminTabPanels({
         />
       </AdminTabPanel>
 
-      <AdminTabPanel activeTab={activeTab} tab="worksheetCandidates" visitedTabs={visitedTabs}>
+      <AdminTabPanel
+        activeTab={activeTab}
+        tab="worksheetCandidates"
+        visitedTabs={visitedTabs}
+      >
         <AdminWorksheetCandidatesTab
           candidates={worksheetCandidates}
           driveConnection={googleDriveConnection}
@@ -370,7 +416,11 @@ export default function AdminTabPanels({
         />
       </AdminTabPanel>
 
-      <AdminTabPanel activeTab={activeTab} tab="users" visitedTabs={visitedTabs}>
+      <AdminTabPanel
+        activeTab={activeTab}
+        tab="users"
+        visitedTabs={visitedTabs}
+      >
         <AdminUsersTab
           formatDate={formatDate}
           onDownloadPdf={onDownloadStudentsPdf}
@@ -385,7 +435,11 @@ export default function AdminTabPanels({
         />
       </AdminTabPanel>
 
-      <AdminTabPanel activeTab={activeTab} tab="gradeUpdate" visitedTabs={visitedTabs}>
+      <AdminTabPanel
+        activeTab={activeTab}
+        tab="gradeUpdate"
+        visitedTabs={visitedTabs}
+      >
         <AdminGradeUpdateTab
           isSubmitting={isSubmitting}
           lastGradeUpdate={lastGradeUpdate}
@@ -394,7 +448,11 @@ export default function AdminTabPanels({
         />
       </AdminTabPanel>
 
-      <AdminTabPanel activeTab={activeTab} tab="assignments" visitedTabs={visitedTabs}>
+      <AdminTabPanel
+        activeTab={activeTab}
+        tab="assignments"
+        visitedTabs={visitedTabs}
+      >
         <AdminAssignmentsTab
           assignments={assignments}
           onDeleteAssignment={onDeleteAssignment}
@@ -408,7 +466,11 @@ export default function AdminTabPanels({
         />
       </AdminTabPanel>
 
-      <AdminTabPanel activeTab={activeTab} tab="quizzes" visitedTabs={visitedTabs}>
+      <AdminTabPanel
+        activeTab={activeTab}
+        tab="quizzes"
+        visitedTabs={visitedTabs}
+      >
         <AdminQuizzesTab
           onAddQuestion={onAddQuizQuestion}
           onDeleteQuiz={onDeleteQuiz}
@@ -417,8 +479,15 @@ export default function AdminTabPanels({
         />
       </AdminTabPanel>
 
-      <AdminTabPanel activeTab={activeTab} tab="liveLessons" visitedTabs={visitedTabs}>
-        <ActivityDataBoundary status={liveLessonActivityStatus} onRetry={onRetryLiveLessonActivity}>
+      <AdminTabPanel
+        activeTab={activeTab}
+        tab="liveLessons"
+        visitedTabs={visitedTabs}
+      >
+        <ActivityDataBoundary
+          status={liveLessonActivityStatus}
+          onRetry={onRetryLiveLessonActivity}
+        >
           <AdminLiveLessonsTab
             data={liveLessons}
             onRefresh={onRefreshUsers}

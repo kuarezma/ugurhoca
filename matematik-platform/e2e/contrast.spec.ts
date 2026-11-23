@@ -64,11 +64,14 @@ const ROUTES: RouteDefinition[] = [
   { path: '/araclar/pisagor-hesaplayici' },
   { path: '/canli-ders', authRedirectAllowed: true },
   { path: '/canli-ders/d/contrast-gate', authRedirectAllowed: true },
+  { path: '/cerez' },
   { path: '/cikis-bileti', authRedirectAllowed: true },
+  { path: '/deneme-salonu' },
   { path: '/giris' },
   { path: '/gizlilik' },
   { path: '/icerikler' },
   { path: '/ilerleme', authRedirectAllowed: true },
+  { path: '/iletisim' },
   { path: '/kayit' },
   { path: '/kvkk' },
   { path: '/meydan-okuma', authRedirectAllowed: true },
@@ -286,28 +289,29 @@ async function measureTheme(browser: Browser, theme: Theme, baseURL: string) {
   // rotanın (ör. /araclar) gezinmesini yarıda keser. Yalnızca açıkça istenirse eklenir.
   try {
     const parsedBase = new URL(baseURL);
-    if (process.env.CONTRAST_FAKE_AUTH === '1') await context.addCookies([
-      {
-        name: 'ugurhoca_access_token',
-        value: 'contrast-gate-token',
-        domain: parsedBase.hostname,
-        path: '/',
-      },
-      {
-        name: 'ugurhoca_auth_snapshot',
-        value: encodeURIComponent(
-          JSON.stringify({
-            email: 'denetim@ugurhoca.test',
-            grade: 8,
-            id: 'contrast-gate-admin-user',
-            isAdmin: true,
-            name: 'Denetim Kullanıcısı',
-          }),
-        ),
-        domain: parsedBase.hostname,
-        path: '/',
-      },
-    ]);
+    if (process.env.CONTRAST_FAKE_AUTH === '1')
+      await context.addCookies([
+        {
+          name: 'ugurhoca_access_token',
+          value: 'contrast-gate-token',
+          domain: parsedBase.hostname,
+          path: '/',
+        },
+        {
+          name: 'ugurhoca_auth_snapshot',
+          value: encodeURIComponent(
+            JSON.stringify({
+              email: 'denetim@ugurhoca.test',
+              grade: 8,
+              id: 'contrast-gate-admin-user',
+              isAdmin: true,
+              name: 'Denetim Kullanıcısı',
+            }),
+          ),
+          domain: parsedBase.hostname,
+          path: '/',
+        },
+      ]);
   } catch {}
   await context.addInitScript({
     content: createBrowserContrastCollectorScript(),
@@ -327,7 +331,9 @@ async function measureTheme(browser: Browser, theme: Theme, baseURL: string) {
       if (document.documentElement) {
         applyTheme();
       } else {
-        document.addEventListener('DOMContentLoaded', applyTheme, { once: true });
+        document.addEventListener('DOMContentLoaded', applyTheme, {
+          once: true,
+        });
       }
     },
     { storageKey: THEME_STORAGE_KEY, nextTheme: theme },
@@ -346,7 +352,7 @@ async function measureTheme(browser: Browser, theme: Theme, baseURL: string) {
 }
 
 test.describe('Açık/koyu tema kontrast kapısı', () => {
-  test('27 rota × iki tema için WCAG kontrast raporu üretir', async ({
+  test('30 rota × iki tema için WCAG kontrast raporu üretir', async ({
     browser,
     baseURL,
   }) => {

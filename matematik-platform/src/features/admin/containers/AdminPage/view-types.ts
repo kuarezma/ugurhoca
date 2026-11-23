@@ -21,6 +21,7 @@ import type {
   AdminStudentProfileData,
   AdminSubmission as Submission,
   AdminUser,
+  AdminWeeklyPlanItemDraft,
   AnnualPlanItem,
   GoogleDriveConnectionStatus,
   StudentActivityEvent,
@@ -123,6 +124,16 @@ export type AdminViewProps = {
   ) => Promise<void>;
   handleConnectGoogleDrive: () => Promise<void>;
   handleCreateWeeklyPlan: (student: AdminUser) => Promise<void>;
+  handleBulkCreateWeeklyPlan: (students: AdminUser[]) => Promise<void>;
+  weeklyPlanTargets: AdminUser[] | null;
+  weeklyPlanExisting: StudentWeeklyPlan | null;
+  handleCloseWeeklyPlanModal: () => void;
+  handleSaveWeeklyPlan: (payload: {
+    title: string;
+    targetMinutes: number;
+    items: AdminWeeklyPlanItemDraft[];
+    studentIds: string[];
+  }) => Promise<void>;
   handleDiscoverWorksheetCandidates: (
     item: AnnualPlanItem,
   ) => Promise<WorksheetCandidateDiscoveryResult>;

@@ -221,7 +221,7 @@ export default function StudyActivityHeatmap({
             <span className="text-slate-600 dark:text-slate-300">
               Aktif Gün:
             </span>
-            <strong className="text-amber-500 dark:text-amber-400 font-mono">
+            <strong className="text-amber-800 dark:text-amber-400 font-mono">
               {stats.activeDaysCount} Gün
             </strong>
           </div>
@@ -281,24 +281,24 @@ export default function StudyActivityHeatmap({
                     let bgClass = '';
                     if (cell.level === 0) {
                       bgClass = isLight
-                        ? 'bg-slate-100 hover:bg-slate-200 border-slate-200/80'
-                        : 'bg-white/5 hover:bg-white/15 border-white/5';
+                        ? 'bg-slate-200 hover:bg-slate-300'
+                        : 'bg-white/10 hover:bg-white/20';
                     } else if (cell.level === 1) {
                       bgClass = isLight
-                        ? 'bg-emerald-200 border-emerald-300 hover:bg-emerald-300'
-                        : 'bg-emerald-900/60 border-emerald-700/60 hover:bg-emerald-800';
+                        ? 'bg-emerald-200 hover:bg-emerald-300'
+                        : 'bg-emerald-900/60 hover:bg-emerald-800';
                     } else if (cell.level === 2) {
                       bgClass = isLight
-                        ? 'bg-emerald-400 border-emerald-500 hover:bg-emerald-500 text-slate-950'
-                        : 'bg-emerald-700 border-emerald-500 hover:bg-emerald-600';
+                        ? 'bg-emerald-400 hover:bg-emerald-500 text-slate-950'
+                        : 'bg-emerald-700 hover:bg-emerald-600';
                     } else if (cell.level === 3) {
                       bgClass = isLight
-                        ? 'bg-emerald-600 border-emerald-700 hover:bg-emerald-700 text-slate-950 hover:text-white dark:hover:text-white'
-                        : 'bg-emerald-500 border-emerald-400 hover:bg-emerald-400 shadow-sm shadow-emerald-500/20';
+                        ? 'bg-emerald-600 hover:bg-emerald-700 text-slate-950 hover:text-white dark:hover:text-white'
+                        : 'bg-emerald-500 hover:bg-emerald-400 shadow-sm shadow-emerald-500/20';
                     } else {
                       bgClass = isLight
-                        ? 'bg-teal-600 border-teal-700 hover:bg-teal-700 text-white shadow-sm'
-                        : 'bg-teal-400 border-teal-300 hover:bg-teal-300 shadow-sm shadow-teal-400/40';
+                        ? 'bg-teal-600 hover:bg-teal-700 text-white dark:text-white shadow-sm'
+                        : 'bg-teal-400 hover:bg-teal-300 shadow-sm shadow-teal-400/40';
                     }
 
                     return (
@@ -309,7 +309,7 @@ export default function StudyActivityHeatmap({
                         onMouseEnter={() => setHoveredDay(cell)}
                         onMouseLeave={() => setHoveredDay(null)}
                         aria-label={`${cell.dateStr}: ${cell.count} soru`}
-                        className={`h-[10px] w-[10px] rounded-[2.5px] border transition-all ${bgClass} ${
+                        className={`h-[10px] w-[10px] rounded-[2.5px] border-0 transition-all ${bgClass} ${
                           cell.isToday
                             ? 'ring-1.5 ring-amber-400 ring-offset-1 ring-offset-slate-900'
                             : ''

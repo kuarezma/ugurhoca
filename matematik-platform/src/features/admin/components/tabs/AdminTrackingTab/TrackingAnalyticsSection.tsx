@@ -101,10 +101,8 @@ export function TrackingAnalyticsSection({
       </section>
 
       <section className="grid gap-4 xl:grid-cols-[0.75fr_1fr_1fr]">
-        <div className="rounded-2xl border border-slate-200/80 dark:border-white/10 bg-white/80 dark:bg-white/5 p-5 shadow-sm">
-          <h3 className="mb-4 text-base font-bold text-slate-900 dark:text-white">
-            Canlı Ölçüm
-          </h3>
+        <div className="rounded-2xl border border-border-default bg-surface-1 p-5 shadow-sm">
+          <h3 className="mb-4 text-base font-bold text-primary">Canlı Ölçüm</h3>
           <div className="grid grid-cols-2 gap-3">
             <Metric label="7 gün event" value={activityAnalytics.last7Count} />
             <Metric
@@ -114,17 +112,15 @@ export function TrackingAnalyticsSection({
           </div>
           <div className="mt-4 space-y-2">
             {activityAnalytics.topTypes.length === 0 ? (
-              <p className="text-sm text-slate-500">Henüz ölçüm kaydı yok.</p>
+              <p className="text-sm text-secondary">Henüz ölçüm kaydı yok.</p>
             ) : (
               activityAnalytics.topTypes.map((item) => (
                 <div
                   key={item.type}
-                  className="flex items-center justify-between rounded-xl bg-slate-100 dark:bg-slate-950/45 px-3 py-2 text-sm"
+                  className="flex items-center justify-between rounded-xl border border-border-subtle bg-surface-2 px-3 py-2 text-sm"
                 >
-                  <span className="text-slate-700 dark:text-slate-300">
-                    {item.type}
-                  </span>
-                  <span className="font-bold text-cyan-700 dark:text-cyan-200">
+                  <span className="text-secondary">{item.type}</span>
+                  <span className="font-bold text-tone-info-fg">
                     {item.count}
                   </span>
                 </div>
@@ -133,12 +129,12 @@ export function TrackingAnalyticsSection({
           </div>
         </div>
 
-        <div className="rounded-2xl border border-slate-200/80 dark:border-white/10 bg-white/80 dark:bg-white/5 p-5 shadow-sm">
-          <h3 className="mb-4 text-base font-bold text-slate-900 dark:text-white">
+        <div className="rounded-2xl border border-border-default bg-surface-1 p-5 shadow-sm">
+          <h3 className="mb-4 text-base font-bold text-primary">
             En Çok Kullanılan İçerikler
           </h3>
           {activityAnalytics.topContent.length === 0 ? (
-            <p className="rounded-xl border border-dashed border-slate-200 dark:border-white/10 px-4 py-8 text-center text-sm text-slate-400 dark:text-slate-500">
+            <p className="rounded-xl border border-dashed border-border-default px-4 py-8 text-center text-sm text-secondary">
               İçerik kullanım kaydı birikince burada listelenecek.
             </p>
           ) : (
@@ -146,17 +142,15 @@ export function TrackingAnalyticsSection({
               {activityAnalytics.topContent.map((item) => (
                 <div
                   key={item.id}
-                  className="flex items-center justify-between gap-3 rounded-xl bg-slate-50 dark:bg-slate-950/45 border border-slate-200/60 dark:border-transparent px-3 py-2"
+                  className="flex items-center justify-between gap-3 rounded-xl border border-border-subtle bg-surface-2 px-3 py-2"
                 >
                   <div className="min-w-0">
-                    <p className="truncate text-sm font-semibold text-slate-900 dark:text-white">
+                    <p className="truncate text-sm font-semibold text-primary">
                       {item.title}
                     </p>
-                    <p className="text-xs text-slate-500 dark:text-slate-400">
-                      {item.type}
-                    </p>
+                    <p className="text-xs text-secondary">{item.type}</p>
                   </div>
-                  <span className="rounded-full bg-cyan-100 dark:bg-cyan-400/10 px-3 py-1 text-xs font-bold text-cyan-700 dark:text-cyan-200">
+                  <span className="rounded-full bg-tone-info-bg px-3 py-1 text-xs font-bold text-tone-info-fg">
                     {item.count}
                   </span>
                 </div>
@@ -165,12 +159,12 @@ export function TrackingAnalyticsSection({
           )}
         </div>
 
-        <div className="rounded-2xl border border-slate-200/80 dark:border-white/10 bg-white/80 dark:bg-white/5 p-5 shadow-sm">
-          <h3 className="mb-4 text-base font-bold text-slate-900 dark:text-white">
+        <div className="rounded-2xl border border-border-default bg-surface-1 p-5 shadow-sm">
+          <h3 className="mb-4 text-base font-bold text-primary">
             Az Kullanılan İçerikler
           </h3>
           {activityAnalytics.lowContent.length === 0 ? (
-            <p className="rounded-xl border border-dashed border-slate-200 dark:border-white/10 px-4 py-8 text-center text-sm text-slate-400 dark:text-slate-500">
+            <p className="rounded-xl border border-dashed border-border-default px-4 py-8 text-center text-sm text-secondary">
               İçerik eklenince burada kullanım açığı görülecek.
             </p>
           ) : (
@@ -178,17 +172,15 @@ export function TrackingAnalyticsSection({
               {activityAnalytics.lowContent.map((item) => (
                 <div
                   key={item.id}
-                  className="flex items-center justify-between gap-3 rounded-xl bg-slate-50 dark:bg-slate-950/45 border border-slate-200/60 dark:border-transparent px-3 py-2"
+                  className="flex items-center justify-between gap-3 rounded-xl border border-border-subtle bg-surface-2 px-3 py-2"
                 >
                   <div className="min-w-0">
-                    <p className="truncate text-sm font-semibold text-slate-900 dark:text-white">
+                    <p className="truncate text-sm font-semibold text-primary">
                       {item.title}
                     </p>
-                    <p className="text-xs text-slate-500 dark:text-slate-400">
-                      {item.type}
-                    </p>
+                    <p className="text-xs text-secondary">{item.type}</p>
                   </div>
-                  <span className="rounded-full bg-amber-100 dark:bg-amber-400/10 px-3 py-1 text-xs font-bold text-amber-700 dark:text-amber-200">
+                  <span className="rounded-full bg-tone-warn-bg px-3 py-1 text-xs font-bold text-tone-warn-fg">
                     {item.count}
                   </span>
                 </div>

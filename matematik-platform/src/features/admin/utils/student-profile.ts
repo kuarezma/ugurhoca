@@ -16,10 +16,12 @@ export type AdminStudentProfileSummary = Pick<
   | 'pendingAssignments'
   | 'strongTopic'
 > & {
+  averageQuizPercent: number | null;
   currentStreak: number;
   recentQuizResults: DashboardQuizResult[];
   reviewedSubmissions: DashboardSubmission[];
   totalAssignments: number;
+  totalStudyMinutes: number;
 };
 
 const sortByCompletedAtDesc = (results: DashboardQuizResult[]) =>
@@ -61,14 +63,35 @@ export const buildAdminStudentProfileSummary = (
     studySessions: data.studySessions.map((session) => ({
       date: session.date,
       duration: session.duration,
-      id: session.id || `${data.student.id}:${session.date}:${session.duration}`,
+      id:
+        session.id || `${data.student.id}:${session.date}:${session.duration}`,
     })),
     submissions: data.submissions,
     user: data.student,
     weeklyWorksheet: null,
   });
 
+  const validQuizResults = data.quizResults.filter(
+    (result) => Number(result.total_questions) > 0,
+  );
+  const averageQuizPercent =
+    validQuizResults.length > 0
+      ? Math.round(
+          validQuizResults.reduce((sum, result) => {
+            const percent =
+              (Number(result.score) / Number(result.total_questions)) * 100;
+            return sum + Math.max(0, Math.min(100, percent));
+          }, 0) / validQuizResults.length,
+        )
+      : null;
+
+  const totalStudyMinutes = data.studySessions.reduce(
+    (sum, session) => sum + Math.max(0, Number(session.duration) || 0),
+    0,
+  );
+
   return {
+    averageQuizPercent,
     currentStreak: data.student.current_streak || 0,
     focusTopic: viewModel.focusTopic,
     goalSnapshot: viewModel.goalSnapshot,
@@ -80,5 +103,6 @@ export const buildAdminStudentProfileSummary = (
     ).slice(0, 5),
     strongTopic: viewModel.strongTopic,
     totalAssignments: data.assignments.length,
+    totalStudyMinutes,
   };
 };

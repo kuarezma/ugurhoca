@@ -5,7 +5,10 @@ import type { AppUser, Submission } from '@/types';
 import AssignmentsPage from './AssignmentsPage';
 
 const { router } = vi.hoisted(() => ({ router: { push: vi.fn() } }));
-vi.mock('next/navigation', () => ({ useRouter: () => router }));
+vi.mock('next/navigation', () => ({
+  useRouter: () => router,
+  usePathname: () => '/odevler',
+}));
 vi.mock('next/dynamic', async () => {
   const { AssignmentSubmissionModal } =
     await import('../components/AssignmentSubmissionModal');

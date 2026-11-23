@@ -34,17 +34,17 @@ export function TrackingStudentCard({
   onViewProfile,
 }: Props) {
   return (
-    <article className="rounded-2xl border border-slate-200/80 dark:border-white/10 bg-white/80 dark:bg-slate-950/55 p-4 shadow-sm dark:shadow-lg dark:shadow-black/10">
+    <article className="rounded-2xl border border-border-default bg-surface-1 p-4 shadow-sm">
       <div className="flex flex-col gap-4 xl:flex-row xl:items-start xl:justify-between">
         <div className="min-w-0 flex-1">
           <div className="mb-3 flex flex-wrap items-center gap-2">
             <span
               className={`inline-flex items-center gap-1 rounded-full px-2.5 py-1 text-xs font-bold ${
                 insight.riskLevel === 'high'
-                  ? 'bg-red-500/15 text-red-700 dark:text-red-200'
+                  ? 'bg-tone-danger-bg text-tone-danger-fg'
                   : insight.riskLevel === 'medium'
-                    ? 'bg-amber-500/15 text-amber-700 dark:text-amber-200'
-                    : 'bg-emerald-500/15 text-emerald-700 dark:text-emerald-200'
+                    ? 'bg-tone-warn-bg text-tone-warn-fg'
+                    : 'bg-tone-success-bg text-tone-success-fg'
               }`}
             >
               <AlertTriangle className="h-3.5 w-3.5" />
@@ -54,11 +54,11 @@ export function TrackingStudentCard({
                   ? 'Takipte'
                   : 'Normal'}
             </span>
-            <span className="rounded-full bg-slate-100 dark:bg-white/5 px-2.5 py-1 text-xs font-semibold text-slate-700 dark:text-slate-300">
+            <span className="rounded-full border border-border-subtle bg-surface-2 px-2.5 py-1 text-xs font-semibold text-secondary">
               {formatGrade(insight.student.grade)}
             </span>
             {insight.student.is_favorite ? (
-              <span className="inline-flex items-center gap-1 rounded-full border border-amber-300/25 bg-amber-300/10 px-2.5 py-1 text-xs font-semibold text-amber-600 dark:text-amber-200">
+              <span className="inline-flex items-center gap-1 rounded-full border border-tone-warn-border bg-tone-warn-bg px-2.5 py-1 text-xs font-semibold text-tone-warn-fg">
                 <Star className="h-3.5 w-3.5 fill-current" />
                 Favori
               </span>
@@ -66,17 +66,17 @@ export function TrackingStudentCard({
             {insight.status?.labels?.map((label) => (
               <span
                 key={label}
-                className="rounded-full border border-cyan-400/20 bg-cyan-400/10 px-2.5 py-1 text-xs font-semibold text-cyan-700 dark:text-cyan-200"
+                className="rounded-full border border-tone-info-border bg-tone-info-bg px-2.5 py-1 text-xs font-semibold text-tone-info-fg"
               >
                 {label}
               </span>
             ))}
           </div>
 
-          <h3 className="truncate text-lg font-bold text-slate-900 dark:text-white">
+          <h3 className="truncate text-lg font-bold text-primary">
             {insight.student.name || 'İsimsiz öğrenci'}
           </h3>
-          <p className="mt-1 break-all text-sm text-slate-500">
+          <p className="mt-1 break-all text-sm text-secondary">
             {insight.student.email}
           </p>
 
@@ -126,14 +126,14 @@ export function TrackingStudentCard({
 
           <div className="mt-4 flex flex-wrap gap-2">
             {insight.riskReasons.length === 0 ? (
-              <span className="rounded-full border border-emerald-500/20 bg-emerald-500/10 px-3 py-1 text-xs font-semibold text-emerald-700 dark:text-emerald-200">
+              <span className="rounded-full border border-tone-success-border bg-tone-success-bg px-3 py-1 text-xs font-semibold text-tone-success-fg">
                 Kritik sinyal yok
               </span>
             ) : (
               insight.riskReasons.map((reason) => (
                 <span
                   key={reason}
-                  className="rounded-full border border-red-500/20 bg-red-500/10 px-3 py-1 text-xs font-semibold text-red-700 dark:text-red-200"
+                  className="rounded-full border border-tone-danger-border bg-tone-danger-bg px-3 py-1 text-xs font-semibold text-tone-danger-fg"
                 >
                   {reason}
                 </span>
@@ -146,7 +146,7 @@ export function TrackingStudentCard({
           <button
             type="button"
             onClick={() => onViewProfile(insight.student)}
-            className="inline-flex items-center justify-center gap-2 rounded-xl border border-cyan-500/20 bg-cyan-500/15 px-4 py-2.5 text-sm font-bold text-cyan-700 dark:text-cyan-200 transition hover:bg-cyan-500/25 active:scale-95"
+            className="inline-flex items-center justify-center gap-2 rounded-xl border border-tone-info-border bg-tone-info-bg px-4 py-2.5 text-sm font-bold text-tone-info-fg transition hover:opacity-90 active:scale-95"
           >
             <UserRound className="h-4 w-4" />
             Profil Aç
@@ -154,7 +154,7 @@ export function TrackingStudentCard({
           <button
             type="button"
             onClick={() => onSendMessage(insight.student)}
-            className="inline-flex items-center justify-center gap-2 rounded-xl border border-violet-500/20 bg-violet-500/15 px-4 py-2.5 text-sm font-bold text-violet-700 dark:text-violet-200 transition hover:bg-violet-500/25 active:scale-95"
+            className="inline-flex items-center justify-center gap-2 rounded-xl border border-border-default bg-accent-bg px-4 py-2.5 text-sm font-bold text-accent-fg transition hover:opacity-90 active:scale-95"
           >
             <Send className="h-4 w-4" />
             Mesaj Gönder
@@ -162,7 +162,7 @@ export function TrackingStudentCard({
           <button
             type="button"
             onClick={() => onCreateWeeklyPlan(insight.student)}
-            className="inline-flex items-center justify-center gap-2 rounded-xl border border-emerald-500/20 bg-emerald-500/15 px-4 py-2.5 text-sm font-bold text-emerald-700 dark:text-emerald-200 transition hover:bg-emerald-500/25 active:scale-95"
+            className="inline-flex items-center justify-center gap-2 rounded-xl border border-tone-success-border bg-tone-success-bg px-4 py-2.5 text-sm font-bold text-tone-success-fg transition hover:opacity-90 active:scale-95"
           >
             <CalendarClock className="h-4 w-4" />
             Plan Oluştur
@@ -175,7 +175,7 @@ export function TrackingStudentCard({
                 insight.riskLevel === 'high' ? 'risk' : 'watch',
               )
             }
-            className="inline-flex items-center justify-center gap-2 rounded-xl border border-amber-500/20 bg-amber-500/15 px-4 py-2.5 text-sm font-bold text-amber-700 dark:text-amber-200 transition hover:bg-amber-500/25 active:scale-95"
+            className="inline-flex items-center justify-center gap-2 rounded-xl border border-tone-warn-border bg-tone-warn-bg px-4 py-2.5 text-sm font-bold text-tone-warn-fg transition hover:opacity-90 active:scale-95"
           >
             <MessageCircle className="h-4 w-4" />
             Takibe Al

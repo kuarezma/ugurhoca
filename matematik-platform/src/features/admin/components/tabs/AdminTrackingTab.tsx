@@ -1,7 +1,13 @@
 'use client';
 
 import { useMemo, useState } from 'react';
-import { Download, Filter, Search, ShieldCheck } from 'lucide-react';
+import {
+  CalendarClock,
+  Download,
+  Filter,
+  Search,
+  ShieldCheck,
+} from 'lucide-react';
 import { isAdminEmail } from '@/lib/admin';
 import { formatIstanbulDate } from '@/lib/date-format';
 import {
@@ -45,6 +51,7 @@ type AdminTrackingTabProps = {
   assignments: AdminAssignment[];
   documents: AdminDocument[];
   notifications: AdminNotification[];
+  onBulkCreateWeeklyPlan?: (students: AdminUser[]) => Promise<void> | void;
   onCreateWeeklyPlan: (student: AdminUser) => Promise<void> | void;
   onSendMessage: (student: AdminUser) => void;
   onUpdateStatus: (
@@ -67,6 +74,7 @@ export default function AdminTrackingTab({
   assignments,
   documents,
   notifications,
+  onBulkCreateWeeklyPlan,
   onCreateWeeklyPlan,
   onSendMessage,
   onUpdateStatus,
@@ -309,24 +317,22 @@ export default function AdminTrackingTab({
 
   return (
     <div className="space-y-5 animate-fade-up">
-      <section className="relative overflow-hidden rounded-3xl border border-slate-200/80 dark:border-white/10 bg-white/80 dark:bg-slate-900/60 p-6 shadow-sm dark:shadow-xl dark:shadow-black/20">
+      <section className="relative overflow-hidden rounded-3xl border border-border-default bg-surface-1 p-6 shadow-sm">
         <div className="relative z-10 flex flex-col gap-6 lg:flex-row lg:items-center lg:justify-between">
           <div>
-            <div className="mb-2 inline-flex items-center gap-2 rounded-full bg-cyan-100 dark:bg-cyan-400/10 px-3 py-1 text-xs font-bold text-cyan-700 dark:text-cyan-200">
+            <div className="mb-2 inline-flex items-center gap-2 rounded-full border border-tone-info-border bg-tone-info-bg px-3 py-1 text-xs font-bold text-tone-info-fg">
               <ShieldCheck className="h-4 w-4" />
               Canlı Dashboard
             </div>
-            <h2 className="text-2xl font-bold text-slate-900 dark:text-white">
-              Takip Merkezi
-            </h2>
-            <p className="mt-1 text-sm text-slate-600 dark:text-slate-400">
+            <h2 className="text-2xl font-bold text-primary">Takip Merkezi</h2>
+            <p className="mt-1 text-sm text-secondary">
               Risk, pasiflik, ödev, test, hedef ve mesaj sinyalleri tek ekranda.
             </p>
-            <div className="mt-3">
+            <div className="mt-3 flex flex-wrap items-center gap-2">
               <button
                 type="button"
                 onClick={handleExportCsv}
-                className="inline-flex items-center gap-1.5 rounded-xl border border-emerald-500/30 bg-emerald-500/15 px-3 py-1.5 text-xs font-semibold text-emerald-700 dark:text-emerald-300 transition hover:bg-emerald-500/25 active:scale-95"
+                className="inline-flex items-center gap-1.5 rounded-xl border border-tone-success-border bg-tone-success-bg px-3 py-1.5 text-xs font-semibold text-tone-success-fg transition hover:opacity-90 active:scale-95"
                 title="Filtrelenen öğrenci takip listesini Excel/CSV olarak indir"
               >
                 <Download className="h-3.5 w-3.5" />
@@ -334,6 +340,22 @@ export default function AdminTrackingTab({
                   Excel / CSV Raporu İndir ({filteredInsights.length})
                 </span>
               </button>
+              {onBulkCreateWeeklyPlan ? (
+                <button
+                  type="button"
+                  disabled={filteredInsights.length === 0}
+                  onClick={() =>
+                    void onBulkCreateWeeklyPlan(
+                      filteredInsights.map((item) => item.student),
+                    )
+                  }
+                  className="inline-flex items-center gap-1.5 rounded-xl border border-tone-info-border bg-tone-info-bg px-3 py-1.5 text-xs font-semibold text-tone-info-fg transition hover:opacity-90 active:scale-95 disabled:cursor-not-allowed disabled:opacity-50"
+                  title="Filtrelenen öğrencilere ortak haftalık çalışma planı ata"
+                >
+                  <CalendarClock className="h-3.5 w-3.5" />
+                  <span>Toplu Plan Ata ({filteredInsights.length})</span>
+                </button>
+              ) : null}
             </div>
           </div>
           <div className="grid grid-cols-2 gap-3 md:grid-cols-4">
@@ -351,16 +373,16 @@ export default function AdminTrackingTab({
         webVitals={webVitals}
       />
 
-      <section className="rounded-2xl border border-slate-200/80 dark:border-white/10 bg-white/80 dark:bg-white/5 p-4 shadow-sm">
+      <section className="rounded-2xl border border-border-default bg-surface-1 p-4 shadow-sm">
         <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
           <label className="relative block">
             <span className="sr-only">Öğrenci ara</span>
-            <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400 dark:text-slate-500" />
+            <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-tertiary" />
             <input
               value={searchQuery}
               onChange={(event) => setSearchQuery(event.target.value)}
               placeholder="Öğrenci ara..."
-              className="w-full rounded-xl border border-slate-200 dark:border-white/10 bg-white dark:bg-slate-950/60 py-2.5 pl-10 pr-3 text-sm text-slate-900 dark:text-white placeholder:text-slate-400 dark:placeholder:text-slate-500 outline-none focus:border-cyan-500 dark:focus:border-cyan-400/60 focus:ring-2 focus:ring-cyan-500/20"
+              className="w-full rounded-xl border border-border-default bg-surface-2 py-2.5 pl-10 pr-3 text-sm text-primary placeholder:text-tertiary outline-none focus:border-brand-primary focus:ring-2 focus:ring-brand-primary/20"
             />
           </label>
           <Select
@@ -411,12 +433,12 @@ export default function AdminTrackingTab({
           </Select>
           <label className="relative block">
             <span className="sr-only">Takip etiketi</span>
-            <Filter className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400 dark:text-slate-500" />
+            <Filter className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-tertiary" />
             <input
               value={labelFilter}
               onChange={(event) => setLabelFilter(event.target.value)}
               placeholder="Etiket"
-              className="w-full rounded-xl border border-slate-200 dark:border-white/10 bg-white dark:bg-slate-950/60 py-2.5 pl-10 pr-3 text-sm text-slate-900 dark:text-white placeholder:text-slate-400 dark:placeholder:text-slate-500 outline-none focus:border-cyan-500 dark:focus:border-cyan-400/60 focus:ring-2 focus:ring-cyan-500/20 lg:w-36"
+              className="w-full rounded-xl border border-border-default bg-surface-2 py-2.5 pl-10 pr-3 text-sm text-primary placeholder:text-tertiary outline-none focus:border-brand-primary focus:ring-2 focus:ring-brand-primary/20 lg:w-36"
             />
           </label>
         </div>
@@ -440,7 +462,7 @@ export default function AdminTrackingTab({
       </section>
 
       {filteredInsights.length === 0 ? (
-        <div className="rounded-2xl border border-dashed border-slate-200 dark:border-white/10 bg-white/80 dark:bg-white/5 p-10 text-center text-slate-500 dark:text-slate-400">
+        <div className="rounded-2xl border border-dashed border-border-default bg-surface-1 p-10 text-center text-secondary">
           {studentUsers.length === 0
             ? 'Takip edilecek öğrenci kaydı henüz yok.'
             : 'Filtrelere uygun öğrenci bulunamadı.'}

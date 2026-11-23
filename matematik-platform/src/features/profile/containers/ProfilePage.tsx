@@ -5,12 +5,9 @@ import dynamic from 'next/dynamic';
 import { useRouter } from 'next/navigation';
 import { signOutClient } from '@/lib/auth-client';
 import { useTheme } from '@/components/ThemeProvider';
-import NotesSection from '@/components/NotesSection';
 import DashboardHero from '@/components/dashboard/DashboardHero';
 import { quickActionIcons } from '@/components/dashboard/QuickActionGrid';
-import DashboardSettings from '@/components/dashboard/DashboardSettings';
 import { Skeleton } from '@/components/ui/Skeleton';
-import ProfileNotificationsPanel from '@/features/profile/components/ProfileNotificationsPanel';
 import {
   getSavedMistakes,
   getDueMistakes,
@@ -45,6 +42,17 @@ import { ProfileFeatureModals } from './ProfilePage/ProfileFeatureModals';
 
 const WelcomeTour = dynamic(
   () => import('@/components/dashboard/WelcomeTour'),
+  { ssr: false },
+);
+const NotesSection = dynamic(() => import('@/components/NotesSection'), {
+  ssr: false,
+});
+const DashboardSettings = dynamic(
+  () => import('@/components/dashboard/DashboardSettings'),
+  { ssr: false },
+);
+const ProfileNotificationsPanel = dynamic(
+  () => import('@/features/profile/components/ProfileNotificationsPanel'),
   { ssr: false },
 );
 
@@ -473,7 +481,7 @@ export default function ProfilePage({ initialData }: ProfilePageProps) {
 
   if (loading) {
     return (
-      <main className="profil-page page-surface min-h-screen px-4 pb-12 pt-20 dark:bg-surface-0">
+      <main className="profil-page page-surface min-h-screen px-4 pb-24 pt-[calc(5.25rem+env(safe-area-inset-top))] sm:pt-24 dark:bg-surface-0">
         <div className="mx-auto max-w-6xl space-y-6">
           <Skeleton className="h-48 rounded-[2.5rem]" />
           <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
@@ -517,7 +525,7 @@ export default function ProfilePage({ initialData }: ProfilePageProps) {
         />
       )}
 
-      <div className="px-4 pb-12 pt-[calc(4.5rem+env(safe-area-inset-top))] sm:pt-20">
+      <div className="px-4 pb-24 pt-[calc(5.25rem+env(safe-area-inset-top))] sm:pt-24">
         <div className="mx-auto max-w-6xl">
           {user.isAdmin ? (
             <AdminProfileHero name={user.name} email={user.email} />

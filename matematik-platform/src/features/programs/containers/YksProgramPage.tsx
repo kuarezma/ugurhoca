@@ -279,7 +279,7 @@ export default function YksWizardPage() {
   };
 
   return (
-    <main className="programlar-page min-h-screen gradient-bg px-4 pb-12 pt-16 sm:px-6 sm:pt-20">
+    <main className="programlar-page min-h-screen gradient-bg px-4 pb-24 pt-[calc(5.25rem+env(safe-area-inset-top))] sm:px-6 sm:pt-24">
       <div className="mx-auto max-w-6xl">
         <ProgramBackLink isLight={isLight} />
 

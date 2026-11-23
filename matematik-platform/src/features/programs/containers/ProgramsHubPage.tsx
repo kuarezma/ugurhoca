@@ -3,7 +3,6 @@
 import { useState } from 'react';
 import Link from 'next/link';
 import {
-  ArrowLeft,
   BookOpen,
   Calculator,
   ChevronRight,
@@ -281,17 +280,9 @@ export default function ProgramsHubPage() {
   ];
 
   return (
-    <main className="page-surface programlar-page min-h-screen gradient-bg px-4 pb-[max(3rem,calc(env(safe-area-inset-bottom)+1.5rem))] pt-[calc(4.5rem+env(safe-area-inset-top))] sm:px-6 sm:pt-20 relative">
+    <main className="page-surface programlar-page min-h-screen gradient-bg px-4 pb-24 pt-[calc(5.25rem+env(safe-area-inset-top))] sm:px-6 sm:pt-24 relative">
       <div className="mx-auto max-w-6xl">
-        <div className="mb-6 flex flex-wrap items-center justify-between gap-3">
-          <Link
-            href="/"
-            className="inline-flex items-center gap-2 text-sm font-semibold transition-colors text-secondary hover:text-primary"
-          >
-            <ArrowLeft className="h-4 w-4" />
-            Ana Sayfa
-          </Link>
-
+        <div className="mb-6 flex flex-wrap items-center justify-end gap-3">
           <button
             type="button"
             onClick={() => setIsFlashcardsOpen(true)}

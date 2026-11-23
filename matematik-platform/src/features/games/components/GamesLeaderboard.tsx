@@ -76,7 +76,7 @@ const medalClasses = [
   {
     container:
       'bg-gradient-to-br from-amber-300 to-amber-500 text-amber-900 shadow-[0_0_20px_rgba(251,191,36,0.3)]',
-    score: 'text-amber-600 dark:text-amber-400',
+    score: 'text-amber-800 dark:text-amber-300',
     row: 'bg-amber-500/10 border-amber-500/20 hover:bg-amber-500/20',
   },
   {

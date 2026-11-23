@@ -98,6 +98,14 @@ export type StudentAdminNote = {
   updated_at?: string | null;
 };
 
+export type AdminWeeklyPlanItemDraft = {
+  title: string;
+  kind?: 'assignment' | 'quiz' | 'content' | 'custom';
+  linked_id?: string | null;
+  href?: string | null;
+  due_at?: string | null;
+};
+
 export type StudentWeeklyPlanItem = {
   id: string;
   plan_id: string;

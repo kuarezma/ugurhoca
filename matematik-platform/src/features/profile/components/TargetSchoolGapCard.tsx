@@ -181,12 +181,18 @@ export default function TargetSchoolGapCard({
     const actualMath = activeTrial.mathNet;
     const targetMath = selectedSchool.baseNets.math;
     const mathDelta = Number((actualMath - targetMath).toFixed(2));
-    const mathPct = Math.min(100, Math.max(0, Math.round((actualMath / targetMath) * 100)));
+    const mathPct = Math.min(
+      100,
+      Math.max(0, Math.round((actualMath / targetMath) * 100)),
+    );
 
     const actualTotal = activeTrial.totalNet;
     const targetTotal = selectedSchool.baseNets.total;
     const totalDelta = Number((actualTotal - targetTotal).toFixed(2));
-    const totalPct = Math.min(100, Math.max(0, Math.round((actualTotal / targetTotal) * 100)));
+    const totalPct = Math.min(
+      100,
+      Math.max(0, Math.round((actualTotal / targetTotal) * 100)),
+    );
 
     const targetScore = selectedSchool.baseScore;
     const actualScore = activeTrial.score;
@@ -225,15 +231,20 @@ export default function TargetSchoolGapCard({
           </div>
           <div>
             <div className="flex items-center gap-2">
-              <h3 className={`font-display text-base sm:text-lg font-bold ${isLight ? 'text-slate-900' : 'text-white'}`}>
+              <h3
+                className={`font-display text-base sm:text-lg font-bold ${isLight ? 'text-slate-900' : 'text-white'}`}
+              >
                 Hedef Okul Taban Net Açığı Köprüsü
               </h3>
-              <span className="inline-flex items-center gap-1 rounded-full bg-amber-500/15 text-amber-700 dark:text-amber-400 border border-amber-500/30 px-2 py-0.5 text-[10px] font-bold">
+              <span className="inline-flex items-center gap-1 rounded-full bg-amber-500/15 text-amber-800 dark:text-amber-300 border border-amber-500/30 px-2 py-0.5 text-[10px] font-bold">
                 🎯 Hedef Kıyaslama
               </span>
             </div>
-            <p className={`text-xs ${isLight ? 'text-slate-500' : 'text-slate-400'}`}>
-              Son deneme sınavı netlerini hedef okulun taban netleriyle karşılaştır.
+            <p
+              className={`text-xs ${isLight ? 'text-slate-500' : 'text-slate-400'}`}
+            >
+              Son deneme sınavı netlerini hedef okulun taban netleriyle
+              karşılaştır.
             </p>
           </div>
         </div>
@@ -279,13 +290,13 @@ export default function TargetSchoolGapCard({
               className={`rounded-xl px-3 py-1.5 text-xs font-semibold transition-all ${
                 isSelected
                   ? 'bg-brand-primary shadow-md ring-2 ring-brand-primary/30 font-bold text-slate-950 dark:text-slate-950'
-                  : isLight
-                  ? 'border border-slate-200 bg-slate-50 text-slate-700 hover:bg-slate-100'
-                  : 'border border-white/10 bg-white/5 text-slate-300 hover:bg-white/10'
+                  : 'border border-border-default bg-surface-2 text-primary hover:bg-surface-3'
               }`}
             >
               <span>{school.name}</span>
-              <span className="ml-1.5 text-[10px] opacity-75">({school.baseScore} Puan)</span>
+              <span className="ml-1.5 text-[10px] opacity-75">
+                ({school.baseScore} Puan)
+              </span>
             </button>
           );
         })}
@@ -297,12 +308,18 @@ export default function TargetSchoolGapCard({
           <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-2xl bg-slate-100 dark:bg-white/5 text-slate-400 mb-2">
             <Target className="h-6 w-6" />
           </div>
-          <h4 className={`text-sm font-bold ${isLight ? 'text-slate-800' : 'text-slate-200'}`}>
-            Henüz Kayıtlı {examType === 'lgs' ? 'LGS' : 'YKS'} Denemen Bulunmuyor
+          <h4
+            className={`text-sm font-bold ${isLight ? 'text-slate-800' : 'text-slate-200'}`}
+          >
+            Henüz Kayıtlı {examType === 'lgs' ? 'LGS' : 'YKS'} Denemen
+            Bulunmuyor
           </h4>
-          <p className={`mt-1 text-xs max-w-md mx-auto ${isLight ? 'text-slate-500' : 'text-slate-400'}`}>
-            Puan ve Net Hesaplayıcıdan son denemeni kaydederek {' '}
-            {selectedSchool.name} için kalan net açığını ve ders çalışma önceliklerini anında görebilirsin.
+          <p
+            className={`mt-1 text-xs max-w-md mx-auto ${isLight ? 'text-slate-500' : 'text-slate-400'}`}
+          >
+            Puan ve Net Hesaplayıcıdan son denemeni kaydederek{' '}
+            {selectedSchool.name} için kalan net açığını ve ders çalışma
+            önceliklerini anında görebilirsin.
           </p>
         </div>
       ) : (
@@ -310,21 +327,39 @@ export default function TargetSchoolGapCard({
         comparison && (
           <div className="mt-5 space-y-4">
             {/* Seçili Okul ve Son Deneme Başlığı */}
-            <div className={`flex flex-wrap items-center justify-between gap-2 rounded-2xl p-3 text-xs border ${
-              isLight ? 'bg-indigo-50/60 border-indigo-200/80 text-indigo-950' : 'bg-indigo-950/20 border-indigo-500/20 text-indigo-200'
-            }`}>
+            <div
+              className={`flex flex-wrap items-center justify-between gap-2 rounded-2xl p-3 text-xs border ${
+                isLight
+                  ? 'bg-indigo-50/60 border-indigo-200/80 text-indigo-950'
+                  : 'bg-indigo-950/20 border-indigo-500/20 text-indigo-200'
+              }`}
+            >
               <div className="flex items-center gap-2">
                 <GraduationCap className="h-4 w-4 text-indigo-500" />
                 <span className="font-bold">{selectedSchool.name}</span>
-                <span className="opacity-75">Taban Puan: {selectedSchool.baseScore}</span>
+                <span className="opacity-75">
+                  Taban Puan: {selectedSchool.baseScore}
+                </span>
               </div>
               <div className="flex items-center gap-2">
-                <span className="opacity-75">Son Deneme ({activeTrial.title}):</span>
-                <strong className={comparison.isScoreReached ? 'text-accent-success-ink dark:text-emerald-400' : 'text-amber-600 dark:text-amber-400'}>
+                <span className="opacity-75">
+                  Son Deneme ({activeTrial.title}):
+                </span>
+                <strong
+                  className={
+                    comparison.isScoreReached
+                      ? 'text-accent-success-ink dark:text-emerald-400'
+                      : 'text-amber-600 dark:text-amber-400'
+                  }
+                >
                   {activeTrial.score.toFixed(1)} Puan
                 </strong>
                 <span className="font-bold">
-                  ({comparison.scoreDelta >= 0 ? `+${comparison.scoreDelta}` : comparison.scoreDelta} {' '}Puan)
+                  (
+                  {comparison.scoreDelta >= 0
+                    ? `+${comparison.scoreDelta}`
+                    : comparison.scoreDelta}{' '}
+                  Puan)
                 </span>
               </div>
             </div>
@@ -332,26 +367,38 @@ export default function TargetSchoolGapCard({
             {/* Ders Net Açığı Karşılaştırma Grid'i */}
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
               {/* Matematik Neti Kıyası */}
-              <div className={`rounded-2xl border p-3.5 transition-all ${
-                isLight ? 'border-slate-200/90 bg-slate-50/70' : 'border-white/10 bg-white/5'
-              }`}>
+              <div
+                className={`rounded-2xl border p-3.5 transition-all ${
+                  isLight
+                    ? 'border-slate-200/90 bg-slate-50/70'
+                    : 'border-white/10 bg-white/5'
+                }`}
+              >
                 <div className="flex items-center justify-between text-xs mb-1.5">
                   <span className="font-bold flex items-center gap-1.5 text-slate-800 dark:text-slate-200">
                     <Sparkles className="h-3.5 w-3.5 text-amber-500" />
                     Matematik Neti
                   </span>
-                  <span className={`font-bold px-2 py-0.5 rounded-md text-[11px] ${
-                    comparison.mathDelta >= 0
-                      ? 'bg-emerald-500/15 text-emerald-700 dark:text-emerald-400 border border-emerald-500/30'
-                      : 'bg-amber-500/15 text-amber-700 dark:text-amber-400 border border-amber-500/30'
-                  }`}>
-                    {comparison.mathDelta >= 0 ? `+${comparison.mathDelta} Hedef Üstü` : `${comparison.mathDelta} Net Açık`}
+                  <span
+                    className={`font-bold px-2 py-0.5 rounded-md text-[11px] ${
+                      comparison.mathDelta >= 0
+                        ? 'bg-emerald-500/15 text-emerald-700 dark:text-emerald-400 border border-emerald-500/30'
+                        : 'bg-amber-500/15 text-amber-700 dark:text-amber-400 border border-amber-500/30'
+                    }`}
+                  >
+                    {comparison.mathDelta >= 0
+                      ? `+${comparison.mathDelta} Hedef Üstü`
+                      : `${comparison.mathDelta} Net Açık`}
                   </span>
                 </div>
 
                 <div className="flex items-baseline justify-between text-xs mt-1">
                   <span className="text-[11px] text-slate-500 dark:text-slate-400">
-                    Mevcut: {' '}<strong className="text-slate-900 dark:text-white">{comparison.actualMath}</strong> {' '}/ Hedef: {comparison.targetMath} Net
+                    Mevcut:{' '}
+                    <strong className="text-slate-900 dark:text-white">
+                      {comparison.actualMath}
+                    </strong>{' '}
+                    / Hedef: {comparison.targetMath} Net
                   </span>
                   <span className="text-[10px] font-bold text-slate-500 dark:text-slate-400">
                     %{comparison.mathPct}
@@ -361,7 +408,9 @@ export default function TargetSchoolGapCard({
                 <div className="mt-2 h-2 w-full overflow-hidden rounded-full bg-slate-200 dark:bg-white/10">
                   <div
                     className={`h-full rounded-full transition-all duration-500 ${
-                      comparison.mathDelta >= 0 ? 'bg-emerald-500' : 'bg-gradient-to-r from-amber-500 to-orange-500'
+                      comparison.mathDelta >= 0
+                        ? 'bg-emerald-500'
+                        : 'bg-gradient-to-r from-amber-500 to-orange-500'
                     }`}
                     style={{ width: `${comparison.mathPct}%` }}
                   />
@@ -369,26 +418,38 @@ export default function TargetSchoolGapCard({
               </div>
 
               {/* Toplam Net Kıyası */}
-              <div className={`rounded-2xl border p-3.5 transition-all ${
-                isLight ? 'border-slate-200/90 bg-slate-50/70' : 'border-white/10 bg-white/5'
-              }`}>
+              <div
+                className={`rounded-2xl border p-3.5 transition-all ${
+                  isLight
+                    ? 'border-slate-200/90 bg-slate-50/70'
+                    : 'border-white/10 bg-white/5'
+                }`}
+              >
                 <div className="flex items-center justify-between text-xs mb-1.5">
                   <span className="font-bold flex items-center gap-1.5 text-slate-800 dark:text-slate-200">
                     <TrendingUp className="h-3.5 w-3.5 text-indigo-500" />
                     Toplam Net
                   </span>
-                  <span className={`font-bold px-2 py-0.5 rounded-md text-[11px] ${
-                    comparison.totalDelta >= 0
-                      ? 'bg-emerald-500/15 text-emerald-700 dark:text-emerald-400 border border-emerald-500/30'
-                      : 'bg-rose-500/15 text-rose-700 dark:text-rose-400 border border-rose-500/30'
-                  }`}>
-                    {comparison.totalDelta >= 0 ? `+${comparison.totalDelta} Hedef Üstü` : `${comparison.totalDelta} Net Açık`}
+                  <span
+                    className={`font-bold px-2 py-0.5 rounded-md text-[11px] ${
+                      comparison.totalDelta >= 0
+                        ? 'bg-emerald-500/15 text-emerald-700 dark:text-emerald-400 border border-emerald-500/30'
+                        : 'bg-rose-500/15 text-rose-700 dark:text-rose-400 border border-rose-500/30'
+                    }`}
+                  >
+                    {comparison.totalDelta >= 0
+                      ? `+${comparison.totalDelta} Hedef Üstü`
+                      : `${comparison.totalDelta} Net Açık`}
                   </span>
                 </div>
 
                 <div className="flex items-baseline justify-between text-xs mt-1">
                   <span className="text-[11px] text-slate-500 dark:text-slate-400">
-                    Mevcut: {' '}<strong className="text-slate-900 dark:text-white">{comparison.actualTotal}</strong> {' '}/ Hedef: {comparison.targetTotal} Net
+                    Mevcut:{' '}
+                    <strong className="text-slate-900 dark:text-white">
+                      {comparison.actualTotal}
+                    </strong>{' '}
+                    / Hedef: {comparison.targetTotal} Net
                   </span>
                   <span className="text-[10px] font-bold text-slate-500 dark:text-slate-400">
                     %{comparison.totalPct}
@@ -398,7 +459,9 @@ export default function TargetSchoolGapCard({
                 <div className="mt-2 h-2 w-full overflow-hidden rounded-full bg-slate-200 dark:bg-white/10">
                   <div
                     className={`h-full rounded-full transition-all duration-500 ${
-                      comparison.totalDelta >= 0 ? 'bg-emerald-500' : 'bg-gradient-to-r from-indigo-500 to-purple-500'
+                      comparison.totalDelta >= 0
+                        ? 'bg-emerald-500'
+                        : 'bg-gradient-to-r from-indigo-500 to-purple-500'
                     }`}
                     style={{ width: `${comparison.totalPct}%` }}
                   />
@@ -407,11 +470,17 @@ export default function TargetSchoolGapCard({
             </div>
 
             {/* Stratejik Tavsiye & Pedagojik Reçete */}
-            <div className={`flex items-start gap-2.5 rounded-2xl p-3.5 text-xs border ${
-              comparison.isScoreReached
-                ? isLight ? 'bg-emerald-50 border-emerald-200 text-emerald-950' : 'bg-emerald-950/20 border-emerald-500/30 text-emerald-200'
-                : isLight ? 'bg-amber-50 border-amber-200 text-amber-950' : 'bg-amber-950/20 border-amber-500/30 text-amber-200'
-            }`}>
+            <div
+              className={`flex items-start gap-2.5 rounded-2xl p-3.5 text-xs border ${
+                comparison.isScoreReached
+                  ? isLight
+                    ? 'bg-emerald-50 border-emerald-200 text-emerald-950'
+                    : 'bg-emerald-950/20 border-emerald-500/30 text-emerald-200'
+                  : isLight
+                    ? 'bg-amber-50 border-amber-200 text-amber-950'
+                    : 'bg-amber-950/20 border-amber-500/30 text-amber-200'
+              }`}
+            >
               {comparison.isScoreReached ? (
                 <CheckCircle2 className="h-4 w-4 shrink-0 text-accent-success-ink dark:text-emerald-400 mt-0.5" />
               ) : (
@@ -419,7 +488,9 @@ export default function TargetSchoolGapCard({
               )}
               <div className="min-w-0 flex-1">
                 <strong className="font-bold">
-                  {comparison.isScoreReached ? '🎯 Hedef Taban Bandındasın!' : '💡 Hedef Kapatma Stratejisi:'}
+                  {comparison.isScoreReached
+                    ? '🎯 Hedef Taban Bandındasın!'
+                    : '💡 Hedef Kapatma Stratejisi:'}
                 </strong>
                 <p className="mt-0.5 leading-relaxed opacity-90">
                   {comparison.isScoreReached

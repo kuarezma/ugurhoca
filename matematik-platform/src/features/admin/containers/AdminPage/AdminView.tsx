@@ -11,6 +11,7 @@ import {
   AdminSpotlightModal,
   AdminBroadcastModal,
   AdminDiagnosticsCard,
+  AdminWeeklyPlanModal,
 } from './lazy';
 import { AdminNavigation } from './AdminNavigation';
 import { AdminWelcome } from './AdminWelcome';
@@ -184,6 +185,7 @@ export function AdminView(props: AdminViewProps) {
             handleConnectGoogleDrive={props.handleConnectGoogleDrive}
             openModal={props.openModal}
             handleCreateWeeklyPlan={props.handleCreateWeeklyPlan}
+            handleBulkCreateWeeklyPlan={props.handleBulkCreateWeeklyPlan}
             handleDiscoverWorksheetCandidates={
               props.handleDiscoverWorksheetCandidates
             }
@@ -305,6 +307,19 @@ export function AdminView(props: AdminViewProps) {
         isOpen={props.isBroadcastOpen}
         onClose={() => props.setIsBroadcastOpen(false)}
         students={props.studentUsers}
+      />
+
+      <AdminWeeklyPlanModal
+        isOpen={Boolean(
+          props.weeklyPlanTargets && props.weeklyPlanTargets.length > 0,
+        )}
+        onClose={props.handleCloseWeeklyPlanModal}
+        students={props.weeklyPlanTargets ?? []}
+        existingPlan={props.weeklyPlanExisting}
+        quizzes={props.quizzes}
+        assignments={props.assignments}
+        documents={props.documents}
+        onSave={props.handleSaveWeeklyPlan}
       />
 
       <AdminActionDialogHost />

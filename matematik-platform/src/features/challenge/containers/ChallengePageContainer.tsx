@@ -11,16 +11,30 @@ import { HomeNavbar } from '@/features/home/components/HomeNavbar';
 import { HomeFooter } from '@/features/home/components/HomeFooter';
 import { HomeDailyChallenge } from '@/features/home/components/HomeDailyChallenge';
 import { HomeDailyGoalWidget } from '@/features/home/components/HomeDailyGoalWidget';
-import { LgsTacticsCorner } from '@/features/home/components/LgsTacticsCorner';
-import { HomeSuccessRoadmap } from '@/features/home/components/HomeSuccessRoadmap';
 import { getCurrentUserProfile, signOutClient } from '@/lib/auth-client';
 import type { AppUser } from '@/types';
 
+const LgsTacticsCorner = dynamic(
+  () =>
+    import('@/features/home/components/LgsTacticsCorner').then((m) => ({
+      default: m.LgsTacticsCorner,
+    })),
+  { ssr: false },
+);
+const HomeSuccessRoadmap = dynamic(
+  () =>
+    import('@/features/home/components/HomeSuccessRoadmap').then((m) => ({
+      default: m.HomeSuccessRoadmap,
+    })),
+  { ssr: false },
+);
 const FormulaFlashcardsModal = dynamic(
   () =>
-    import('@/features/programs/components/FormulaFlashcardsModal').then((m) => ({
-      default: m.FormulaFlashcardsModal,
-    })),
+    import('@/features/programs/components/FormulaFlashcardsModal').then(
+      (m) => ({
+        default: m.FormulaFlashcardsModal,
+      }),
+    ),
   { ssr: false },
 );
 
@@ -104,7 +118,9 @@ export function ChallengePageContainer() {
                   isLight ? 'text-slate-600' : 'text-slate-300'
                 }`}
               >
-                Günün sorusuyla zihnini aç, günlük soru hedefini tamamla, LGS taktikleriyle hız kazan ve başarı yol haritanı adım adım takip et.
+                Günün sorusuyla zihnini aç, günlük soru hedefini tamamla, LGS
+                taktikleriyle hız kazan ve başarı yol haritanı adım adım takip
+                et.
               </p>
             </div>
 

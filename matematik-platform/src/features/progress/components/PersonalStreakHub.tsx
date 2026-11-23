@@ -44,7 +44,8 @@ export function PersonalStreakHub({ isLight }: PersonalStreakHubProps) {
     };
 
     window.addEventListener('ugurhoca:daily-goal-updated', handleUpdate);
-    return () => window.removeEventListener('ugurhoca:daily-goal-updated', handleUpdate);
+    return () =>
+      window.removeEventListener('ugurhoca:daily-goal-updated', handleUpdate);
   }, []);
 
   const handleUseFreezeToday = () => {
@@ -75,7 +76,9 @@ export function PersonalStreakHub({ isLight }: PersonalStreakHubProps) {
 
       const count = i === 0 ? goalData.solved : history[dateKey] || 0;
       const isTargetReached = count >= goalData.target;
-      const dayName = new Intl.DateTimeFormat('tr-TR', { weekday: 'short' }).format(d);
+      const dayName = new Intl.DateTimeFormat('tr-TR', {
+        weekday: 'short',
+      }).format(d);
 
       list.push({
         dateKey,
@@ -104,7 +107,10 @@ export function PersonalStreakHub({ isLight }: PersonalStreakHubProps) {
     return { totalQuestions, activeDays, maxDayQuestions, completionRate };
   }, [activityDays]);
 
-  const progressPercent = Math.min(100, Math.round((goalData.solved / goalData.target) * 100));
+  const progressPercent = Math.min(
+    100,
+    Math.round((goalData.solved / goalData.target) * 100),
+  );
   const isGoalReached = goalData.solved >= goalData.target;
 
   const handleSaveTarget = () => {
@@ -131,10 +137,14 @@ export function PersonalStreakHub({ isLight }: PersonalStreakHubProps) {
             <Flame className="h-5 w-5" />
           </div>
           <div>
-            <h2 className={`font-display text-lg sm:text-xl font-bold ${isLight ? 'text-slate-900' : 'text-white'}`}>
+            <h2
+              className={`font-display text-lg sm:text-xl font-bold ${isLight ? 'text-slate-900' : 'text-white'}`}
+            >
               Bireysel Çalışma Disiplini & Seri
             </h2>
-            <p className={`text-xs ${isLight ? 'text-slate-500' : 'text-slate-400'}`}>
+            <p
+              className={`text-xs ${isLight ? 'text-slate-500' : 'text-slate-400'}`}
+            >
               Her gün düzenli bir adım: Başarı süreklilikle inşa edilir.
             </p>
           </div>
@@ -147,56 +157,65 @@ export function PersonalStreakHub({ isLight }: PersonalStreakHubProps) {
       </div>
 
       {/* Seri Telafi Kartı (Seri yeni kırıldıysa kurtarma seçeneği sunar) */}
-      {(goalData.previousStreakBeforeReset || 0) > 0 && goalData.streak === 0 && (
-        <div className="mb-6 flex flex-wrap items-center justify-between gap-3 rounded-2xl border border-amber-300 dark:border-amber-500/40 bg-amber-50/90 dark:bg-amber-950/25 p-4 text-xs shadow-sm">
-          <div className="flex items-center gap-2.5">
-            <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-amber-500/20 text-amber-600 dark:text-amber-400">
-              <RotateCcw className="h-4 w-4" />
+      {(goalData.previousStreakBeforeReset || 0) > 0 &&
+        goalData.streak === 0 && (
+          <div className="mb-6 flex flex-wrap items-center justify-between gap-3 rounded-2xl border border-amber-300 dark:border-amber-500/40 bg-amber-50/90 dark:bg-amber-950/25 p-4 text-xs shadow-sm">
+            <div className="flex items-center gap-2.5">
+              <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-amber-500/20 text-amber-600 dark:text-amber-400">
+                <RotateCcw className="h-4 w-4" />
+              </div>
+              <div>
+                <span className="font-bold text-amber-900 dark:text-amber-200">
+                  {goalData.previousStreakBeforeReset} Günlük Serini
+                  Kurtarabilirsin!
+                </span>
+                <p className="text-[11px] text-amber-800/80 dark:text-amber-300/80 mt-0.5">
+                  Dün soru çözemedin ama zincirin henüz tamamen kaybolmadı. Tek
+                  tıkla serini kaldığı yerden devam ettir.
+                </p>
+              </div>
             </div>
-            <div>
-              <span className="font-bold text-amber-900 dark:text-amber-200">
-                {goalData.previousStreakBeforeReset} Günlük Serini Kurtarabilirsin!
-              </span>
-              <p className="text-[11px] text-amber-800/80 dark:text-amber-300/80 mt-0.5">
-                Dün soru çözemedin ama zincirin henüz tamamen kaybolmadı. Tek tıkla serini kaldığı yerden devam ettir.
-              </p>
-            </div>
+            <button
+              type="button"
+              onClick={handleRepairStreak}
+              className="inline-flex items-center gap-1.5 rounded-xl px-3.5 py-2 text-xs font-bold hover:scale-[1.02] active:scale-[0.98] transition bg-brand-primary hover:bg-brand-primary-soft text-slate-950 dark:text-slate-950 shadow-btn-3d-green active:translate-y-1 active:shadow-none"
+            >
+              <Sparkles className="h-3.5 w-3.5" />
+              <span>Seriyi Kurtar & Devam Et</span>
+            </button>
           </div>
-          <button
-            type="button"
-            onClick={handleRepairStreak}
-            className="inline-flex items-center gap-1.5 rounded-xl px-3.5 py-2 text-xs font-bold hover:scale-[1.02] active:scale-[0.98] transition bg-brand-primary hover:bg-brand-primary-soft text-slate-950 dark:text-slate-950 shadow-btn-3d-green active:translate-y-1 active:shadow-none"
-          >
-            <Sparkles className="h-3.5 w-3.5" />
-            <span>Seriyi Kurtar & Devam Et</span>
-          </button>
-        </div>
-      )}
+        )}
 
       {/* 3 Ana Metrik Kartı */}
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-6">
         {/* Seri Sayacı */}
         <div
           className={`rounded-2xl border p-4 flex items-center justify-between ${
-            isLight ? 'bg-orange-50/60 border-orange-200/80' : 'bg-orange-950/20 border-orange-500/25'
+            isLight
+              ? 'bg-orange-50/60 border-orange-200/80'
+              : 'bg-orange-950/20 border-orange-500/25'
           }`}
         >
           <div>
-            <span className="text-[11px] font-bold uppercase tracking-wider text-orange-500">
+            <span className="text-[11px] font-bold uppercase tracking-wider text-orange-700 dark:text-orange-400">
               Günlük Seri
             </span>
             <div className="flex items-baseline gap-1 mt-0.5">
-              <span className={`text-3xl font-black ${isLight ? 'text-slate-900' : 'text-white'}`}>
+              <span
+                className={`text-3xl font-black ${isLight ? 'text-slate-900' : 'text-white'}`}
+              >
                 {goalData.streak}
               </span>
-              <span className="text-xs font-semibold text-orange-500">Gün Üst Üste</span>
+              <span className="text-xs font-semibold text-orange-700 dark:text-orange-400">
+                Gün Üst Üste
+              </span>
             </div>
             <div className="mt-1.5 flex flex-wrap items-center gap-1.5">
               <span
                 className={`inline-flex items-center gap-1 rounded-md px-1.5 py-0.5 text-[10px] font-semibold border ${
                   (goalData.freezeTokens || 0) > 0
-                    ? 'bg-sky-500/15 border-sky-500/30 text-sky-600 dark:text-sky-400'
-                    : 'bg-slate-200 dark:bg-slate-700/30 border-slate-300 dark:border-slate-600/30 text-slate-500 dark:text-slate-400'
+                    ? 'bg-sky-500/15 border-sky-500/30 text-sky-800 dark:text-sky-300'
+                    : 'bg-slate-200 dark:bg-slate-700/30 border-slate-300 dark:border-slate-600/30 text-slate-600 dark:text-slate-300'
                 }`}
                 title="Seri Kalkanı: Giremediğin günlerde çalışma serinin sıfırlanmasını otomatik önler."
               >
@@ -211,7 +230,9 @@ export function PersonalStreakHub({ isLight }: PersonalStreakHubProps) {
                 <span className="text-[10px] font-medium text-accent-success-ink dark:text-emerald-400">
                   🛡️ Dün serin korundu!
                 </span>
-              ) : (goalData.freezeTokens || 0) > 0 && goalData.streak > 0 && !isGoalReached ? (
+              ) : (goalData.freezeTokens || 0) > 0 &&
+                goalData.streak > 0 &&
+                !isGoalReached ? (
                 <button
                   type="button"
                   onClick={handleUseFreezeToday}
@@ -222,8 +243,12 @@ export function PersonalStreakHub({ isLight }: PersonalStreakHubProps) {
                 </button>
               ) : null}
             </div>
-            <p className={`text-[11px] mt-1 ${isLight ? 'text-slate-600' : 'text-slate-400'}`}>
-              {goalData.streak > 0 ? 'Harika gidiyorsun! Zinciri kırma.' : 'Bugün hedefine ulaş, seriyi başlat!'}
+            <p
+              className={`text-[11px] mt-1 ${isLight ? 'text-slate-600' : 'text-slate-400'}`}
+            >
+              {goalData.streak > 0
+                ? 'Harika gidiyorsun! Zinciri kırma.'
+                : 'Bugün hedefine ulaş, seriyi başlat!'}
             </p>
           </div>
           <Flame className="h-10 w-10 text-orange-500 shrink-0" />
@@ -232,12 +257,14 @@ export function PersonalStreakHub({ isLight }: PersonalStreakHubProps) {
         {/* Günlük Hedef & İlerleme */}
         <div
           className={`rounded-2xl border p-4 flex flex-col justify-between ${
-            isLight ? 'bg-indigo-50/60 border-indigo-200/80' : 'bg-indigo-950/20 border-indigo-500/25'
+            isLight
+              ? 'bg-indigo-50/60 border-indigo-200/80'
+              : 'bg-indigo-950/20 border-indigo-500/25'
           }`}
         >
           <div>
             <div className="flex items-center justify-between">
-              <span className="text-[11px] font-bold uppercase tracking-wider text-indigo-500">
+              <span className="text-[11px] font-bold uppercase tracking-wider text-sky-800 dark:text-sky-300">
                 Bugünkü Soru Hedefin
               </span>
               <button
@@ -246,7 +273,7 @@ export function PersonalStreakHub({ isLight }: PersonalStreakHubProps) {
                   setNewTargetInput(String(goalData.target));
                   setIsEditingTarget((p) => !p);
                 }}
-                className="text-indigo-400 hover:text-indigo-300 p-1"
+                className="text-sky-800 hover:text-sky-900 dark:text-sky-300 dark:hover:text-sky-200 p-1"
                 title="Günlük soru hedefini değiştir"
               >
                 <Settings2 className="h-3.5 w-3.5" />
@@ -254,17 +281,25 @@ export function PersonalStreakHub({ isLight }: PersonalStreakHubProps) {
             </div>
 
             <div className="flex items-baseline gap-1 mt-0.5">
-              <span className={`text-3xl font-black ${isLight ? 'text-slate-900' : 'text-white'}`}>
+              <span
+                className={`text-3xl font-black ${isLight ? 'text-slate-900' : 'text-white'}`}
+              >
                 {goalData.solved}
               </span>
-              <span className="text-xs font-semibold text-indigo-400">/ {goalData.target} Soru</span>
+              <span className="text-xs font-semibold text-sky-800 dark:text-sky-300">
+                / {goalData.target} Soru
+              </span>
             </div>
           </div>
 
           <div className="mt-2">
-            <div className="flex justify-between text-[10px] font-semibold text-slate-400 mb-1">
+            <div className="flex justify-between text-[10px] font-semibold text-slate-600 dark:text-slate-300 mb-1">
               <span>%{progressPercent} Tamamlandı</span>
-              {isGoalReached && (<span className="text-accent-success-ink font-bold">🎉 Hedef Bitti!</span>)}
+              {isGoalReached && (
+                <span className="text-accent-success-ink font-bold">
+                  🎉 Hedef Bitti!
+                </span>
+              )}
             </div>
             <div className="h-2 rounded-full overflow-hidden bg-white/10">
               <div
@@ -278,23 +313,34 @@ export function PersonalStreakHub({ isLight }: PersonalStreakHubProps) {
         {/* Yaklaşan Sınav Geri Sayımı */}
         <div
           className={`rounded-2xl border p-4 flex flex-col justify-between ${
-            isLight ? 'bg-cyan-50/60 border-cyan-200/80' : 'bg-cyan-950/20 border-cyan-500/25'
+            isLight
+              ? 'bg-cyan-50/60 border-cyan-200/80'
+              : 'bg-cyan-950/20 border-cyan-500/25'
           }`}
         >
           <div>
-            <span className="text-[11px] font-bold uppercase tracking-wider text-cyan-500">
+            <span className="text-[11px] font-bold uppercase tracking-wider text-cyan-800 dark:text-cyan-300">
               Hedef Sınav Sayacı
             </span>
             <div className="mt-2 space-y-1.5">
               {featuredExams.map((exam) => {
-                const diffTime = new Date(exam.targetDate).getTime() - Date.now();
-                const daysLeft = Math.max(0, Math.ceil(diffTime / (1000 * 60 * 60 * 24)));
+                const diffTime =
+                  new Date(exam.targetDate).getTime() - Date.now();
+                const daysLeft = Math.max(
+                  0,
+                  Math.ceil(diffTime / (1000 * 60 * 60 * 24)),
+                );
                 return (
-                  <div key={exam.id} className="flex items-center justify-between text-xs">
-                    <span className={`font-semibold ${isLight ? 'text-slate-700' : 'text-slate-300'}`}>
-                      {exam.title.replace(" Kalan Süre", "")}:
+                  <div
+                    key={exam.id}
+                    className="flex items-center justify-between text-xs"
+                  >
+                    <span
+                      className={`font-semibold ${isLight ? 'text-slate-700' : 'text-slate-300'}`}
+                    >
+                      {exam.title.replace(' Kalan Süre', '')}:
                     </span>
-                    <span className="font-mono font-bold text-cyan-400 bg-cyan-500/15 px-2 py-0.5 rounded-lg">
+                    <span className="font-mono font-bold text-cyan-800 dark:text-cyan-300 bg-cyan-500/15 px-2 py-0.5 rounded-lg">
                       {daysLeft} Gün Kaldı
                     </span>
                   </div>
@@ -303,7 +349,9 @@ export function PersonalStreakHub({ isLight }: PersonalStreakHubProps) {
             </div>
           </div>
 
-          <p className={`text-[10px] mt-2 ${isLight ? 'text-slate-500' : 'text-slate-400'}`}>
+          <p
+            className={`text-[10px] mt-2 ${isLight ? 'text-slate-500' : 'text-slate-400'}`}
+          >
             Her gün 15 soru, sınava kadar ~1.200 ekstra pratik demektir.
           </p>
         </div>
@@ -317,11 +365,15 @@ export function PersonalStreakHub({ isLight }: PersonalStreakHubProps) {
             animate={{ opacity: 1, height: 'auto' }}
             exit={{ opacity: 0, height: 0 }}
             className={`mb-6 p-4 rounded-2xl border ${
-              isLight ? 'bg-slate-100 border-slate-200' : 'bg-slate-900 border-white/10'
+              isLight
+                ? 'bg-slate-100 border-slate-200'
+                : 'bg-slate-900 border-white/10'
             }`}
           >
             <div className="flex flex-wrap items-center gap-3">
-              <span className={`text-xs font-bold ${isLight ? 'text-slate-800' : 'text-white'}`}>
+              <span
+                className={`text-xs font-bold ${isLight ? 'text-slate-800' : 'text-white'}`}
+              >
                 Yeni Günlük Soru Hedefi:
               </span>
               <div className="flex items-center gap-2">
@@ -389,20 +441,27 @@ export function PersonalStreakHub({ isLight }: PersonalStreakHubProps) {
         {/* Özet İstatistik Çubuğu */}
         <div className="grid grid-cols-3 gap-2 mb-3 p-2.5 rounded-xl bg-slate-50/70 dark:bg-white/[0.02] border border-slate-200/60 dark:border-white/5 text-center text-xs">
           <div>
-            <span className="text-[10px] text-slate-600 dark:text-slate-400 block">Toplam Çözülen</span>
+            <span className="text-[10px] text-slate-600 dark:text-slate-400 block">
+              Toplam Çözülen
+            </span>
             <span className="font-bold text-slate-900 dark:text-white text-sm sm:text-base">
               {activityStats.totalQuestions} Soru
             </span>
           </div>
           <div>
-            <span className="text-[10px] text-slate-600 dark:text-slate-400 block">Aktif Gün Oranı</span>
+            <span className="text-[10px] text-slate-600 dark:text-slate-400 block">
+              Aktif Gün Oranı
+            </span>
             <span className="font-bold text-accent-success-ink dark:text-emerald-400 text-sm sm:text-base">
-              %{activityStats.completionRate} ({activityStats.activeDays}/{timeframe})
+              %{activityStats.completionRate} ({activityStats.activeDays}/
+              {timeframe})
             </span>
           </div>
           <div>
-            <span className="text-[10px] text-slate-600 dark:text-slate-400 block">En Verimli Gün</span>
-            <span className="font-bold text-amber-600 dark:text-amber-400 text-sm sm:text-base">
+            <span className="text-[10px] text-slate-600 dark:text-slate-400 block">
+              En Verimli Gün
+            </span>
+            <span className="font-bold text-amber-800 dark:text-amber-300 text-sm sm:text-base">
               {activityStats.maxDayQuestions} Soru
             </span>
           </div>
@@ -413,19 +472,24 @@ export function PersonalStreakHub({ isLight }: PersonalStreakHubProps) {
           <span>Son {timeframe} günlük kümülatif çalışma yoğunluğun:</span>
           <div className="flex items-center gap-2">
             <span className="flex items-center gap-1">
-              <span className="h-2.5 w-2.5 rounded-sm bg-slate-200 dark:bg-slate-800 inline-block border border-slate-300 dark:border-white/10" /> {' '}0
+              <span className="h-2.5 w-2.5 rounded-sm bg-slate-200 dark:bg-slate-800 inline-block border border-slate-300 dark:border-white/10" />{' '}
+              0
             </span>
             <span className="flex items-center gap-1">
-              <span className="h-2.5 w-2.5 rounded-sm bg-amber-400/70 inline-block" /> {' '}Hafif
+              <span className="h-2.5 w-2.5 rounded-sm bg-amber-400/70 inline-block" />{' '}
+              Hafif
             </span>
             <span className="flex items-center gap-1">
-              <span className="h-2.5 w-2.5 rounded-sm bg-emerald-400 inline-block" /> {' '}Orta
+              <span className="h-2.5 w-2.5 rounded-sm bg-emerald-400 inline-block" />{' '}
+              Orta
             </span>
             <span className="flex items-center gap-1">
-              <span className="h-2.5 w-2.5 rounded-sm bg-emerald-500 inline-block" /> {' '}Hedef
+              <span className="h-2.5 w-2.5 rounded-sm bg-emerald-500 inline-block" />{' '}
+              Hedef
             </span>
             <span className="flex items-center gap-1">
-              <span className="h-2.5 w-2.5 rounded-sm bg-teal-400 inline-block" /> {' '}Maraton
+              <span className="h-2.5 w-2.5 rounded-sm bg-teal-400 inline-block" />{' '}
+              Maraton
             </span>
           </div>
         </div>
@@ -436,27 +500,37 @@ export function PersonalStreakHub({ isLight }: PersonalStreakHubProps) {
             timeframe === 14
               ? 'grid-cols-7 sm:grid-cols-14'
               : timeframe === 30
-              ? 'grid-cols-6 sm:grid-cols-10 md:grid-cols-15'
-              : timeframe === 60
-              ? 'grid-cols-10 sm:grid-cols-12 md:grid-cols-20'
-              : 'grid-cols-10 sm:grid-cols-15 md:grid-cols-30'
+                ? 'grid-cols-6 sm:grid-cols-10 md:grid-cols-15'
+                : timeframe === 60
+                  ? 'grid-cols-10 sm:grid-cols-12 md:grid-cols-20'
+                  : 'grid-cols-10 sm:grid-cols-15 md:grid-cols-30'
           }`}
         >
           {activityDays.map((day) => {
-            let bgColor = isLight ? 'bg-slate-100 border-slate-200 text-slate-400' : 'bg-slate-800/40 border-white/5 text-slate-500';
-            let countColor = isLight ? 'text-slate-500' : 'text-slate-400';
+            let bgColor = isLight
+              ? 'bg-slate-100 border-slate-300 text-slate-700'
+              : 'bg-slate-800/60 border-white/10 text-slate-300';
+            let countColor = isLight ? 'text-slate-700' : 'text-slate-300';
 
             if (day.count >= goalData.target * 1.5) {
-              bgColor = 'bg-gradient-to-br from-emerald-500 to-teal-400 text-white border-teal-300 shadow-sm';
+              bgColor =
+                'bg-gradient-to-br from-emerald-500 to-teal-400 text-white border-teal-300 shadow-sm';
               countColor = 'text-white font-bold';
             } else if (day.isTargetReached) {
-              bgColor = 'bg-emerald-500 text-slate-950 border-emerald-400 shadow-sm';
+              bgColor =
+                'bg-emerald-500 text-slate-950 border-emerald-400 shadow-sm';
               countColor = 'text-white font-bold';
             } else if (day.count >= goalData.target / 2) {
-              bgColor = isLight ? 'bg-emerald-200 border-emerald-300 text-emerald-900' : 'bg-emerald-800/60 border-emerald-700/50 text-emerald-100';
-              countColor = isLight ? 'text-emerald-950 font-bold' : 'text-emerald-200 font-bold';
+              bgColor = isLight
+                ? 'bg-emerald-200 border-emerald-300 text-emerald-900'
+                : 'bg-emerald-800/60 border-emerald-700/50 text-emerald-100';
+              countColor = isLight
+                ? 'text-emerald-950 font-bold'
+                : 'text-emerald-200 font-bold';
             } else if (day.count > 0) {
-              bgColor = isLight ? 'bg-amber-100 border-amber-300 text-amber-900' : 'bg-amber-500/25 border-amber-500/30 text-amber-200';
+              bgColor = isLight
+                ? 'bg-amber-100 border-amber-300 text-amber-900'
+                : 'bg-amber-500/25 border-amber-500/30 text-amber-200';
               countColor = isLight ? 'text-amber-950' : 'text-amber-300';
             }
 
@@ -465,12 +539,20 @@ export function PersonalStreakHub({ isLight }: PersonalStreakHubProps) {
                 key={day.dateKey}
                 title={`${day.dateKey} (${day.dayName}): ${day.count} soru çözüldü`}
                 className={`flex flex-col items-center justify-center p-1.5 rounded-xl border text-center transition-transform hover:scale-110 cursor-default ${bgColor} ${
-                  day.isToday ? 'ring-2 ring-indigo-400 ring-offset-1 ring-offset-slate-900' : ""
+                  day.isToday
+                    ? 'ring-2 ring-indigo-400 ring-offset-1 ring-offset-slate-900'
+                    : ''
                 }`}
               >
-                <span className="text-[9px] font-semibold opacity-75 leading-none">{day.dayName}</span>
-                <span className="text-xs font-bold leading-tight my-0.5">{day.dayNumber}</span>
-                <span className={`text-[9px] font-mono leading-none ${countColor}`}>
+                <span className="text-[9px] font-semibold leading-none">
+                  {day.dayName}
+                </span>
+                <span className="text-xs font-bold leading-tight my-0.5">
+                  {day.dayNumber}
+                </span>
+                <span
+                  className={`text-[9px] font-mono leading-none ${countColor}`}
+                >
                   {day.count > 0 ? `${day.count}s` : '-'}
                 </span>
               </div>

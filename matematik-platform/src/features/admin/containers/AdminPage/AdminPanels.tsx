@@ -63,6 +63,7 @@ type AdminPanelsProps = {
   handleConnectGoogleDrive: () => Promise<void>;
   openModal: ReturnType<typeof useAdminModalState>['openModal'];
   handleCreateWeeklyPlan: (student: AdminUser) => Promise<void>;
+  handleBulkCreateWeeklyPlan: (students: AdminUser[]) => Promise<void>;
   handleDiscoverWorksheetCandidates: (
     item: AnnualPlanItem,
   ) => Promise<WorksheetCandidateDiscoveryResult>;
@@ -151,6 +152,7 @@ export function AdminPanels({
   handleConnectGoogleDrive,
   openModal,
   handleCreateWeeklyPlan,
+  handleBulkCreateWeeklyPlan,
   handleDiscoverWorksheetCandidates,
   deleteItem,
   handleDisconnectGoogleDrive,
@@ -215,6 +217,7 @@ export function AdminPanels({
       onCreateAnnouncement={() => openModal('announcement')}
       onCreateAssignment={() => openModal('assignment')}
       onCreateSendDocument={() => openModal('sendDoc')}
+      onBulkCreateWeeklyPlan={handleBulkCreateWeeklyPlan}
       onCreateWeeklyPlan={handleCreateWeeklyPlan}
       onDiscoverWorksheetCandidates={handleDiscoverWorksheetCandidates}
       onDeleteAnnouncement={(id) => deleteItem('announcement', id)}

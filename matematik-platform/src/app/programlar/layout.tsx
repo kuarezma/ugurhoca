@@ -1,4 +1,5 @@
 import type { Metadata } from 'next';
+import { SitePageNavigation } from '@/components/SitePageNavigation';
 import { createPageMetadata } from '@/lib/site-metadata';
 
 export const metadata: Metadata = createPageMetadata({
@@ -12,5 +13,10 @@ export default function ProgramlarLayout({
 }: {
   children: React.ReactNode;
 }) {
-  return children;
+  return (
+    <>
+      <SitePageNavigation />
+      {children}
+    </>
+  );
 }

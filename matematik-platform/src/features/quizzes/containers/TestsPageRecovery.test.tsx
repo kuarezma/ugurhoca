@@ -5,7 +5,12 @@ import * as draftStorage from '@/features/quizzes/lib/quizDraftStorage';
 
 vi.mock('next/navigation', () => ({
   useRouter: () => ({ push: vi.fn() }),
+  usePathname: () => '/testler',
   useSearchParams: () => new URLSearchParams(),
+}));
+
+vi.mock('@/components/ThemeProvider', () => ({
+  useTheme: () => ({ theme: 'light', toggleTheme: vi.fn() }),
 }));
 
 vi.mock('@/components/Toast', () => ({
@@ -16,7 +21,9 @@ vi.mock('@/lib/supabase/client', () => ({
   supabase: {
     auth: {
       getUser: vi.fn().mockResolvedValue({ data: { user: null } }),
-      getSession: vi.fn().mockResolvedValue({ data: { session: null }, error: null }),
+      getSession: vi
+        .fn()
+        .mockResolvedValue({ data: { session: null }, error: null }),
     },
     from: vi.fn().mockReturnValue({
       select: vi.fn().mockReturnValue({
@@ -30,7 +37,9 @@ vi.mock('@/lib/supabase/client', () => ({
 }));
 
 vi.mock('@/features/quizzes/lib/mistakeSync', () => ({
-  syncMistakesWithCloud: vi.fn().mockResolvedValue({ success: true, count: 0, mistakes: [] }),
+  syncMistakesWithCloud: vi
+    .fn()
+    .mockResolvedValue({ success: true, count: 0, mistakes: [] }),
 }));
 
 describe('TestsPage State Recovery (Kesinti Koruması)', () => {
@@ -70,13 +79,21 @@ describe('TestsPage State Recovery (Kesinti Koruması)', () => {
             updated_at: '2026-09-01',
           },
         ]}
-        initialUser={{ id: 'test_user', name: 'Ali', email: 'ali@example.com', grade: 8, isAdmin: false }}
+        initialUser={{
+          id: 'test_user',
+          name: 'Ali',
+          email: 'ali@example.com',
+          grade: 8,
+          isAdmin: false,
+        }}
         isHydrated={true}
-      />
+      />,
     );
 
     // Banner görünür olmalı
-    expect(screen.getByText('Yarım Kalan Sınavınız Bulundu')).toBeInTheDocument();
+    expect(
+      screen.getByText('Yarım Kalan Sınavınız Bulundu'),
+    ).toBeInTheDocument();
     expect(screen.getByText('Kesinti Koruması Aktif')).toBeInTheDocument();
     expect(screen.getByText(/5\. soruda kalmıştınız/i)).toBeInTheDocument();
 
@@ -85,6 +102,8 @@ describe('TestsPage State Recovery (Kesinti Koruması)', () => {
     fireEvent.click(discardBtn);
 
     expect(clearDraftSpy).toHaveBeenCalledWith('quiz-101', 'test_user');
-    expect(screen.queryByText('Yarım Kalan Sınavınız Bulundu')).not.toBeInTheDocument();
+    expect(
+      screen.queryByText('Yarım Kalan Sınavınız Bulundu'),
+    ).not.toBeInTheDocument();
   });
 });

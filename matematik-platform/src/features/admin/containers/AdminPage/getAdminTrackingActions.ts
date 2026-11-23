@@ -4,7 +4,6 @@ import { useToast } from '@/components/Toast';
 import { useAdminModalState } from '@/features/admin/hooks/useAdminModalState';
 import {
   addStudentAdminNote,
-  createAdminWeeklyPlan,
   upsertStudentAdminStatus,
 } from '@/features/admin/queries';
 import type {
@@ -40,49 +39,6 @@ export function getAdminTrackingActions({
     await loadData(user?.id);
     if (activeStudentProfileId === studentId) {
       await loadStudentProfile(studentId);
-    }
-  };
-
-  const handleCreateWeeklyPlan = async (student: AdminUser) => {
-    if (!user) return;
-
-    const titlePrompt = await promptAdminAction(
-      `${student.name || 'Öğrenci'} için haftalık plan başlığı`,
-      'Bu Haftaki Plan',
-    );
-    const title = titlePrompt?.trim() || '';
-
-    if (!title) return;
-
-    const rawItemsPrompt = await promptAdminAction(
-      'Plan maddelerini virgül veya satır satır yazın',
-      'Eksik konuyu tekrar et, 1 test çöz, Ödevleri kontrol et',
-    );
-    const rawItems = rawItemsPrompt || '';
-    const itemTitles = rawItems
-      .split(/\n|,/)
-      .map((item) => item.trim())
-      .filter(Boolean);
-
-    if (itemTitles.length === 0) {
-      showToast('warning', 'En az bir plan maddesi ekleyin.');
-      return;
-    }
-
-    try {
-      await createAdminWeeklyPlan({
-        authorId: user.id,
-        itemTitles,
-        studentId: student.id,
-        title,
-      });
-      showToast('success', 'Haftalık plan kaydedildi.');
-      await refreshAfterStudentTrackingChange(student.id);
-    } catch (error) {
-      showToast(
-        'error',
-        error instanceof Error ? error.message : 'Haftalık plan kaydedilemedi.',
-      );
     }
   };
 
@@ -157,7 +113,6 @@ export function getAdminTrackingActions({
     openEditQuiz(quiz, getQuizFormState(quiz));
   };
   return {
-    handleCreateWeeklyPlan,
     handleUpdateStudentStatus,
     handleAddStudentAdminNote,
     handleEditQuiz,
