@@ -3,6 +3,7 @@
 -- (migration 20261004120000_live_lesson_rls_scope.sql).
 --
 -- Çalıştırma (yerel Supabase, migration'lar uygulanmış olmalı):
+-- CI: `npm run test:db` bu dosyayı tam migration zinciri üzerinde (PGlite) koşar.
 --   psql "$(supabase status -o env | sed -n 's/^DB_URL=//p' | tr -d '"')" \
 --     -v ON_ERROR_STOP=1 -f supabase/tests/live_lesson_rls.sql
 --
@@ -131,7 +132,7 @@ SELECT pg_temp.expect('realtime: replica identity varsayılan',
   (SELECT string_agg(c.relname || '=' || c.relreplident::text, ',' ORDER BY c.relname)
      FROM pg_class c JOIN pg_namespace n ON n.oid = c.relnamespace
     WHERE n.nspname = 'public' AND c.relkind = 'r' AND c.relname LIKE 'live_lesson%'),
-  'live_lesson_chat_messages=d,live_lesson_events=d,live_lesson_participants=d,live_lesson_reminders=d,live_lessons=d');
+  'live_lesson_chat_messages=d,live_lesson_events=d,live_lesson_participants=d,live_lesson_questions=d,live_lesson_reminders=d,live_lessons=d');
 
 -- --- Öğrenci A (7. sınıf) ----------------------------------------------------
 SET LOCAL ROLE authenticated;
@@ -141,11 +142,12 @@ SELECT set_config('request.jwt.claims',
 SELECT pg_temp.expect('A: dersler (L6 sınıf dersi olarak açık; L7/L8 boş seçim kapalı)',
   (SELECT string_agg(title, ',' ORDER BY title) FROM public.live_lessons
     WHERE id::text LIKE '10000000-%'), 'L1,L4,L5,L6');
-SELECT pg_temp.expect('A: sohbet yalnız erişilen derslerden',
+-- Sohbet ve olaylar: 20261110101000'dan beri yalnız satır sahibi ve admin.
+SELECT pg_temp.expect('A: sohbet yalnız kendi mesajı (erişilen L4''teki başkasının mesajı gizli)',
   (SELECT string_agg(message, ',' ORDER BY message) FROM public.live_lesson_chat_messages
     WHERE lesson_id::text LIKE '10000000-%'),
-  'L1 mesajı,L4 mesajı');
-SELECT pg_temp.expect('A: olaylar yalnız L1',
+  'L1 mesajı');
+SELECT pg_temp.expect('A: olaylar yalnız kendi olayı',
   (SELECT string_agg(lesson_id::text, ',') FROM public.live_lesson_events
     WHERE lesson_id::text LIKE '10000000-%'),
   '10000000-0000-4000-8000-000000000001');
@@ -213,13 +215,13 @@ SELECT set_config('request.jwt.claims',
 SELECT pg_temp.expect('B: dersler (L6 bayat diziyle açılmaz)',
   (SELECT string_agg(title, ',' ORDER BY title) FROM public.live_lessons
     WHERE id::text LIKE '10000000-%'), 'L2,L3,L4');
-SELECT pg_temp.expect('B: sohbet',
+SELECT pg_temp.expect('B: sohbet yalnız kendi mesajları',
   (SELECT string_agg(message, ',' ORDER BY message) FROM public.live_lesson_chat_messages
     WHERE lesson_id::text LIKE '10000000-%'),
-  'L2 mesajı,L3 mesajı,L4 mesajı');
-SELECT pg_temp.expect('B: olaylar',
+  'L2 mesajı,L3 mesajı');
+SELECT pg_temp.expect('B: olaylar yalnız kendi olayı (admin''in L3 olayı gizli)',
   (SELECT count(*)::text FROM public.live_lesson_events
-    WHERE lesson_id::text LIKE '10000000-%'), '2');
+    WHERE lesson_id::text LIKE '10000000-%'), '1');
 SELECT pg_temp.expect('B: katılımcı yalnız kendi satırları',
   (SELECT string_agg(user_name || '@' || right(lesson_id::text, 1), ',' ORDER BY lesson_id)
      FROM public.live_lesson_participants WHERE lesson_id::text LIKE '10000000-%'),

@@ -104,6 +104,15 @@ try {
   );
   console.log('PASS full chain student isolation and privacy contract');
 
+  // Dosya kendi BEGIN/ROLLBACK'ini taşır; sonraki adımlara satır bırakmaz.
+  await database.exec(
+    await readFile(
+      resolve(projectRoot, 'supabase/tests/live_lesson_rls.sql'),
+      'utf8',
+    ),
+  );
+  console.log('PASS live lesson read scope RLS contract');
+
   // İki yeni onarım dolu şemada tekrar çalışır; tarihsel dosyalar tekrarlanmaz.
   await database.exec(
     await readFile(
