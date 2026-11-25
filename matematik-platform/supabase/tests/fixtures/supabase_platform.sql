@@ -39,7 +39,7 @@ GRANT EXECUTE ON FUNCTION auth.jwt(), auth.uid(), auth.role()
 CREATE TABLE auth.users (
   id uuid PRIMARY KEY,
   email text,
-  raw_user_meta_data jsonb NOT NULL DEFAULT '{}'::jsonb
+  raw_user_meta_data jsonb DEFAULT '{}'::jsonb
 );
 
 CREATE TABLE storage.buckets (
