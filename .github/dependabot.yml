@@ -28,6 +28,12 @@ updates:
       # @testing-library/jest-dom v8 vitest 5 gerektirir (projede vitest 4 var)
       - dependency-name: "@testing-library/jest-dom"
         update-types: ["version-update:semver-major"]
+      # TypeScript 7 henüz typescript-eslint / eslint-config-next ile uyumsuz
+      - dependency-name: "typescript"
+        update-types: ["version-update:semver-major"]
+      # jsdom 31 mevcut CSS animationDelay test davranışını değiştiriyor
+      - dependency-name: "jsdom"
+        update-types: ["version-update:semver-major"]
 
   - package-ecosystem: "github-actions"
     directory: "/"

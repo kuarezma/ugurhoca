@@ -1,8 +1,8 @@
-export type QuizRole = "teacher" | "student";
+export type QuizRole = 'teacher' | 'student';
 
 export type QuizMessage =
   | {
-      kind: "question";
+      kind: 'question';
       questionId: string;
       prompt: string;
       options: string[];
@@ -10,29 +10,29 @@ export type QuizMessage =
       fromIdentity: string;
     }
   | {
-      kind: "answer";
+      kind: 'answer';
       questionId: string;
       choiceIndex: number;
       fromIdentity: string;
       displayName: string;
     }
   | {
-      kind: "clear_question";
+      kind: 'clear_question';
       fromIdentity: string;
     };
 
-export function encodeQuizMessage(msg: QuizMessage): Uint8Array {
+export function encodeQuizMessage(msg: QuizMessage): Uint8Array<ArrayBuffer> {
   return new TextEncoder().encode(JSON.stringify(msg));
 }
 
 export function isQuizMessage(value: unknown): value is QuizMessage {
-  if (!value || typeof value !== "object" || !("kind" in value)) return false;
+  if (!value || typeof value !== 'object' || !('kind' in value)) return false;
   const k = (value as { kind: unknown }).kind;
-  if (k === "clear_question") {
+  if (k === 'clear_question') {
     const o = value as unknown as { fromIdentity?: unknown };
-    return typeof o.fromIdentity === "string";
+    return typeof o.fromIdentity === 'string';
   }
-  if (k === "question") {
+  if (k === 'question') {
     const v = value as unknown as {
       questionId: unknown;
       prompt: unknown;
@@ -41,17 +41,17 @@ export function isQuizMessage(value: unknown): value is QuizMessage {
       fromIdentity: unknown;
     };
     if (
-      typeof v.questionId !== "string" ||
-      typeof v.prompt !== "string" ||
-      typeof v.fromIdentity !== "string" ||
-      typeof v.correctIndex !== "number" ||
+      typeof v.questionId !== 'string' ||
+      typeof v.prompt !== 'string' ||
+      typeof v.fromIdentity !== 'string' ||
+      typeof v.correctIndex !== 'number' ||
       !Array.isArray(v.options)
     ) {
       return false;
     }
-    return v.options.every((o) => typeof o === "string");
+    return v.options.every((o) => typeof o === 'string');
   }
-  if (k === "answer") {
+  if (k === 'answer') {
     const v = value as unknown as {
       questionId: unknown;
       choiceIndex: unknown;
@@ -59,10 +59,10 @@ export function isQuizMessage(value: unknown): value is QuizMessage {
       displayName: unknown;
     };
     return (
-      typeof v.questionId === "string" &&
-      typeof v.choiceIndex === "number" &&
-      typeof v.fromIdentity === "string" &&
-      typeof v.displayName === "string"
+      typeof v.questionId === 'string' &&
+      typeof v.choiceIndex === 'number' &&
+      typeof v.fromIdentity === 'string' &&
+      typeof v.displayName === 'string'
     );
   }
   return false;
